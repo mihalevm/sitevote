@@ -1,3 +1,3 @@
 import './style.css';
-import bootstrap from 'bootstrap';
+import { Alert } from 'bootstrap';
 import $ from "jquery";

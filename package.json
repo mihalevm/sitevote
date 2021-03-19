@@ -6,7 +6,7 @@
   "private": "true",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --open",
+    "dev-server": "webpack serve --open",
     "build": "webpack"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@popperjs/core": "^2.9.1",
     "bootstrap": "^5.0.0-beta2",
     "jquery": "^3.6.0"
   }
