@@ -30,12 +30,24 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.(scss)$/,
         use: [
-          MiniCssExtractPlugin.loader,
-          { loader: 'css-loader' },
           { loader: 'style-loader' },
-          { loader: 'sass-loader' },
+          { loader: 'css-loader' },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: function () {
+                  return [
+                    require('precss'),
+                    require('autoprefixer')
+                  ];
+                }
+              }
+            }
+          },
+          { loader: 'sass-loader' }
         ]
       },
       {
@@ -64,6 +76,14 @@ module.exports = {
         {
           from: path.resolve(__dirname, 'src/config/config.json'),
           to: path.resolve(__dirname, 'dist/config')
+        },        
+        {
+          from: path.resolve(__dirname, 'src/pages/'),
+          to: path.resolve(__dirname, 'dist/pages')
+        },
+        {
+          from: path.resolve(__dirname, 'src/img/'),
+          to: path.resolve(__dirname, 'dist/img')
         }
       ]
     })
