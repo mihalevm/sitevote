@@ -11,12 +11,12 @@ module.exports = {
   mode: 'development',
   entry: {
     index: './src/index.js',
-    bootstrap: './src/bootstrap.js',
-    jquery: './src/jquery.js',
+    bootstrap: './src/js/bootstrap.js',
+    jquery: './src/js/jquery.js',
   },
   output: {
     filename: fileName('js'),
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/'),
     clean: true,
   },
   devtool: isDev ? 'source-map' : false,
@@ -30,14 +30,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.s[ac]ss$/i,
         use: [
-          {
-            loader: 'style-loader'
-          },
-          {
-            loader: 'css-loader'
-          },
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader' },
+          { loader: 'style-loader' },
+          { loader: 'sass-loader' },
         ]
       },
       {
@@ -64,8 +62,8 @@ module.exports = {
           to: path.resolve(__dirname, 'dist')
         },
         {
-          from: path.resolve(__dirname, 'src/config.json'),
-          to: path.resolve(__dirname, 'dist')
+          from: path.resolve(__dirname, 'src/config/config.json'),
+          to: path.resolve(__dirname, 'dist/config')
         }
       ]
     })
