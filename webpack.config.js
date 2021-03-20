@@ -5,11 +5,15 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
-const fileName = ext => isDev ? `bundle.${ext}` : `bundle.[hash].${ext}`;
+const fileName = ext => isDev ? `[name].bundle.${ext}` : `[name].bundle.[fullhash].${ext}`;
 
 module.exports = {  
   mode: 'development',
-  entry: './src/index.js',
+  entry: {
+    index: './src/index.js',
+    bootstrap: './src/bootstrap.js',
+    jquery: './src/jquery.js',
+  },
   output: {
     filename: fileName('js'),
     path: path.resolve(__dirname, 'dist'),
@@ -26,8 +30,15 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader'
+          },
+        ]
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
