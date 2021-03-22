@@ -1,3 +1,6 @@
-## Команды package.json
-npm run dev-server - запуск dev-сервера.
-npm run build - создание билда
+### Установка
+npm install
+### Запуск dev-сервера
+npm run dev-server
+### Cоздание билда
+npm run build

@@ -1,7 +1,11 @@
+const webpack = require("webpack");
 const path = require('path');
+const glob = require('glob-all');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const PurgeCSSPlugin = require('purgecss-webpack-plugin');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
@@ -22,9 +26,17 @@ module.exports = {
     path: path.resolve(__dirname, 'dist/'),
     clean: true,
   },
-  optimization: {
+  optimization: {    
     splitChunks: {
       chunks: 'all',
+      cacheGroups: {
+        styles: {
+          name: 'style',
+          test: /\.scss$/,
+          chunks: 'all',
+          enforce: true
+        }
+      }     
     },
   },
   devtool: isDev ? 'source-map' : false,
@@ -134,6 +146,21 @@ module.exports = {
           to: path.resolve(__dirname, 'dist/config')
         }, 
       ]
-    })
+    }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
+    new PurgeCSSPlugin({      
+      paths: glob.sync([
+        './src/index.js',
+        './index.html',
+        './src/js/*.js',
+        './src/pages/*.html'
+      ])
+    }),
+    // new BundleAnalyzerPlugin()
   ],
 };
+
+
