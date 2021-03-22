@@ -18,7 +18,7 @@ module.exports = {
     'vote': './src/js/vote.js', 
   },  
   output: {
-    filename: fileName('js'),
+    filename: `scripts/${fileName('js')}`,
     path: path.resolve(__dirname, 'dist/'),
     clean: true,
   },
@@ -48,7 +48,7 @@ module.exports = {
       {
         test: /\.(scss)$/,
         use: [
-        { loader: 'style-loader' },
+          MiniCssExtractPlugin.loader,        
         { loader: 'css-loader'  },
         { loader: 'postcss-loader' },
         { loader: 'sass-loader'  }
@@ -121,7 +121,7 @@ module.exports = {
       filename: 'pages/vote.html'
     }),
     new MiniCssExtractPlugin({
-      filename: fileName('css')
+      filename: `styles/${fileName('css')}`
     }),
     new CopyPlugin({
       patterns: [
