@@ -10,14 +10,22 @@ const fileName = ext => isDev ? `[name].bundle.${ext}` : `[name].bundle.[fullhas
 module.exports = {  
   mode: 'development',
   entry: {
-    index: './src/index.js',
-    bootstrap: './src/js/bootstrap.js',
-    jquery: './src/js/jquery.js',
-  },
+    'index' : './src/index.js',
+    'add-site': './src/js/add-site.js',
+    'profile': './src/js/profile.js',
+    'select-site': './src/js/select-site.js',
+    'statistics':'./src/js/statistics.js',
+    'vote': './src/js/vote.js', 
+  },  
   output: {
     filename: fileName('js'),
     path: path.resolve(__dirname, 'dist/'),
     clean: true,
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
   },
   devtool: isDev ? 'source-map' : false,
   devServer: {
@@ -30,25 +38,21 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env']
+        }
+      },
+      {
         test: /\.(scss)$/,
         use: [
-          { loader: 'style-loader' },
-          { loader: 'css-loader' },
-          {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: function () {
-                  return [
-                    require('precss'),
-                    require('autoprefixer')
-                  ];
-                }
-              }
-            }
-          },
-          { loader: 'sass-loader' }
-        ]
+        { loader: 'style-loader' },
+        { loader: 'css-loader'  },
+        { loader: 'postcss-loader' },
+        { loader: 'sass-loader'  }
+      ]
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -62,7 +66,59 @@ module.exports = {
       minify: {
         removeComments: isProd,
         collapseWhitespace: isProd
-      }
+      },
+      inject: 'body',
+      chunks: ['index']      
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/add-site.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['add-site'],
+      filename: 'pages/add-site.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/profile.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['profile'],
+      filename: 'pages/profile.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/select-site.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['select-site'],
+      filename: 'pages/select-site.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/statistics.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['statistics'],
+      filename: 'pages/statistics.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/vote.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['vote'],
+      filename: 'pages/vote.html'
     }),
     new MiniCssExtractPlugin({
       filename: fileName('css')
@@ -76,15 +132,7 @@ module.exports = {
         {
           from: path.resolve(__dirname, 'src/config/config.json'),
           to: path.resolve(__dirname, 'dist/config')
-        },        
-        {
-          from: path.resolve(__dirname, 'src/pages/'),
-          to: path.resolve(__dirname, 'dist/pages')
-        },
-        {
-          from: path.resolve(__dirname, 'src/img/'),
-          to: path.resolve(__dirname, 'dist/img')
-        }
+        }, 
       ]
     })
   ],
