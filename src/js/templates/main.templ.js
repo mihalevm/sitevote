@@ -1,4 +1,4 @@
-export const windowInit = (el) => {
+export const windowAuth = (el) => {
   const tmpl = ({title, hint, pass, enter}) => `
     <div class="modal" id="auth-modal" tabindex="-1" style="display: none;">
       <div class="modal-dialog">
@@ -27,10 +27,10 @@ export const windowInit = (el) => {
       </div>
     </div>
   `;
-  // debugger;
+  
   return $.ajax({
     type: 'GET',
-    url: 'config/config.json',
+    url: '/config/config.json',
   }).done(function(data){
     const content = data.auth;
     $(el).append(tmpl({ 
