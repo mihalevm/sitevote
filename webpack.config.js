@@ -151,11 +151,12 @@ module.exports = {
       $: 'jquery',
       jQuery: 'jquery',
     }),
-    new PurgeCSSPlugin({      
+    new PurgeCSSPlugin({
       paths: glob.sync([
         './src/index.js',
         './index.html',
         './src/js/*.js',
+        './src/js/templates/*.js',
         './src/pages/*.html'
       ])
     }),
