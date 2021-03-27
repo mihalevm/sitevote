@@ -2,7 +2,7 @@
 import { windowAuth, header } from './js/templates/main.templ';
 import './styles/style.scss';
 const container = () => `
-  <div id="index-con" class="container">
+  <div class="container">
     <div class="row">
       <main> <!-- col-md-9 ms-sm-auto col-lg-10 px-md-4 -->
         <div class="container pt-5">
@@ -58,8 +58,19 @@ const container = () => `
         </div>
       </main>
     </div>
+    <div class="container pt-5">
+      <div class="row pt-5">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </div>
+    </div>
   </div>
 `;
+
 header(document.body)
 $(document.body).append(container);
 windowAuth(document.body);
