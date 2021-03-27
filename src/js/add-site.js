@@ -15,7 +15,6 @@ const container = () => `
     </div>
   </div>
 `;
-header(document.body).done(function() {
-  $(document.body).append(container);
-})
+header(document.body);
+$(document.body).append(container);
 windowAuth(document.body);
