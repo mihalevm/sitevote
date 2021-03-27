@@ -1,3 +1,22 @@
-import { windowAuth } from './templates/main.templ';
+import { windowAuth, header } from './templates/main.templ';
 import '../styles/style.scss';
-windowAuth(document.body)
+const container = () => `
+  <div class="container-fluid">
+    <div class="row">
+      <main>
+        <div class="container pt-5">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Голосование</a></li>
+            </ol>
+          </nav>
+        </div>
+      </main>
+    </div>
+  </div>
+`;
+header(document.body).done(function() {
+  $(document.body).append(container);
+})
+windowAuth(document.body);
+
