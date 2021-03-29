@@ -17,6 +17,9 @@
     "byEmail": "По Email"
   },
   "profile": {
+    "profile": "Профиль",
+    "add_site": "Добавление сайта",
+    "statistics": "Статистика голосования",
     "fio": "ФИО",
     "email": "Email",
     "number": "Номер телефона",
