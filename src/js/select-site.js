@@ -5,13 +5,6 @@ const container = () => `
     <div class="row pt-3">
       <main>
         <div class="container pt-5">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Выбор сайта</a></li>
-            </ol>
-          </nav>
-        </div>
-        <div class="container pt-5">
           <div class="input-group input-group-lg">
             <span class="input-group-text" id="inputGroup-sizing-lg">Поиск</span>
             <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">

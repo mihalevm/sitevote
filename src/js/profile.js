@@ -10,7 +10,13 @@ const container = ({
   email, 
   number, 
   username,
-  pass
+  pass,
+  save,
+  url,
+  access_check,
+  pic,
+  description,
+  uniq_url
 }) => `
   <nav>
   <div class="nav nav-tabs" id="profile-nav-tab" role="tablist">
@@ -44,6 +50,7 @@ const container = ({
                 <span class="input-group-text" id="basic-addon5">${pass}</span>
                 <input type="password" class="form-control" id="user-password">
               </div>
+              <button type="submit" class="btn btn-primary">${save}</button>
             </div>
           </main>
         </div>
@@ -53,15 +60,33 @@ const container = ({
       <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="">
         <div class="container-fluid">
           <div class="row">
-            <main>
-              <div class="container pt-5">
-                <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Добавление сайта</a></li>
-                  </ol>
-                </nav>
-              </div>
-            </main>
+            <div class="container">
+            <div class="row">
+              <main>
+                <div class="container pt-5">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">${url}</span>
+                    <input type="text" class="form-control" placeholder="https://google.com" aria-label="Username" aria-describedby="basic-addon1">
+                  </div>          
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon2">${pic}</span>
+                    <button class="btn btn-primary">${access_check}</button>
+                  </div>          
+                  <div class="input-group mb-3">
+                    <div class="form-floating">
+                      <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                      <label for="floatingTextarea2">${description}</label>
+                    </div>                
+                  </div>   
+                  <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">${uniq_url}</span>
+                    <input type="text" class="form-control" placeholder="Уникальная ссылка сайта" aria-label="Username" aria-describedby="basic-addon1">
+                  </div> 
+                  <button type="submit" class="btn btn-primary">${save}</button>
+                </div>
+              </main>
+            </div>
+          </div>
           </div>
       </div>
       </div>
@@ -71,13 +96,6 @@ const container = ({
         <div class="container-fluid">
         <div class="row">
           <main>
-            <div class="container pt-5">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">Статистика по голосованию</a></li>
-                </ol>
-              </nav>
-            </div>
             <div class="container pt-5">
               <div class="table-responsive">
                 <table class="table table-striped table-sm">
@@ -224,6 +242,12 @@ $(document.body).append(container({
   email: config.profile.email, 
   number: config.profile.number, 
   username: config.profile.username,
-  pass: config.profile.pass
+  pass: config.profile.pass,
+  save: config.profile.save,
+  access_check: config.profile.access_check,
+  url: config.profile.url,
+  pic: config.profile.pic,
+  description: config.profile.description,
+  uniq_url: config.profile.uniq_url,
 }));
 windowAuth(document.body);
