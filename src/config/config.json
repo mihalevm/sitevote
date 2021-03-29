@@ -1,12 +1,12 @@
 {
-  "header": {
+  "header_tmpl": {
     "title": "Конкурс сайтов",
     "profile": "Профиль",
     "select": "Выбор сайта",
     "vote": "Голосование",
     "enter": "Вход"
   },
-  "auth": {
+  "auth_tmpl": {
     "title": "Авторизация",
     "hint": "Ни кому не говорите свой пароль.",
     "pass": "Пароль",
@@ -15,5 +15,12 @@
     "email": "Email",
     "byNumber": "По номеру телефона",
     "byEmail": "По Email"
+  },
+  "profile": {
+    "fio": "ФИО",
+    "email": "Email",
+    "number": "Номер телефона",
+    "username": "Имя пользователя",
+    "pass": "Пароль"
   }
 }
