@@ -14,11 +14,9 @@ const fileName = ext => isDev ? `[name].bundle.${ext}` : `[name].bundle.[fullhas
 module.exports = {  
   mode: 'development',
   entry: {
-    'index' : './src/index.js',
-    'add-site': './src/js/add-site.js',
+    'index' : './src/index.js',    
     'profile': './src/js/profile.js',
-    'select-site': './src/js/select-site.js',
-    'statistics':'./src/js/statistics.js',
+    'select-site': './src/js/select-site.js',    
     'vote': './src/js/vote.js', 
   },  
   output: {
@@ -40,7 +38,7 @@ module.exports = {
     },
   },
   devtool: isDev ? 'source-map' : false,
-  devServer: {
+  devServer: {     
     contentBase: './dist',
     hot: isDev,
     watchOptions: {
@@ -83,16 +81,6 @@ module.exports = {
       chunks: ['index']      
     }),
     new HtmlWebpackPlugin({      
-      template: './src/pages/add-site.html',
-      minify: {
-        removeComments: isProd,
-        collapseWhitespace: isProd
-      },
-      inject: 'body',
-      chunks: ['add-site'],
-      filename: 'pages/add-site.html'
-    }),
-    new HtmlWebpackPlugin({      
       template: './src/pages/profile.html',
       minify: {
         removeComments: isProd,
@@ -111,16 +99,6 @@ module.exports = {
       inject: 'body',
       chunks: ['select-site'],
       filename: 'pages/select-site.html'
-    }),
-    new HtmlWebpackPlugin({      
-      template: './src/pages/statistics.html',
-      minify: {
-        removeComments: isProd,
-        collapseWhitespace: isProd
-      },
-      inject: 'body',
-      chunks: ['statistics'],
-      filename: 'pages/statistics.html'
     }),
     new HtmlWebpackPlugin({      
       template: './src/pages/vote.html',

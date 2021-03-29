@@ -43,7 +43,8 @@ export const windowAuth = (el) => {
                   </div>
                 </div>
               </div>
-            </div>        
+            </div>
+          </div>        
           <div class="modal-footer">            
             <button id="auth-modal-enter" type="submit" class="btn btn-primary">${enter}</button>
           </div>
@@ -54,14 +55,14 @@ export const windowAuth = (el) => {
 `;
 
   $(el).append(tmpl({ 
-    title: config.auth.title, 
-    hint: config.auth.hint,
-    pass: config.auth.pass,
-    enter: config.auth.enter,
-    email: config.auth.email,
-    number: config.auth.number,
-    byNumber: config.auth.byNumber,
-    byEmail: config.auth.byEmail,
+    title: config.auth_tmpl.title, 
+    hint: config.auth_tmpl.hint,
+    pass: config.auth_tmpl.pass,
+    enter: config.auth_tmpl.enter,
+    email: config.auth_tmpl.email,
+    number: config.auth_tmpl.number,
+    byNumber: config.auth_tmpl.byNumber,
+    byEmail: config.auth_tmpl.byEmail,
   }));
   $('#auth-modal-open').on('click', function() {
     $('#auth-modal').show();
@@ -94,19 +95,19 @@ export const header = (el) => {
     </a>
 
     <ul class="nav nav-pills">
-      <li class="nav-item"><a href="#" class="nav-link">${profile}</a></li>
-      <li class="nav-item"><a href="#" class="nav-link">${select}</a></li>
-      <li class="nav-item"><a href="#" class="nav-link">${vote}</a></li>
+      <li class="nav-item"><a href="/pages/profile.html" class="nav-link">${profile}</a></li>
+      <li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${select}</a></li>
+      <li class="nav-item"><a href="/pages/vote.html" class="nav-link">${vote}</a></li>
       <li class="nav-item"><a id="auth-modal-open" href="#" class="nav-link">${enter}</a></li>
     </ul>
   </header>
   `;
   
   $(el).append(tmpl({ 
-    title: config.header.title,
-    profile: config.header.profile,
-    select: config.header.select,
-    vote: config.header.vote,
-    enter: config.header.enter
+    title: config.header_tmpl.title,
+    profile: config.header_tmpl.profile,
+    select: config.header_tmpl.select,
+    vote: config.header_tmpl.vote,
+    enter: config.header_tmpl.enter
   }));
 }
