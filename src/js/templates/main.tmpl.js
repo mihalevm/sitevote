@@ -3,8 +3,8 @@ import config from '../../config/config.json';
 
 export const windowAuth = (el) => {  
   const tmpl = ({title, hint, pass, enter, number, email, byNumber, byEmail}) => `
-  <div class="modal" id="auth-modal" tabindex="-1" style="display: none;">
-    <div class="modal-dialog">
+  <div class="modal" id="auth-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">${title}</h5>

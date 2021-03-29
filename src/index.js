@@ -1,5 +1,5 @@
 // import 'bootstrap';
-import { windowAuth, header } from './js/templates/main.templ';
+import { windowAuth, header } from './js/templates/main.tmpl';
 import './styles/style.scss';
 const container = () => `
   <div class="container">
