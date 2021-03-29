@@ -40,10 +40,6 @@ module.exports = {
   devtool: isDev ? 'source-map' : false,
   devServer: {     
     contentBase: './dist',
-    hot: isDev,
-    watchOptions: {
-      poll: true,
-    }
   },
   module: {
     rules: [

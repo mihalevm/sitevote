@@ -42,6 +42,7 @@
     "@popperjs/core": "^2.9.1",
     "bootstrap": "^5.0.0-beta2",
     "glob-all": "^3.2.1",
-    "jquery": "^3.6.0"
+    "jquery": "^3.6.0",
+    "list.js": "^2.3.1"
   }
 }
