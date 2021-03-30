@@ -1,21 +1,54 @@
+import config from '../config/config.json'
 import { windowAuth, header } from './templates/main.tmpl';
 import '../styles/style.scss';
 const container = () => `
-  <div class="container-fluid">
-    <div class="row">
-      <main>
-        <div class="container pt-5">
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Голосование</a></li>
-            </ol>
-          </nav>
-        </div>
-      </main>
+<div class="container">
+<div class="row">
+    <form>
+    <div>
+      <h2>Участник №1</h2>
     </div>
-  </div>
+    <div>
+      <img src="/img/img-site-1.webp" alt="test-img">
+    </div>
+    <div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+        <label class="form-check-label" for="flexRadioDefault1">
+          Учитель
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+        <label class="form-check-label" for="flexRadioDefault2">
+          Родитель
+        </label>
+        </div>
+      </div>
+      <div class="form-check">
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+      <label class="form-check-label" for="flexRadioDefault1">
+        Педагог
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+      <label class="form-check-label" for="flexRadioDefault2">
+        Меценат
+      </label>
+      </div>
+    </div>
+    <div>
+      <button type="button" class="btn btn-primary">Голосовать</button>
+    </div>
+    <div>
+      <div class="ya-share2" data-curtain data-size="l" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>
+    </div>    
+  </form>      
+</div>       
+</div>
 `;
-header(document.body)
+document.title = config.vote.page_title;
+header(document.body);
 $(document.body).append(container);
 windowAuth(document.body);
-

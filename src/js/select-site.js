@@ -21,6 +21,7 @@ const container = () => `
 </div>
 `;
 
+document.title = config.select_site.page_title;
 header(document.body);
 $(document.body).append(container);
 createCards('#cards-list');

@@ -232,7 +232,7 @@ const container = ({
   </div>
 </div>
   `;
-
+document.title = config.profile.page_title
 header(document.body);
 $(document.body).append(container({
   profile: config.profile.profile, 
