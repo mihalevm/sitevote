@@ -28,8 +28,8 @@ windowAuth(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
   let value = $(this).val().toLowerCase();
-  $(`#cards-list .ch`).filter(function() {    
-    $(`#card-list .card-body`).toggle($(this).text().toLowerCase().indexOf(value) - 1);    
-    // debugger;
+  $('#cards-list div.col').filter(function() {
+    $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
-});
+});  
+
