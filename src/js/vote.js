@@ -1,4 +1,4 @@
-import { windowAuth, header } from './templates/main.templ';
+import { windowAuth, header } from './templates/main.tmpl';
 import '../styles/style.scss';
 const container = () => `
   <div class="container-fluid">
