@@ -50,6 +50,15 @@
     "search": "Поиск"
   },
   "vote":{
-    "page_title": "Голосование"
+    "page_title": "Голосование",
+    "site_name": "Название сайта",
+    "img_src": "/img/img-site-1.webp",
+    "img_alt": "Текст картинки",
+    "vote_opt": {
+      "scholar":"Ученик",
+      "parent":"Родитель",
+      "teacher":"Педагог",
+      "maecenas":"Меценат"
+    }
   }
 }
