@@ -1,7 +1,7 @@
 import { Tabs } from 'bootstrap';
 import config from '../../config/config.json';
 
-export const windowAuth = (el) => {  
+export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, number, email, byNumber, byEmail}) => `
   <div class="modal" id="auth-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-dialog-centered">
@@ -86,7 +86,7 @@ export const windowAuth = (el) => {
   });
 };
 
-export const header = (el) => {
+export const createHeader = (el) => {
   const tmpl = ({title, enter, select, vote, profile}) => `
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">

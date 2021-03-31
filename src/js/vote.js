@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-import { windowAuth, header } from './templates/main.tmpl';
+import { createAuthWindow, createHeader } from './templates/main.tmpl';
 import '../styles/style.scss';
 const container = () => `
 <div class="container">
@@ -13,26 +13,26 @@ const container = () => `
     </div>
     <div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-scholar">
         <label class="form-check-label" for="flexRadioDefault1">
-          Учитель
+          Ученик
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-parent" checked>
         <label class="form-check-label" for="flexRadioDefault2">
           Родитель
         </label>
         </div>
       </div>
       <div class="form-check">
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-teacher">
       <label class="form-check-label" for="flexRadioDefault1">
         Педагог
       </label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-maecenas" checked>
       <label class="form-check-label" for="flexRadioDefault2">
         Меценат
       </label>
@@ -49,6 +49,6 @@ const container = () => `
 </div>
 `;
 document.title = config.vote.page_title;
-header(document.body);
+createHeader(document.body);
+createAuthWindow(document.body);
 $(document.body).append(container);
-windowAuth(document.body);
