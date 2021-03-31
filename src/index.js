@@ -1,5 +1,5 @@
 import config from './config/config.json';
-import { windowAuth, header } from './js/templates/main.tmpl';
+import { createAuthWindow, createHeader } from './js/templates/main.tmpl';
 import './styles/style.scss';
 const container = () => `
 <div class="container">
@@ -71,6 +71,6 @@ const container = () => `
 </div>
 `;
 document.title = config.index.page_title;
-header(document.body);
+createHeader(document.body);
+createAuthWindow(document.body);
 $(document.body).append(container);
-windowAuth(document.body);
