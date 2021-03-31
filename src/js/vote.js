@@ -13,26 +13,26 @@ const container = () => `
     </div>
     <div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-scholar">
         <label class="form-check-label" for="flexRadioDefault1">
-          Учитель
+          Ученик
         </label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-parent" checked>
         <label class="form-check-label" for="flexRadioDefault2">
           Родитель
         </label>
         </div>
       </div>
       <div class="form-check">
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-teacher">
       <label class="form-check-label" for="flexRadioDefault1">
         Педагог
       </label>
     </div>
     <div class="form-check">
-      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+      <input class="form-check-input" type="radio" name="flexRadioDefault" id="vote-maecenas" checked>
       <label class="form-check-label" for="flexRadioDefault2">
         Меценат
       </label>
