@@ -1,0 +1,3 @@
+# После изменения сделать ревизию и обновить БД
+# alembic revision --autogenerate -m "Added required tables"
+# alembic upgrade head
