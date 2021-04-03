@@ -13,7 +13,7 @@ const container = () => `
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="cards-list" class="container pt-5">      
+    <div id="cards-list" class="container pt-5 pb-5">      
     </div>
   </main>
 </div>

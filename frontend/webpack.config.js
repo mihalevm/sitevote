@@ -33,7 +33,14 @@ module.exports = {
           test: /\.scss$/,
           chunks: 'all',
           enforce: true
-        }
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]; 
+            return `npm.${packageName.replace('@', '')}`;
+          },
+        },
       }     
     },
   },
@@ -130,15 +137,15 @@ module.exports = {
       jQuery: 'jquery',
       'window.jQuery': 'jquery'
     }),
-    // new PurgeCSSPlugin({
-    //   paths: glob.sync([
-    //     './src/index.js',
-    //     './index.html',
-    //     './src/js/*.js',
-    //     './src/js/templates/*.js',        
-    //     './src/pages/*.html'
-    //   ])
-    // }),
+    new PurgeCSSPlugin({
+      paths: glob.sync([
+        './src/index.js',
+        './index.html',
+        './src/js/*.js',
+        './src/js/templates/*.js',
+        './src/pages/*.html'
+      ])
+    }),
     // new BundleAnalyzerPlugin()
   ],
 };
