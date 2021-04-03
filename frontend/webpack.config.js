@@ -119,10 +119,10 @@ module.exports = {
           from: path.resolve(__dirname, 'src/config/config.json'),
           to: path.resolve(__dirname, 'dist/config')
         },
-        {
-          from: path.resolve(__dirname, 'src/img'),
-          to: path.resolve(__dirname, 'dist/img')
-        },  
+        // {
+        //   from: path.resolve(__dirname, 'src/img'),
+        //   to: path.resolve(__dirname, 'dist/img')
+        // },  
       ]
     }),
     new webpack.ProvidePlugin({

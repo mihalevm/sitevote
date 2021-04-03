@@ -1,7 +1,7 @@
 // import { Tabs } from 'bootstrap';
 import config from '../config/config.json'
 import { createAuthWindow, createHeader } from './templates/main.tmpl';
-import { createProfile, createAddSite, createStatistics } from './templates/profile.tmpl';
+import { createProfile, createAddSite, createStatistics, createChart } from './templates/profile.tmpl';
 import '../styles/style.scss';
 
 const container = ({ profile, add_site, statistics }) => `
@@ -33,3 +33,4 @@ $(document.body).append(container({
 createProfile('#profile-tab');
 createAddSite('#add-site-tab');
 createStatistics('#statistics-tab');
+createChart('#statistics-tab');
