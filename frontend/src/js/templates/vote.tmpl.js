@@ -49,7 +49,7 @@ $(el).append(tmpl({
 
 export const createShare = (el) => {
   const tmpl = () => `
-  <div class="ya-share2 pt-3" data-curtain data-size="l" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>  
+  <div class="ya-share2 pt-3 pb-3" data-curtain data-size="l" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>  
   `;
   $(el).append(tmpl());
 }
