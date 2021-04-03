@@ -4,7 +4,6 @@ import { createSiteAwards, createDescription } from './js/templates/index.tmpl';
 import './styles/style.scss';
 const container = () => `
 <div id="index-main" class="container">
-
 </div>
 `;
 document.title = config.index.page_title;

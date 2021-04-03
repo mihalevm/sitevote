@@ -2,35 +2,29 @@ import config from '../../config/config.json';
 
 export const createSiteAwards = (el) => {
   const tmpl = ({card_title, card_text}) => `
-<div class="row rows-cols-1 row-cols-md-2 g-4 pt-5">
-  <div class="col">
-    <div class="card">
-      <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">${card_title}</h5>
-        <p class="card-text">${card_text}</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
+  <div class="card-group pt-5">
+  <div class="card">
+    <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">${card_title}</h5>
+      <p class="card-text">${card_text}</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
   </div>
-  <div class="col">  
-    <div class="card">
-      <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">${card_title}</h5>
-        <p class="card-text">${card_text}</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
+  <div class="card">
+    <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">${card_title}</h5>
+      <p class="card-text">${card_text}</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
   </div>
-  <div class="col">
-    <div class="card">  
-      <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title">${card_title}</h5>
-        <p class="card-text">${card_text}</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
+  <div class="card">
+    <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">${card_title}</h5>
+      <p class="card-text">${card_text}</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
     </div>
   </div>
 </div>
