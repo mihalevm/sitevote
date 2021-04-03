@@ -87,6 +87,7 @@ export const createAuthWindow = (el) => {
 };
 
 export const createHeader = (el) => {
+  // profile gonna be visible only after user autorize
   const tmpl = ({title, enter, select, vote, profile}) => `
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
@@ -96,13 +97,15 @@ export const createHeader = (el) => {
 
     <ul class="nav nav-pills">
       <li class="nav-item"><a href="/pages/profile.html" class="nav-link">${profile}</a></li>
-      <li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${select}</a></li>
+      <li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${select}</a></li>      
       <li class="nav-item"><a href="/pages/vote.html" class="nav-link">${vote}</a></li>
       <li class="nav-item"><a id="auth-modal-open" href="#" class="nav-link">${enter}</a></li>
     </ul>
   </header>
   `;
-  
+  // url: pages/vote/{:id}
+  // <li class="nav-item"><a href="/pages/vote.html" class="nav-link">${vote}</a></li>
+
   $(el).append(tmpl({ 
     title: config.header_tmpl.title,
     profile: config.header_tmpl.profile,
