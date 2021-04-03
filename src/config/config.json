@@ -52,7 +52,7 @@
   "vote":{
     "page_title": "Голосование",
     "site_name": "Название сайта",
-    "img_src": "/img/img-site-1.webp",
+    "img_src": "/img/img-site-2.webp",
     "img_alt": "Текст картинки",
     "vote_opt": {
       "scholar":"Ученик",
