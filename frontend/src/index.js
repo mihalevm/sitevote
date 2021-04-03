@@ -1,5 +1,5 @@
 import config from './config/config.json';
-import { createAuthWindow, createHeader } from './js/templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter } from './js/templates/main.tmpl';
 import { createSiteAwards, createDescription } from './js/templates/index.tmpl';
 import './styles/style.scss';
 const container = () => `
@@ -12,3 +12,4 @@ createAuthWindow(document.body);
 $(document.body).append(container);
 createSiteAwards('#index-main');
 createDescription('#index-main');
+createFooter(document.body);

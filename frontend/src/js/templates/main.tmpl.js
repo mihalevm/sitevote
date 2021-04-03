@@ -3,55 +3,55 @@ import config from '../../config/config.json';
 
 export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, number, email, byNumber, byEmail}) => `
-  <div class="modal" id="auth-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">${title}</h5>
-          <button id="auth-modal-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form>
-          <div class="modal-body">
-            <nav>
-              <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#auth-email-tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true">${byEmail}</button>
-                <button class="nav-link" id="number-tab" data-bs-toggle="tab" data-bs-target="#auth-number-tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">${byNumber}</button>
+<div id="auth-modal" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">${title}</h5>
+        <button id="auth-modal-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="email-tab" data-bs-toggle="tab" data-bs-target="#auth-email-tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true">${byEmail}</button>
+              <button class="nav-link" id="number-tab" data-bs-toggle="tab" data-bs-target="#auth-number-tab" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">${byNumber}</button>
+            </div>
+          </nav>
+          <div id="auth-modal-tabs" class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active p-3" id="auth-email-tab" role="tabpanel" aria-labelledby="email-tab">
+              <div class="mb-3">
+              <label for="auth-modal-email" class="form-label">${email}</label>
+              <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
+              <div id="email-hint" class="form-text">${hint}</div>
               </div>
-            </nav>
-            <div id="auth-modal-tabs" class="tab-content" id="nav-tabContent">
-              <div class="tab-pane fade show active p-3" id="auth-email-tab" role="tabpanel" aria-labelledby="email-tab">
+              <div class="mb-3">
+                <label for="auth-modal-email-pass" class="form-label">${pass}</label>
+                <input type="password" class="form-control" id="auth-modal-email-pass" required>                  
+              </div>
+            </div>
+            <div class="tab-pane fade p-3" id="auth-number-tab" role="tabpanel" aria-labelledby="number-tab">
+              <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="email-tab">
                 <div class="mb-3">
-                <label for="auth-modal-email" class="form-label">${email}</label>
-                <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
-                <div id="email-hint" class="form-text">${hint}</div>
+                <label for="auth-modal-number" class="form-label">${number}</label>
+                <input class="form-control" id="auth-modal-number" aria-describedby="emailHelp">
+                <div id="number-hint" class="form-text">${hint}</div>
                 </div>
                 <div class="mb-3">
-                  <label for="auth-modal-email-pass" class="form-label">${pass}</label>
-                  <input type="password" class="form-control" id="auth-modal-email-pass" required>                  
-                </div>
-              </div>
-              <div class="tab-pane fade p-3" id="auth-number-tab" role="tabpanel" aria-labelledby="number-tab">
-                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="email-tab">
-                  <div class="mb-3">
-                  <label for="auth-modal-number" class="form-label">${number}</label>
-                  <input class="form-control" id="auth-modal-number" aria-describedby="emailHelp">
-                  <div id="number-hint" class="form-text">${hint}</div>
-                  </div>
-                  <div class="mb-3">
-                    <label for="auth-modal-number-pass" class="form-label">${pass}</label>
-                    <input type="password" class="form-control" id="auth-modal-number-pass">
-                  </div>
+                  <label for="auth-modal-number-pass" class="form-label">${pass}</label>
+                  <input type="password" class="form-control" id="auth-modal-number-pass">
                 </div>
               </div>
             </div>
-          </div>        
-          <div class="modal-footer">            
-            <button id="auth-modal-enter" type="submit" class="btn btn-primary">${enter}</button>
           </div>
-        </form>
-      </div>
+        </div>        
+        <div class="modal-footer">            
+          <button id="auth-modal-enter" type="submit" class="btn btn-primary">${enter}</button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
 `;
 
   $(el).append(tmpl({ 
@@ -84,6 +84,33 @@ export const createAuthWindow = (el) => {
       console.log(number, pass);
     }
   });
+
+  const tmpl2 = () => `
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    Launch static backdrop modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+  $(el).append(tmpl2())
 };
 
 export const createHeader = (el) => {
@@ -114,3 +141,14 @@ export const createHeader = (el) => {
     enter: config.header_tmpl.enter
   }));
 }
+
+export const createFooter = (el) => { 
+  const tmpl = () => `
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="footer-container">
+    <span class="text-muted">Place sticky footer content here.</span>
+  </div>
+</footer>
+`;
+  $(el).append(tmpl());
+};

@@ -130,15 +130,15 @@ module.exports = {
       jQuery: 'jquery',
       'window.jQuery': 'jquery'
     }),
-    new PurgeCSSPlugin({
-      paths: glob.sync([
-        './src/index.js',
-        './index.html',
-        './src/js/*.js',
-        './src/js/templates/*.js',
-        './src/pages/*.html'
-      ])
-    }),
+    // new PurgeCSSPlugin({
+    //   paths: glob.sync([
+    //     './src/index.js',
+    //     './index.html',
+    //     './src/js/*.js',
+    //     './src/js/templates/*.js',
+    //     './src/pages/*.html'
+    //   ])
+    // }),
     // new BundleAnalyzerPlugin()
   ],
 };

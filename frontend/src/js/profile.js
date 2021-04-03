@@ -1,6 +1,6 @@
 // import { Tabs } from 'bootstrap';
 import config from '../config/config.json'
-import { createAuthWindow, createHeader } from './templates/main.tmpl';
+import { createAuthWindow, createFooter, createHeader } from './templates/main.tmpl';
 import { createProfile, createAddSite, createStatistics, createChart } from './templates/profile.tmpl';
 import '../styles/style.scss';
 
@@ -30,6 +30,7 @@ $(document.body).append(container({
   add_site: config.profile.add_site,
   statistics: config.profile.statistics
 }));
+createFooter(document.body);
 createProfile('#profile-tab');
 createAddSite('#add-site-tab');
 createStatistics('#statistics-tab');

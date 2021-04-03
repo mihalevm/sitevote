@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-import { createAuthWindow, createHeader } from './templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter } from './templates/main.tmpl';
 import { createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
 
@@ -25,6 +25,7 @@ createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
 createCards('#cards-list');
+createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
   let value = $(this).val().toLowerCase();
