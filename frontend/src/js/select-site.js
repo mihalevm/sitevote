@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-import { createAuthWindow, createHeader } from './templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter } from './templates/main.tmpl';
 import { createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
 
@@ -13,7 +13,7 @@ const container = () => `
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="cards-list" class="container pt-5">      
+    <div id="cards-list" class="container pt-5 pb-5">      
     </div>
   </main>
 </div>
@@ -25,6 +25,7 @@ createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
 createCards('#cards-list');
+createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
   let value = $(this).val().toLowerCase();
