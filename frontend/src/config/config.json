@@ -44,15 +44,17 @@
     "add_site": "Добавление сайта",
     "statistics": "Статистика голосования",
     "fio": "ФИО",
+    "company_name": "Название компании",
     "email": "Email",
     "number": "Номер телефона",
     "username": "Имя пользователя",
     "pass": "Пароль",
+    "confirm_pass": "Подтверждение пароля",
     "save":"Сохранить",
     "url": "URL",
     "pic": "Картинка",
     "description": "Описание сайта",
-    "access_check": "Проверка на доступность",
+    "access_check": "Проверить",
     "uniq_url" : "Уникальная ссылка сайта"
   },
   "select_site":{
@@ -64,6 +66,7 @@
     "site_name": "Винни-пух",
     "img_src": "/img/img-site-1.webp",
     "img_alt": "Текст картинки",
+    "description" :"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     "vote_opt": {
       "scholar":"Ученик",
       "parent":"Родитель",
