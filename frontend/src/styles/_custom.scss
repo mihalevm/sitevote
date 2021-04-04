@@ -57,3 +57,13 @@ body {
   max-width: 680px;
   padding: 0 15px;
 }
+
+.share-toolbar {
+  position: absolute;
+  top: 93px;
+  right: 40px;
+  padding: 40px 0;
+  height: 100%;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;  
+}

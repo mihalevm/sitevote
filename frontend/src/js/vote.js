@@ -5,9 +5,10 @@ import { createVote, createShare } from './templates/vote.tmpl';
 import '../styles/style.scss';
 const container = () => `
 <div class="container">
-<div id="vote-main" class="row">
-  
-</div>       
+  <div id="vote-main" class="row">    
+  </div>
+  <div id="vote-share" class="row share-toolbar">    
+  </div>
 </div>
 `;
 document.title = config.vote.page_title;
@@ -16,4 +17,4 @@ createAuthWindow(document.body);
 $(document.body).append(container);
 createFooter(document.body);
 createVote('#vote-main');
-createShare('#vote-main');
+createShare('#vote-share');
