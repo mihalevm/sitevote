@@ -57,7 +57,7 @@ const tmpl = ({ fio, email, number, username, company_name, confirm_pass, pass, 
 <div class="container">
 <div class="row pt-5">
   <main>
-    <form action="#">
+    <form id="form-1" action="#" class="needs-validation" novalidate>
     <div class="mb-3">          
       <div class="form-check mb-3">
         <input class="form-check-input" type="radio" name="profile-select-fio-company" id="profile-fio-check" >
@@ -108,6 +108,15 @@ $(el).append(tmpl({
   save: config.profile.save,
 }));
 
+$('.needs-validation').on('submit', function(event) {  
+  if (!this.checkValidity()) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  $(this).addClass('was-validated');
+});
+
+
 const checkEqualPasswords = (pass, passConfirm) => {
   if(pass === passConfirm) {
     console.log(pass, passConfirm, true);
@@ -128,6 +137,7 @@ const changeFieldEnable = () => {
     $('#profile-company').removeAttr('disabled');
   });
 }
+
 changeFieldEnable();
 
 $('#profile-save').on('click', function() {
