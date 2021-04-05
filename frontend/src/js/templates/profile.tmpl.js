@@ -116,8 +116,8 @@ $('.needs-validation').on('submit', function(event) {
   $(this).addClass('was-validated');
 });
 
-
 const checkEqualPasswords = (pass, passConfirm) => {
+  // if(pass.length == 0 || passConfirm.length == 0)
   if(pass === passConfirm) {
     console.log(pass, passConfirm, true);
   } else {
