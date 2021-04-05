@@ -1,17 +1,20 @@
 import config from '../config/config.json'
-import { createAuthWindow, createHeader } from './templates/main.tmpl';
-import { createVote } from './templates/vote.tmpl';
+import { createAuthWindow, createHeader, createFooter } from './templates/main.tmpl';
+import { createVote, createShare } from './templates/vote.tmpl';
 
 import '../styles/style.scss';
 const container = () => `
 <div class="container">
-<div id="vote-main" class="row">
-  <div class="ya-share2" data-curtain data-size="l" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>  
-</div>       
+  <div id="vote-main" class="row">    
+  </div>
+  <div id="vote-share" class="row share-toolbar">    
+  </div>
 </div>
 `;
 document.title = config.vote.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
+createFooter(document.body);
 createVote('#vote-main');
+createShare('#vote-share');

@@ -7,7 +7,7 @@ const tmpl = (header) => `
 <div class="card" style="width: 18rem;">
   <img src="/img/img-site-1.webp" alt="test-img">
   <div class="card-body">
-    <h6>${header}</h6>
+    <h6 class="card-title">${header} <span class="badge bg-secondary">Компания</span></h6>
   </div>
 </div>
 </div>
