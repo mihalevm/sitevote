@@ -15,6 +15,7 @@ from fastapi import Depends, FastAPI, HTTPException, status, Query
 from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 
 from datetime import datetime, timedelta, date
 from typing import Optional, List
@@ -89,6 +90,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 router = FastAPI()
 log = logging.getLogger("main")
 DBH = None
+
+
+router.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_web_user(email: str) -> Users:
