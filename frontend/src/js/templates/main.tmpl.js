@@ -1,6 +1,6 @@
 import { Tabs } from 'bootstrap';
 import config from '../../config/config.json';
-import sha256 from 'crypto-js/sha256';
+import { login } from '../lib/auth';
 
 export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, number, email, byNumber, byEmail}) => `
@@ -34,12 +34,12 @@ export const createAuthWindow = (el) => {
             <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="email-tab">
               <div class="mb-3">
               <label for="auth-modal-number" class="form-label">${number}</label>
-              <input class="form-control" id="auth-modal-number" aria-describedby="emailHelp">
+              <input class="form-control" id="auth-modal-number" aria-describedby="emailHelp" disabled>
               <div id="number-hint" class="form-text">${hint}</div>
               </div>
               <div class="mb-3">
                 <label for="auth-modal-number-pass" class="form-label">${pass}</label>
-                <input type="password" class="form-control" id="auth-modal-number-pass">
+                <input type="password" class="form-control" id="auth-modal-number-pass" disabled>
               </div>
             </div>
           </div>
@@ -73,11 +73,14 @@ export const createAuthWindow = (el) => {
       const email = $('#auth-modal-email').val();
       const pass = $('#auth-modal-email-pass').val();
       // Pass check min 8 chars
+      login(email, pass).done(function() {
+        console.log(true);
+      });
     } else {
-      const number = $('#auth-modal-number').val();
-      const pass = $('#auth-modal-number-pass').val();
-      // Pass check min 8 chars
-      console.log(number, pass);
+      // const number = $('#auth-modal-number').val();
+      // const pass = $('#auth-modal-number-pass').val();
+      // // Pass check min 8 chars
+      // console.log(number, pass);
     }
   });
 };
