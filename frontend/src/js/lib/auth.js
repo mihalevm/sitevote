@@ -1,21 +1,21 @@
 import sha256 from 'crypto-js/sha256';
 const URL = 'http://sitevote.e-arbitrage.ru/rest';
 
-// const test = $.ajax({
-//   type: 'GET',
-//   url: URL,
-//   beforeSend: function(xhr) {
-//     if(localStorage.token) {
-//       xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
-//     }
-//   },
-//   success: function(data) {
-//     alert('Hello ' + data.name + '! You have successfully accessed to /api/profile.');
-//   },
-//   error: function() {
-//     alert("Sorry, you are not logged in.");
-//   }
-// });
+const checkAuth = () => $.ajax({
+  type: 'GET',
+  url: URL,
+  beforeSend: function(xhr) {
+    if(localStorage.token) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
+    }
+  },
+  success: function(data) {
+    console.log('Hello ' + data.name + '! You have successfully accessed to /api/profile.');
+  },
+  error: function() {
+    console.log("Sorry, you are not logged in.");
+  }
+});
 
 
 export const login = (username, password) => $.ajax({
