@@ -3,7 +3,7 @@ import config from '../../config/config.json';
 export const createVote = (el) => {
 const tmpl = ({ site_name, img_src, img_alt, description, vote_opt }) => `
   <div>
-    <h5 class="pt-5">${site_name} <span class="badge bg-secondary">Компания</span></h5>
+    <h5 class="pt-5">${site_name}</h5>
   </div>
   <div class="pt-5">
     <img src="${img_src}" alt="${img_alt}" class="img-fluid">

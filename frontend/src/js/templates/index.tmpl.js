@@ -12,7 +12,7 @@ export const createSiteAwards = (el) => {
     </div>
   </div>
   <div class="card">
-    <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
+    <img src="/img/img-site-2.webp" class="card-img-top" alt="...">
     <div class="card-body">
       <h5 class="card-title">${card_title}</h5>
       <p class="card-text">${card_text}</p>
@@ -20,7 +20,7 @@ export const createSiteAwards = (el) => {
     </div>
   </div>
   <div class="card">
-    <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
+    <img src="/img/img-site-3.webp" class="card-img-top" alt="...">
     <div class="card-body">
       <h5 class="card-title">${card_title}</h5>
       <p class="card-text">${card_text}</p>

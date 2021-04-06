@@ -1,13 +1,13 @@
 import config from '../config/config.json'
 import { createAuthWindow, createHeader, createFooter } from './templates/main.tmpl';
-import { createCards } from './templates/select-site.tmpl';
+import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
 
 const container = () => `
 <div class="container">
 <div class="row pt-3">
   <main>
-    <div class="container pt-5">
+    <div id="select-site-con" class="container pt-5">
       <div class="input-group input-group-lg">
         <span class="input-group-text">${config.select_site.search}</span>
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
@@ -24,6 +24,8 @@ document.title = config.select_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
+// Проверка аутентфикации
+createAddSite('#select-site-con');
 createCards('#cards-list');
 createFooter(document.body);
 
