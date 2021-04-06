@@ -1,5 +1,6 @@
 import { Tabs } from 'bootstrap';
 import config from '../../config/config.json';
+import sha256 from 'crypto-js/sha256';
 
 export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, number, email, byNumber, byEmail}) => `
@@ -62,9 +63,7 @@ export const createAuthWindow = (el) => {
     byNumber: config.auth_tmpl.byNumber,
     byEmail: config.auth_tmpl.byEmail,
   }));
-  // $('#auth-modal-open').on('click', function() {
-  //   $('#auth-modal').show();
-  // });
+
   $('#auth-modal-close').on('click', function() {
     $('#auth-modal').hide();
   });
@@ -74,7 +73,6 @@ export const createAuthWindow = (el) => {
       const email = $('#auth-modal-email').val();
       const pass = $('#auth-modal-email-pass').val();
       // Pass check min 8 chars
-      console.log(email, pass);
     } else {
       const number = $('#auth-modal-number').val();
       const pass = $('#auth-modal-number-pass').val();
