@@ -12,7 +12,7 @@ const isDev = !isProd;
 const fileName = ext => isDev ? `[name].bundle.${ext}` : `[name].bundle.[fullhash].${ext}`;
 
 module.exports = {  
-  mode: 'development',
+  mode: 'development',  
   entry: {
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
@@ -23,6 +23,11 @@ module.exports = {
     filename: `scripts/${fileName('js')}`,
     path: path.resolve(__dirname, 'dist/'),
     clean: true,
+  },
+  resolve: {
+    fallback: {
+      "crypto": false,
+    }
   },
   optimization: {    
     splitChunks: {
@@ -43,7 +48,7 @@ module.exports = {
         // },
       }     
     },
-  },
+  },  
   devtool: isDev ? 'source-map' : false,
   devServer: {     
     contentBase: './dist',
@@ -135,7 +140,8 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-      'window.jQuery': 'jquery'
+      'window.jQuery': 'jquery',
+      Mask: 'jquery-mask-plugin',      
     }),
     new PurgeCSSPlugin({
       paths: glob.sync([
