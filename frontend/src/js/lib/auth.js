@@ -11,7 +11,7 @@ export const checkAuth = () => $.ajax({
     }
   },
   success: function(data) {    
-    console.log('Hello ' + data.token + '! You have successfully accessed to ' + window.location.pathname);
+    console.log(data.token + ' You have successfully accessed to ' + window.location.pathname);
   },
   error: function(data) {    
     if(window.location.pathname !== '/') {
