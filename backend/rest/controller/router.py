@@ -21,8 +21,8 @@ from datetime import datetime, timedelta, date
 from typing import Optional, List
 
 from rest.lib.config import Configuration
-
 from rest.model.Users import Users
+
 
 from pydantic import BaseModel
 from jose import JWTError, jwt
@@ -53,30 +53,16 @@ class Encoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
 
-class Token(BaseModel):
-    token: str
-    type: str
-
-
-class SessionAccount(BaseModel):
+class SessionAccount(Users):
     token: str
 
 
-class FilterParams(BaseModel):
-    order_by: Optional[str] = Query(None)
-    order: Optional[str] = Query(None)
-    city_id: Optional[List[int]] = Query(None)
-    rows: int = Query(20)
-    page: int = Query(1)
-    product_id: Optional[List[int]] = Query(None)
-    service_id: Optional[List[int]] = Query(None)
-    service_type_id: Optional[List[int]] = Query(None)
-    sale_channel_id: Optional[List[int]] = Query(None)
-    change_reason_id: Optional[List[int]] = Query(None)
-    create_date_begin: date = Query(None)
-    create_date_end: date = Query(None)
-    change_date_begin: Optional[date] = Query(None)
-    change_date_end: Optional[date] = Query(None)
+class UserParams(BaseModel):
+    email: str = Query(default=None, max_length=32, description='Эл. почта пользователя используемая в качестве логина')
+    password: Optional[str] = Query(default=None, max_length=64, description='Пароль пользователя')
+    fullname: Optional[str] = Query(default=None, max_length=128, description='ФИО либо название компании')
+    phone: Optional[str] = Query(default=None, max_length=12, description='Контактный телефон')
+    user_desc: Optional[str] = Query(default=None, max_length=512, description='Краткое описание пользователя')
 
 
 config: Configuration = Configuration('server.ini')
@@ -104,6 +90,41 @@ router.add_middleware(
 def get_web_user(email: str) -> Users:
     return DBH.query(Users)\
             .filter(Users.email == email).first() if email else None
+
+
+def db_profile_save(uid: int, profile: UserParams):
+    result = False
+
+    user_profile: Users = DBH.query(Users)\
+        .filter(Users.id == uid).first()
+
+    user_profile.email = profile.email
+
+    if profile.password:
+        user_profile.password = profile.password
+
+    if profile.fullname:
+        user_profile.fullname = profile.fullname
+
+    if profile.phone:
+        user_profile.phone = profile.phone
+
+    if profile.user_desc:
+        user_profile.user_desc = profile.user_desc
+
+    try:
+        DBH.commit()
+    except SQLAlchemyError as exc:
+        log.error('[Rest service] Profile save error: %s', exc)
+    else:
+        result = True
+
+    return result
+
+
+def db_profile_get(uid: int) -> Users:
+    return DBH.query(Users)\
+        .filter(Users.id == uid).first()
 
 
 # def get_db_city_dic() -> ma_city:
@@ -165,7 +186,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-async def validate_user(token: str = Depends(oauth2_scheme)) -> str:
+async def validate_user(token: str = Depends(oauth2_scheme)) -> SessionAccount:
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -192,7 +213,7 @@ async def validate_user(token: str = Depends(oauth2_scheme)) -> str:
         raise credentials_exception
 
     new_token = None
-    account: Users = get_web_user(email)
+    account: SessionAccount = get_web_user(email)
 
     if account:
         new_token = create_access_token(
@@ -204,7 +225,9 @@ async def validate_user(token: str = Depends(oauth2_scheme)) -> str:
     if new_token is None:
         raise credentials_exception
 
-    return new_token
+    account.token = new_token
+
+    return account
 
 
 @router.on_event("startup")
@@ -218,7 +241,7 @@ async def startup():
                            pool_size=5,
                            max_overflow=5,
                            pool_timeout=5,
-                           pool_recycle=5,
+                           pool_recycle=3600,
                            poolclass=QueuePool,
                            connect_args={'connect_timeout': 5}
                            )
@@ -250,9 +273,9 @@ async def logout(token: str = Depends(oauth2_scheme)):
     )
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    email:Users = Users()
+    email: Users = Users()
 
     if form_data.username is not None and form_data.password is not None:
         email = authenticate_user(form_data.username, form_data.password)
@@ -318,12 +341,39 @@ async def some_req(token: str = Depends(validate_user)):
 #     )
 #
 
-@router.post("/get-data")
-async def get_data(params: FilterParams, sess_acc: SessionAccount = Depends(validate_user)):
+@router.post("/profile-save")
+async def profile_save(params: UserParams, sess_acc: SessionAccount = Depends(validate_user)):
     j_obj = {
-        "data": json.dumps({"field1" : "Some data", "field2" : "Some data"}, cls=Encoder),
+        "data": "Ошибка сохранения профиля. Проверить уникальность адреса почты",
+        "error": 400,
         "token": sess_acc.token
     }
+
+    if db_profile_save(sess_acc.id, params):
+        j_obj["data"] = "Профиль сохранен"
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/profile-get")
+async def profile_get(sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка сохранения профиля. Проверить уникальность адреса почты",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    profile: Users = db_profile_get(sess_acc.id)
+
+    if profile:
+        j_obj["data"] = json.dumps(profile, cls=Encoder)
+        j_obj["error"] = 200
 
     return JSONResponse(
         content=j_obj,

@@ -10,5 +10,6 @@ if __name__ == "__main__":
         host=rest_config['host'],
         port=int(rest_config['port']),
         log_level=rest_config['log_level'],
-        workers=int(rest_config['workers'])
+        workers=int(rest_config['workers']),
+        root_path=rest_config['root_path']
     )
