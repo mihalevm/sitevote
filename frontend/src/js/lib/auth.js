@@ -10,9 +10,8 @@ export const checkAuth = () => $.ajax({
       xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
     }
   },
-  success: function(data) {
-    console.log(data);
-    console.log('Hello ' + data.name + '! You have successfully accessed to /api/profile.');
+  success: function(data) {    
+    console.log('Hello ' + data.token + '! You have successfully accessed to ' + window.location.pathname);
   },
   error: function(data) {    
     if(window.location.pathname !== '/') {
@@ -21,9 +20,50 @@ export const checkAuth = () => $.ajax({
   }
 });
 
+export const loadProfile = () => $.ajax({
+  type: 'POST',
+  url: URL + "/profile-get",
+  beforeSend: function(xhr) {
+    if(localStorage.token) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
+    }
+  },
+  success: function(data) {
+    // console.log(data);
+    console.log('Profile loaded');
+  },
+  error: function(data) {    
+    console.log('Profile not loaded');
+  }
+});
+
+export const updateProfile = ({email, password, fullname, phone, user_desc}) => $.ajax({
+  type: 'POST',
+  url: URL + "/profile-save",
+  beforeSend: function(xhr) {
+    if(localStorage.token) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
+    }
+  },  
+  data: JSON.stringify({
+    email: email,
+    password: sha256(password).toString(),
+    fullname: fullname,
+    phone: phone,
+    user_desc: user_desc
+  }),
+  success: function(data) {    
+    console.log('User updated')
+  },
+  error: function(data) {    
+    console.log('User not updated')
+  }
+});
+
+
 export const logIn = (username, password) => $.ajax({
   type: "POST",
-  url: URL + "/login",  
+  url: URL + "/login",
   data: {
     username: username,
     password: sha256(password).toString()
