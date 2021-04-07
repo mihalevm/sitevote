@@ -51,32 +51,33 @@ Chart.register(
   Title,
   Tooltip
 );
+import 'jquery-mask-plugin';
 
 export const createProfile = (el) => {
 const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
 <div class="container">
 <div class="row pt-5">
   <main>
-    <form id="form-1" action="#" class="needs-validation" novalidate>
+    <form id="profile-edit-form" class="needs-validation" novalidate>
     <div class="mb-3">      
       <label for="profile-fio" class="form-label">${fio_company}</label>
-      <input id="profile-fio" type="text" class="form-control" placeholder="Иванов Иван Иванович\\ООО 'Компания'" aria-label="fio" aria-describedby="profile-fio">      
+      <input id="profile-fio" name="fullname" type="text" class="form-control" placeholder="Иванов Иван Иванович\\ООО 'Компания'" aria-label="fio" aria-describedby="profile-fio">      
     </div>          
     <div class="mb-3">
       <label for="profile-email" class="form-label">${email}</label>
-      <input id="profile-email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email">
+      <input id="profile-email" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email">
     </div>          
     <div class="mb-3">
       <label for="profile-number" class="form-label">${number}</label>
-      <input id="profile-number" type="text" class="form-control" placeholder="+7(999)999-77-88" aria-label="number" aria-describedby="profile-number">
+      <input id="profile-number" name="phone" type="text" class="form-control" placeholder="+7(999)999-77-88" aria-label="number" aria-describedby="profile-number">
     </div>
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
-      <input id="profile-password" type="password" class="form-control">
+      <input id="profile-password" name="password" type="password" class="form-control">
     </div>
     <div class="mb-3">
-      <label for="profile-confirm-pass" class="form-label">${confirm_pass}</label>
-      <input id="profile-confirm-pass" type="password" class="form-control">
+      <label for="profile-confirm-pass" class="form-label" >${confirm_pass}</label>
+      <input id="profile-confirm-pass" name="user_desc" type="password" class="form-control">
     </div>
     <button id="profile-save" type="submit" class="btn btn-primary">${save}</button>    
     </form>
@@ -93,6 +94,8 @@ $(el).append(tmpl({
   pass: config.profile.pass,
   save: config.profile.save,
 }));
+// !!!!
+$('#profile-number').mask('+7(000)000-00-00');
 
 $('.needs-validation').on('submit', function(event) {  
   if (!this.checkValidity()) {

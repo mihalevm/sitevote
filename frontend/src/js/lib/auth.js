@@ -1,24 +1,67 @@
 import sha256 from 'crypto-js/sha256';
+
 const URL = 'http://sitevote.e-arbitrage.ru/rest';
 
-const checkAuth = () => $.ajax({
+export const checkAuth = () => $.ajax({
   type: 'GET',
-  url: URL,
+  url: URL + "/authtest",
+  beforeSend: function(xhr) {
+    if(localStorage.token) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
+    }
+  },
+  success: function(data) {    
+    console.log(data.token + ' You have successfully accessed to ' + window.location.pathname);
+  },
+  error: function(data) {    
+    if(window.location.pathname !== '/') {
+      window.location.replace('/');
+    }
+  }
+});
+
+export const loadProfile = () => $.ajax({
+  type: 'POST',
+  url: URL + "/profile-get",
   beforeSend: function(xhr) {
     if(localStorage.token) {
       xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
     }
   },
   success: function(data) {
-    console.log('Hello ' + data.name + '! You have successfully accessed to /api/profile.');
+    // console.log(data);
+    console.log('Profile loaded');
   },
-  error: function() {
-    console.log("Sorry, you are not logged in.");
+  error: function(data) {    
+    console.log('Profile not loaded');
+  }
+});
+
+export const updateProfile = ({email, password, fullname, phone, user_desc}) => $.ajax({
+  type: 'POST',
+  url: URL + "/profile-save",
+  beforeSend: function(xhr) {
+    if(localStorage.token) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
+    }
+  },  
+  data: JSON.stringify({
+    email: email,
+    password: sha256(password).toString(),
+    fullname: fullname,
+    phone: phone,
+    user_desc: user_desc
+  }),
+  success: function(data) {    
+    console.log('User updated')
+  },
+  error: function(data) {    
+    console.log('User not updated')
   }
 });
 
 
-export const login = (username, password) => $.ajax({
+export const logIn = (username, password) => $.ajax({
   type: "POST",
   url: URL + "/login",
   data: {
@@ -33,6 +76,12 @@ export const login = (username, password) => $.ajax({
     console.log(data);
   }
 });
+
+export const logOut = () => {
+  localStorage.clear();
+  window.location.replace('/');
+}; 
+  
 
 // const checkOpenAuth = () => {
 //   this.__httpRequest.onreadystatechange = function() {
@@ -111,10 +160,8 @@ export const login = (username, password) => $.ajax({
 //   httpReq.send(JSON.stringify(params));
 // };
 
-// const sendPassword = () => {
-//   import sha256 from 'crypto-js/sha256';
-// auth_params.append('password', sha256(this.__LgnInpPassword.value));
-// };
 
-// const logout = localStorage.clear();
-
+// crossDomain: true,
+//   headers: {'Access-Control-Allow-Origin': '*'},
+//   contentType: 'application/x-www-form-urlencoded',
+//   dataType: 'json',
