@@ -1,26 +1,29 @@
 import sha256 from 'crypto-js/sha256';
+
 const URL = 'http://sitevote.e-arbitrage.ru/rest';
 
-const checkAuth = () => $.ajax({
+export const checkAuth = () => $.ajax({
   type: 'GET',
-  url: URL,
+  url: URL + "/authtest",
   beforeSend: function(xhr) {
     if(localStorage.token) {
       xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
     }
   },
   success: function(data) {
+    console.log(data);
     console.log('Hello ' + data.name + '! You have successfully accessed to /api/profile.');
   },
-  error: function() {
-    console.log("Sorry, you are not logged in.");
+  error: function(data) {    
+    if(window.location.pathname !== '/') {
+      window.location.replace('/');
+    }
   }
 });
 
-
-export const login = (username, password) => $.ajax({
+export const logIn = (username, password) => $.ajax({
   type: "POST",
-  url: URL + "/login",
+  url: URL + "/login",  
   data: {
     username: username,
     password: sha256(password).toString()
@@ -33,6 +36,12 @@ export const login = (username, password) => $.ajax({
     console.log(data);
   }
 });
+
+export const logOut = () => {
+  localStorage.clear();
+  window.location.replace('/');
+}; 
+  
 
 // const checkOpenAuth = () => {
 //   this.__httpRequest.onreadystatechange = function() {
@@ -111,10 +120,8 @@ export const login = (username, password) => $.ajax({
 //   httpReq.send(JSON.stringify(params));
 // };
 
-// const sendPassword = () => {
-//   import sha256 from 'crypto-js/sha256';
-// auth_params.append('password', sha256(this.__LgnInpPassword.value));
-// };
 
-// const logout = localStorage.clear();
-
+// crossDomain: true,
+//   headers: {'Access-Control-Allow-Origin': '*'},
+//   contentType: 'application/x-www-form-urlencoded',
+//   dataType: 'json',

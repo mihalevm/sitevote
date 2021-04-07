@@ -1,6 +1,19 @@
 import config from '../../config/config.json';
 import { Tabs } from 'bootstrap';
-import { login } from '../lib/auth';
+import { logIn, logOut } from '../lib/auth';
+
+export const userLogged = () => {
+  const menuLink = $('#auth-modal-enter-link');
+  $('#auth-modal').hide();
+  menuLink.text('Выход');
+  menuLink.removeAttr('data-bs-toggle');
+  menuLink.removeAttr('data-bs-target');
+  menuLink.on('click', function() {
+    logOut();
+  });
+  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
+  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);
+};
 
 export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, number, email, byNumber, byEmail}) => `
@@ -63,7 +76,7 @@ export const createAuthWindow = (el) => {
     byNumber: config.auth_tmpl.byNumber,
     byEmail: config.auth_tmpl.byEmail,
   }));
-
+  
   $('#auth-modal-close').on('click', function() {
     $('#auth-modal').hide();
   });
@@ -74,14 +87,8 @@ export const createAuthWindow = (el) => {
       const pass = $('#auth-modal-email-pass').val();
       // Pass check min 8 chars
       // For view
-      login(email, pass).done(function() {
-        const menuLink = $('#auth-modal-enter-link');
-        $('#auth-modal').hide();
-        menuLink.text('Выход');
-        menuLink.removeAttr("data-bs-toggle");
-        menuLink.removeAttr("data-bs-target");
-        $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
-        $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);
+      logIn(email, pass).done(function() {        
+        userLogged();
       }).fail(function() {
         console.log('fail');
       });
@@ -106,16 +113,10 @@ export const createHeader = (el) => {
       <li class="nav-item"><a id="auth-modal-enter-link" href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#auth-modal">${enter}</a></li>
     </ul>
   </header>
-  `;
-
-  // <li class="nav-item"><a href="/pages/vote.html" class="nav-link">${vote}</a></li>
-  // <li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${select}</a></li>
+  `; 
 
   $(el).append(tmpl({ 
     title: config.header_tmpl.title,
-    // select: config.header_tmpl.select,
-    // profile: config.header_tmpl.profile,
-    // vote: config.header_tmpl.vote,
     enter: config.header_tmpl.enter
   }));
 }
