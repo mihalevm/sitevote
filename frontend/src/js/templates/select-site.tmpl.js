@@ -7,7 +7,9 @@ const tmpl = (header) => `
 <div class="card" style="width: 18rem;">
   <img src="/img/img-site-1.webp" alt="test-img">
   <div class="card-body">
-    <h6 class="card-title">${header} <span class="badge bg-secondary">Компания</span></h6>
+    <h6 class="card-title">${header}</h6>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <a href="#" class="btn btn-primary">Посмотреть</a>
   </div>
 </div>
 </div>
@@ -33,3 +35,55 @@ $.each(config.cards_tmpl, function(i, v) {
 });
 $(el).append(cards);
 }
+
+export const createAddSite = (el) => {
+  const tmpl = ({ save, url, access_check, description, uniq_url }) => `  
+<div class="pb-5">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-site-modal">
+  Добавить сайт
+</button>  
+
+<div class="modal fade" id="add-site-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-site-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="add-site-modal">Добавить сайт</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form>
+      <div class="modal-body">                
+        <div class="mb-3">
+          <label for="profile-url" class="form-label">${url}</label>
+          <input type="text" class="form-control" placeholder="https://google.com" aria-label="profile-url" aria-describedby="profile-url">
+        </div>
+        <div class="mb-3">
+          <img src="/img/img-site-1.webp" alt="test" class="img-fluid pb-3">
+          <button id="profile-access-check" class="btn btn-primary">${access_check}</button>
+        </div>
+        <div class="mb-3">
+          <label for="profile-site-description" class="form-label">${description}</label>          
+          <textarea id="profile-site-description" class="form-control" placeholder="Описание сайта" style="height: 100px"></textarea>
+        </div>
+        <div class="input-group mb-3">
+          <span for="profile-uniq-url" class="input-group-text">${uniq_url}</span>
+          <input type="text" class="form-control" placeholder="" aria-label="profile-uniq-url" aria-describedby="profile-uniq-url">
+        </div>
+      </div>
+      <div class="modal-footer">        
+        <button id="profile-site-save" type="submit" class="btn btn-primary">${save}</button>
+      </div>
+      </form> 
+    </div>
+  </div>
+</div>
+</div>
+`;
+  
+  $(el).prepend(tmpl({ 
+    save: config.select_site.save,
+    url: config.select_site.url,    
+    access_check: config.select_site.access_check,    
+    description: config.select_site.description,
+    uniq_url: config.select_site.uniq_url ,  
+  }));
+};

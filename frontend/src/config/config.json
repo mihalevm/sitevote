@@ -42,25 +42,23 @@
     "page_title": "Профиль",
     "profile": "Профиль",
     "add_site": "Добавление сайта",
-    "statistics": "Статистика голосования",
+    "statistics": "Статистика голосования",    
     "chart": "График",
-    "fio": "ФИО",
-    "company_name": "Название компании",
+    "fio_company": "ФИО\\Название компании",    
     "email": "Email",
-    "number": "Номер телефона",
-    "username": "Имя пользователя",
+    "number": "Номер телефона",    
     "pass": "Пароль",
     "confirm_pass": "Подтверждение пароля",
-    "save":"Сохранить",
-    "url": "URL",
-    "pic": "Картинка",
-    "description": "Описание сайта",
-    "access_check": "Проверить",
-    "uniq_url" : "Уникальная ссылка сайта"
+    "save":"Сохранить"
   },
   "select_site":{
     "page_title": "Выбор сайта",
-    "search": "Поиск"
+    "search": "Поиск",
+    "url": "URL",    
+    "description": "Описание сайта",
+    "access_check": "Проверить",
+    "uniq_url" : "http://sitevote.e-arbitrage.ru/sites/",
+    "save":"Сохранить"
   },
   "vote":{
     "page_title": "Голосование",
