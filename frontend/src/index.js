@@ -1,7 +1,9 @@
 import config from './config/config.json';
-import { createAuthWindow, createHeader, createFooter } from './js/templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter, userLogged } from './js/templates/main.tmpl';
 import { createSiteAwards, createDescription } from './js/templates/index.tmpl';
 import './styles/style.scss';
+import { checkAuth } from './js/lib/auth';
+
 const container = () => `
 <div id="index-main" class="container">
 </div>
@@ -13,3 +15,10 @@ $(document.body).append(container);
 createSiteAwards('#index-main');
 createDescription('#index-main');
 createFooter(document.body);
+
+checkAuth().done(function(data) {
+  userLogged()
+}).fail(function(data) {
+  console.log('fail', data);
+});
+

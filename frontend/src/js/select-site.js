@@ -1,7 +1,8 @@
 import config from '../config/config.json'
-import { createAuthWindow, createHeader, createFooter } from './templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
+import { checkAuth } from './lib/auth';
 
 const container = () => `
 <div class="container">
@@ -36,3 +37,8 @@ $('#sites-cards-search').on('keyup', function() {
   })
 });  
 
+checkAuth().done(function(data) {
+  userLogged();
+}).fail(function(data) {
+  console.log('fail', data);
+});
