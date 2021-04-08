@@ -50,27 +50,27 @@ export const createAddSite = (el) => {
         <h5 class="modal-title" id="add-site-modal">Добавить сайт</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form>
-      <div class="modal-body">                
+      <form id="add-site-form">
+      <div class="modal-body" data-sid="">
         <div class="mb-3">
-          <label for="profile-url" class="form-label">${url}</label>
-          <input type="text" class="form-control" placeholder="https://google.com" aria-label="profile-url" aria-describedby="profile-url">
+          <label for="add-site-url" class="form-label">${url}</label>
+          <input id="add-site-url" type="text" class="form-control" placeholder="https://google.com" aria-label="add-site-url" aria-describedby="add-site-url">
         </div>
         <div class="mb-3">
           <img src="/img/img-site-1.webp" alt="test" class="img-fluid pb-3">
-          <button id="profile-access-check" class="btn btn-primary">${access_check}</button>
+          <button id="add-site-check" class="btn btn-primary">${access_check}</button>
         </div>
         <div class="mb-3">
-          <label for="profile-site-description" class="form-label">${description}</label>          
-          <textarea id="profile-site-description" class="form-control" placeholder="Описание сайта" style="height: 100px"></textarea>
+          <label for=add-site-description" class="form-label">${description}</label>          
+          <textarea id="add-site-description" class="form-control" placeholder="Описание сайта" style="height: 100px"></textarea>
         </div>
         <div class="input-group mb-3">
-          <span for="profile-uniq-url" class="input-group-text">${uniq_url}</span>
-          <input type="text" class="form-control" placeholder="" aria-label="profile-uniq-url" aria-describedby="profile-uniq-url">
+          <span for="add-uniq-url" class="input-group-text">${uniq_url}</span>
+          <input type="text" class="form-control" placeholder="" aria-label="add-uniq-url" aria-describedby="add-uniq-url">
         </div>
       </div>
       <div class="modal-footer">        
-        <button id="profile-site-save" type="submit" class="btn btn-primary">${save}</button>
+        <button id="add-site-save" type="submit" class="btn btn-primary">${save}</button>
       </div>
       </form> 
     </div>
