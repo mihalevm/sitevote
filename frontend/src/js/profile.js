@@ -29,14 +29,24 @@ checkAuth().done(function(data) {
     $('#profile-email').val(parsed.email);
     $('#profile-number').val(parsed.phone);    
   });
-  $('#profile-edit-form').on('submit', function(e) {
+  $('#profile-edit-form').on('submit', function(e) {     
     let formFields = $(this).serializeArray();    
     formFields = formFields.reduce((obj, i) => {      
       obj[i.name] = i.value;
       return obj;
     }, {});
-    updateProfile(formFields);
-    e.preventDefault();
+    // Email required field
+    updateProfile(formFields).done(() => {
+      const form = $('#profile-edit-form');
+      const alertMessage = `
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      `;
+      form.removeClass('was-validated');
+      form.append(alertMessage);
+    });    
   });
 }).fail(function(data) {
   console.log('fail', data);

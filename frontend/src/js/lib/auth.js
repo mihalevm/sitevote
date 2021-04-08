@@ -10,7 +10,8 @@ export const checkAuth = () => $.ajax({
       xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token)
     }
   },
-  success: function(data) {    
+  success: function(data) {
+    localStorage.token = data.token;        
     console.log(data.token + ' You have successfully accessed to ' + window.location.pathname);
   },
   error: function(data) {    
@@ -29,7 +30,7 @@ export const loadProfile = () => $.ajax({
     }
   },
   success: function(data) {
-    // console.log(data);
+    localStorage.token = data.token;
     console.log('Profile loaded');
   },
   error: function(data) {    
@@ -52,7 +53,8 @@ export const updateProfile = ({email, password, fullname, phone, user_desc}) => 
     phone: phone,
     user_desc: user_desc
   }),
-  success: function(data) {    
+  success: function(data) {
+    localStorage.token = data.token;    
     console.log('User updated')
   },
   error: function(data) {    
