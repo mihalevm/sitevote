@@ -140,8 +140,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-      Mask: 'jquery-mask-plugin',      
+      'window.jQuery': 'jquery',      
     }),
     new PurgeCSSPlugin({
       paths: glob.sync([
