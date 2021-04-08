@@ -56,8 +56,8 @@ export const createAddSite = (el) => {
           <label for="add-site-url" class="form-label">${url}</label>
           <input id="add-site-url" type="text" class="form-control" placeholder="https://google.com" aria-label="add-site-url" aria-describedby="add-site-url">
         </div>
-        <div class="mb-3">
-          <img src="/img/img-site-1.webp" alt="test" class="img-fluid pb-3">
+        <div id="img-con" class="mb-3">
+          <img id="add-site-img-old" src="/img/img-site-1.webp" alt="test" class="img-fluid pb-3">
           <button id="add-site-check" class="btn btn-primary">${access_check}</button>
         </div>
         <div class="mb-3">
