@@ -7,3 +7,4 @@ Installation:
     pip install python-multipart
     pip install SQLAlchemy
     pip install mysqlclient
+    pip install selenium --trusted-host pypi.org --trusted-host files.pythonhosted.org

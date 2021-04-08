@@ -5,13 +5,15 @@
 import json
 import logging
 
+from secrets import token_hex
+
 from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
-from fastapi import Depends, FastAPI, HTTPException, status, Query
+from fastapi import Depends, FastAPI, HTTPException, status, Query, Body
 from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -22,10 +24,12 @@ from typing import Optional, List
 
 from rest.lib.config import Configuration
 from rest.model.Users import Users
-
+from rest.model.Sites import Sites
+from rest.lib.webscreen import WebScreen
 
 from pydantic import BaseModel
 from jose import JWTError, jwt
+from PIL import Image
 
 # Todo: remove modules for prod
 # from pprint import pprint
@@ -65,6 +69,22 @@ class UserParams(BaseModel):
     user_desc: Optional[str] = Query(default=None, max_length=512, description='Краткое описание пользователя')
 
 
+class SiteParams(BaseModel):
+    sid: Optional[int] = Query(default=None, description='никальный идетнификатор сайта')
+    site_desc: Optional[str] = Query(default=None, max_length=512, description='Краткое описание сайта')
+    site_url: str = Query(default=None, max_length=128, description='Адрес сайта')
+    short_link: Optional[str] = Query(default=None, max_length=32, description='Сокращенная ссылка сайта')
+    img_link: Optional[str] = Query(default=None, max_length=64, description='Базовое имя картинки')
+
+
+class SiteVerifyParams(BaseModel):
+    url: str = Query(default=None, description="Ссылка на сайт")
+
+
+class SiteGetParams(BaseModel):
+    sid: int = Query(default=None, description="идентификатор сайта")
+
+
 config: Configuration = Configuration('server.ini')
 DB_ACCOUNT = config.get_section('DATABASE')
 ROUTER = config.get_section('ROUTER')
@@ -88,11 +108,20 @@ router.add_middleware(
 
 
 def get_web_user(email: str) -> Users:
-    return DBH.query(Users)\
+    account: Users = Users()
+
+    try:
+        account = DBH.query(Users)\
             .filter(Users.email == email).first() if email else None
+    except SQLAlchemyError as exc:
+        log.error('[Rest] DB connection error: %s', exc)
+        shutdown()
+        startup()
+
+    return account
 
 
-def db_profile_save(uid: int, profile: UserParams):
+def db_profile_save(uid: int, profile: UserParams) -> bool:
     result = False
 
     user_profile: Users = DBH.query(Users)\
@@ -115,7 +144,7 @@ def db_profile_save(uid: int, profile: UserParams):
     try:
         DBH.commit()
     except SQLAlchemyError as exc:
-        log.error('[Rest service] Profile save error: %s', exc)
+        log.error('[REST] Profile save error: %s', exc)
     else:
         result = True
 
@@ -127,45 +156,48 @@ def db_profile_get(uid: int) -> Users:
         .filter(Users.id == uid).first()
 
 
-# def get_db_city_dic() -> ma_city:
-#     return DBH.query(ma_city).filter(ma_city.key != 0).all() if DBH else None
+def db_site_save(uid: int, site_params: SiteParams) -> bool:
+    site: Site = Sites()
+    result: bool = False
+
+    if hasattr(site_params, 'sid') and site_params.sid:
+        site = DBH.query(Sites).filter(Sites.id == site_params.sid).first()
+
+    if hasattr(site_params, 'site_desc'):
+        site.site_desc = site_params.site_desc
+
+    if hasattr(site_params, 'short_link'):
+        site.short_link = site_params.short_link
+
+    if hasattr(site_params, 'img_link'):
+        site.img_link = site_params.img_link
+
+    if hasattr(site_params, 'site_url'):
+        site.site_url = site_params.site_url
+
+    try:
+        if not site_params.sid:
+            site.uid = uid
+            site.disabled = 'N'
+            site.verified = 'N'
+            DBH.add(site)
+        DBH.commit()
+    except SQLAlchemyError as exc:
+        log.error('[REST] Site save error: %s', exc)
+    else:
+        result = True
+
+    return result
 
 
-# def get_db_ma_aa_b2c(filter_params: FilterParams) -> ma_aa_b2c:
-#     result: ma_aa_b2c = ma_aa_b2c()
-#
-#     if DBH:
-#         q = DBH.query(ma_aa_b2c.for_date, ma_city.name, ma_product.name, ma_aa_b2c.change_date, ma_aa_b2c.cnt) \
-#             .filter(ma_aa_b2c.city_id == ma_city.key, ma_aa_b2c.product_id == ma_product.key)
-#
-#         if filter_params.product_id:
-#             q = q.filter(ma_product.key.in_(','.join(str(i) for i in filter_params.product_id)))
-#
-#         if filter_params.city_id:
-#             for i in filter_params.city_id:
-#                 q = q.filter(ma_aa_b2c.city_id == str(i))
-#
-#         if filter_params.create_date_begin:
-#             q = q.filter(ma_aa_b2c.for_date >= filter_params.create_date_begin)
-#
-#         if filter_params.create_date_end:
-#             q = q.filter(ma_aa_b2c.for_date <= filter_params.create_date_end)
-#
-#         if filter_params.change_date_begin:
-#             q = q.filter(ma_aa_b2c.change_date >= filter_params.change_date_begin)
-#
-#         if filter_params.change_date_end:
-#             q = q.filter(ma_aa_b2c.change_date <= filter_params.change_date_end)
-#
-#         if filter_params.order_by and filter_params.order:
-#             if filter_params.order == 'asc':
-#                 q = q.order_by(asc(filter_params.order_by))
-#             if filter_params.order == 'desc':
-#                 q = q.order_by(desc(filter_params.order_by))
-#
-#         result = q.all()
-#
-#     return result
+def db_site_get(uid: int, sid: int) -> Sites:
+    return DBH.query(Sites)\
+        .filter(Sites.id == sid, Sites.uid == uid).first()
+
+
+def db_site_stats(uid: int) -> Sites:
+    return DBH.query(Sites)\
+        .filter(Sites.uid == uid).all()
 
 
 def authenticate_user(email: str, password: str) -> Users:
@@ -248,7 +280,7 @@ async def startup():
     try:
         engine.connect()
     except SQLAlchemyError as exc:
-        log.error('[Rest service] External DB connection error: %s', exc)
+        log.error('[Rest] External DB connection error: %s', exc)
     else:
         base = declarative_base()
         base.metadata.bind = engine
@@ -315,31 +347,16 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.get("/authtest")
-async def some_req(token: str = Depends(validate_user)):
-    j_obj = {"token": token}
-
+async def authorization_test(sess_acc: SessionAccount = Depends(validate_user)):
     return JSONResponse(
-        content=j_obj,
+        content={
+            "token": sess_acc.token
+        },
         headers={
-            'x-auth-token': token
+            'x-auth-token': sess_acc.token
         }
     )
 
-
-# @router.get("/get-city-dictionary")
-# async def get_city_dictionary(sess_acc: SessionAccount = Depends(validate_user)):
-#     j_obj = {
-#         "data": json.dumps(get_db_city_dic(), cls=Encoder),
-#         "token": sess_acc.token
-#     }
-#
-#     return JSONResponse(
-#         content=j_obj,
-#         headers={
-#             'x-auth-token': sess_acc.token
-#         }
-#     )
-#
 
 @router.post("/profile-save")
 async def profile_save(params: UserParams, sess_acc: SessionAccount = Depends(validate_user)):
@@ -364,7 +381,7 @@ async def profile_save(params: UserParams, sess_acc: SessionAccount = Depends(va
 @router.post("/profile-get")
 async def profile_get(sess_acc: SessionAccount = Depends(validate_user)):
     j_obj = {
-        "data": "Ошибка сохранения профиля. Проверить уникальность адреса почты",
+        "data": "Ошибка поиска профиля для аккаунта",
         "error": 400,
         "token": sess_acc.token
     }
@@ -381,5 +398,104 @@ async def profile_get(sess_acc: SessionAccount = Depends(validate_user)):
             'x-auth-token': sess_acc.token
         }
     )
+
+
+@router.post("/site-verify")
+async def site_verify(p: SiteVerifyParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "error": 200,
+        "token": sess_acc.token
+    }
+
+    pic_name = token_hex(32)
+    pic_large = pic_name + '.png'
+    pic_small = pic_name + '_small' + '.png'
+    web_screen: WebScreen = WebScreen(config)
+
+    if web_screen.take_screenshot(p.url, ROUTER['image_storage_dir'] + '/' + pic_large):
+        pic = Image.open(ROUTER['image_storage_dir'] + '/' + pic_large)
+        spic = pic.resize((480, 320))
+        spic.save(ROUTER['image_storage_dir'] + '/' + pic_small)
+
+        j_obj["data"] = {
+            "origin": pic_name,
+            "large": ROUTER['image_storage_web'] + '/' + pic_large,
+            "small": ROUTER['image_storage_web'] + '/' + pic_small,
+        }
+    else:
+        j_obj['data'] = 'Ошибка выполнения запроса'
+        j_obj['error'] = 400
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/site-save")
+async def site_save(params: SiteParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка сохранения параметров сайта.",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    if db_site_save(sess_acc.id, params):
+        j_obj["data"] = "Настройки сайта сохранены"
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/site-get")
+async def site_get(params: SiteGetParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка поиска натроек сайта",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    site: Sites = db_site_get(sess_acc.id, params.sid)
+
+    if site:
+        j_obj["data"] = json.dumps(site, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/site-stats")
+async def site_get(sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка поиска сайтов пользователя",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    site: Sites = db_site_stats(sess_acc.id)
+
+    if site:
+        j_obj["data"] = json.dumps(site, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
 
 __all__ = ['router']
