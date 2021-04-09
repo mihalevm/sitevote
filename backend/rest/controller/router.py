@@ -197,7 +197,7 @@ def db_site_get(uid: int, sid: int) -> Sites:
 
 def db_site_stats(uid: int) -> Sites:
     return DBH.query(Sites)\
-        .filter(Sites.uid == uid).all()
+        .filter(Sites.uid == uid).order_by(asc(Sites.fast_rait)).all()
 
 
 def authenticate_user(email: str, password: str) -> Users:

@@ -24,7 +24,7 @@ class WebScreen:
     def take_screenshot(self, url, output):
         ret: bool = False
 
-        if url.startswith('http'):
+        if url and url.startswith('http'):
             try:
                 driver = webdriver.Chrome(
                     executable_path=self.__chrome_config['driver'],
@@ -34,6 +34,7 @@ class WebScreen:
                 driver.get(url)
                 driver.save_screenshot(output)
                 driver.close()
+                driver.quit()
             except WebDriverException as exc:
                 self.__log.info("[REST] Webscreen raise exception %s", exc)
             else:
