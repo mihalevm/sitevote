@@ -2,7 +2,7 @@ import config from '../config/config.json'
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth } from './lib/auth';
+import { checkAuth, siteVerify } from './lib/auth';
 
 const container = () => `
 <div class="container">
@@ -39,6 +39,18 @@ $('#sites-cards-search').on('keyup', function() {
 
 checkAuth().done(function(data) {
   userLogged();
+
+  $('#add-site-check').on('click', function(e) {
+    e.preventDefault();
+    const url = $('#add-site-url').val();
+    siteVerify({url: url}).done(function(data) {
+      // console.log(data.data.small);
+      let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
+      let imgTag = `<img id="add-site-img-new" src="${src}" alt="test" class="img-fluid pb-3"></img>`
+      $('#add-site-img-old').hide();
+      $('#img-con').prepend(imgTag);
+    });
+  });
 }).fail(function(data) {
   console.log('fail', data);
 });

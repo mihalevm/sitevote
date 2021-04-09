@@ -65,7 +65,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     </div>          
     <div class="mb-3">
       <label for="profile-email" class="form-label">${email}</label>
-      <input id="profile-email" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email">
+      <input id="profile-email" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email" required>
     </div>          
     <div class="mb-3">
       <label for="profile-number" class="form-label">${number}</label>
@@ -74,10 +74,13 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
       <input id="profile-password" name="password" type="password" class="form-control">
+      <div class="invalid-feedback">
+        Пароль и подтверждение пароля должны быть одинаковыми!
+      </div>
     </div>
     <div class="mb-3">
       <label for="profile-confirm-pass" class="form-label" >${confirm_pass}</label>
-      <input id="profile-confirm-pass" name="user_desc" type="password" class="form-control">
+      <input id="profile-confirm-pass" type="password" class="form-control">
     </div>
     <button id="profile-save" type="submit" class="btn btn-primary">${save}</button>    
     </form>
@@ -86,37 +89,34 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
 </div>
 `
 
-$(el).append(tmpl({ 
-  fio_company: config.profile.fio_company,  
-  email: config.profile.email,
-  number: config.profile.number,  
-  confirm_pass: config.profile.confirm_pass,
-  pass: config.profile.pass,
-  save: config.profile.save,
-}));
-// !!!!
-$('#profile-number').mask('+7(000)000-00-00');
+  $(el).append(tmpl({ 
+    fio_company: config.profile.fio_company,  
+    email: config.profile.email,
+    number: config.profile.number,  
+    confirm_pass: config.profile.confirm_pass,
+    pass: config.profile.pass,
+    save: config.profile.save,
+  }));  
+  $('#profile-number').mask('000000000000'); 
 
-$('.needs-validation').on('submit', function(event) {  
-  if (!this.checkValidity()) {
-    event.preventDefault()
-    event.stopPropagation()
-  }
-  $(this).addClass('was-validated');
-});
-
-const checkEqualPasswords = (pass, passConfirm) => {
-  // if(pass.length == 0 || passConfirm.length == 0)
-  if(pass === passConfirm) {
-    console.log(pass, passConfirm, true);
-  } else {
-    console.log(pass, passConfirm, false);
-  }
-};
-
-$('#profile-save').on('click', function() {
-  checkEqualPasswords($('#profile-password').val(), $('#profile-confirm-pass').val());
-});
+  const checkEqualPasswords = (pass, passConfirm) => {    
+    const saveBtn = $('#profile-save')
+    if(pass.val() !== passConfirm.val()) {
+      pass.addClass('is-invalid');
+      passConfirm.addClass('is-invalid');
+      saveBtn.attr('disabled', true);
+    } else {
+      pass.removeClass('is-invalid');
+      passConfirm.removeClass('is-invalid');
+      saveBtn.removeAttr('disabled');
+    }
+  };
+  $('#profile-password').on('keyup', function() {
+    checkEqualPasswords($('#profile-password'), $('#profile-confirm-pass'));
+  });
+  $('#profile-confirm-pass').on('keyup', function() {
+    checkEqualPasswords($('#profile-password'), $('#profile-confirm-pass'));
+  });  
 };
 
 export const createProfileTabs = (el) => {
