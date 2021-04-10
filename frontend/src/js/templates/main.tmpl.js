@@ -34,9 +34,12 @@ export const createAuthWindow = (el) => {
         <div id="auth-modal-tabs" class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active p-3" id="auth-email-tab" role="tabpanel" aria-labelledby="email-tab">
             <div class="mb-3">
-            <label for="auth-modal-email" class="form-label">${email}</label>
-            <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
-            <div id="email-hint" class="form-text">${hint}</div>
+              <label for="auth-modal-email" class="form-label">${email}</label>
+              <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
+              <div id="email-hint" class="form-text">${hint}</div>
+              <div class="invalid-feedback">
+                Поле Email не может быть пустым
+              </div>
             </div>
             <div class="mb-3">
               <label for="auth-modal-email-pass" class="form-label">${pass}</label>
@@ -59,7 +62,7 @@ export const createAuthWindow = (el) => {
         </div>
       </div>
       <div class="modal-footer">
-        <button id="auth-modal-enter" type="submit" class="btn btn-primary">${enter}</button>
+        <button id="auth-modal-enter" type="submit" class="btn btn-primary" data-bs-dismiss="modal">${enter}</button>
       </div>
     </div>
   </div>
@@ -84,8 +87,7 @@ export const createAuthWindow = (el) => {
     // Two classes active and show
     if($('#auth-email-tab').hasClass('show')) {
       const email = $('#auth-modal-email').val();
-      const pass = $('#auth-modal-email-pass').val();
-      // Pass check min 8 chars
+      const pass = $('#auth-modal-email-pass').val();      
       // For view
       logIn(email, pass).done(function() {        
         userLogged();
@@ -94,8 +96,7 @@ export const createAuthWindow = (el) => {
       });
     } else {
       // const number = $('#auth-modal-number').val();
-      // const pass = $('#auth-modal-number-pass').val();
-      // // Pass check min 8 chars
+      // const pass = $('#auth-modal-number-pass').val();      
       // console.log(number, pass);
     }
   });

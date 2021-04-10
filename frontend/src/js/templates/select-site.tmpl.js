@@ -42,7 +42,7 @@ export const createAddSite = (el) => {
   Добавить сайт
 </button>  
 
-<div class="modal fade" id="add-site-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-site-modal" aria-hidden="true">
+<div class="modal fade" id="add-site-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-site-modal" aria-hidden="true" data-sid="">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -72,7 +72,7 @@ export const createAddSite = (el) => {
         </div>
         <div class="input-group mb-3">
           <span for="add-uniq-url" class="input-group-text">${uniq_url}</span>
-          <input type="text" class="form-control" placeholder="" aria-label="add-uniq-url" aria-describedby="add-uniq-url">
+          <input id="add-uniq-url" type="text" class="form-control" aria-label="add-uniq-url" aria-describedby="add-uniq-url">
         </div>
       </div>
       <div class="modal-footer">        

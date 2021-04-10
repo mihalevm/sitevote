@@ -25,7 +25,6 @@ document.title = config.select_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
-// Проверка аутентфикации
 createAddSite('#select-site-con');
 createCards('#cards-list');
 createFooter(document.body);
@@ -83,6 +82,7 @@ checkAuth().done(function(data) {
         $(document.body).append(bigImgModal);
         $('#access-check-con').append(zoomInBtn);
         $('#add-site-img').attr('src', src);        
+        $('#add-site-img').attr('data-origin', data.data.origin);
         $('#loading-spinner').remove();        
       }).fail(function(data) {
         $('#loading-spinner').remove();
@@ -96,6 +96,21 @@ checkAuth().done(function(data) {
     } else {
       $('#add-site-url').addClass('is-invalid');
     }  
+  });
+  $('#add-site-save').on('click', function(e) {
+    e.preventDefault();
+    const newSite = {
+      sid: $('#add-site-modal').data('sid'),
+      site_desc: $('#add-site-description').val(),
+      site_url: $('#add-site-url').val(),
+      short_link: $('#add-uniq-url').val(),
+      img_link: $('#add-site-img').data('origin')
+    };
+
+    // $.each(newSite, function(index, value) {
+
+    // });
+    console.log(newSite);
   });
 }).fail(function(data) {
   console.log('fail', data);
