@@ -8,8 +8,7 @@ const tmpl = (header) => `
   <img src="/img/img-site-1.webp" alt="test-img">
   <div class="card-body">
     <h6 class="card-title">${header}</h6>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="btn btn-primary">Посмотреть</a>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>    
   </div>
 </div>
 </div>
@@ -55,10 +54,17 @@ export const createAddSite = (el) => {
         <div class="mb-3">
           <label for="add-site-url" class="form-label">${url}</label>
           <input id="add-site-url" type="text" class="form-control" placeholder="https://google.com" aria-label="add-site-url" aria-describedby="add-site-url">
+          <div class="invalid-feedback">
+            Поле URL не может быть пустым!
+          </div>
         </div>
         <div id="img-con" class="mb-3">
-          <img id="add-site-img-old" src="/img/img-site-1.webp" alt="test" class="img-fluid pb-3">
-          <button id="add-site-check" class="btn btn-primary">${access_check}</button>
+          <img id="add-site-img" src="/img/img-site-1.webp" alt="test" class="img-fluid pb-3">
+          <div id="access-check-con" class="row">
+            <div class="col">
+              <button id="add-site-check" class="btn btn-primary">${access_check}</button>
+            </div>            
+          </div>          
         </div>
         <div class="mb-3">
           <label for=add-site-description" class="form-label">${description}</label>          

@@ -42,14 +42,60 @@ checkAuth().done(function(data) {
 
   $('#add-site-check').on('click', function(e) {
     e.preventDefault();
-    const url = $('#add-site-url').val();
-    siteVerify({url: url}).done(function(data) {
-      // console.log(data.data.small);
-      let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
-      let imgTag = `<img id="add-site-img-new" src="${src}" alt="test" class="img-fluid pb-3"></img>`
-      $('#add-site-img-old').hide();
-      $('#img-con').prepend(imgTag);
-    });
+    if($('#add-site-url').val().length !== 0) {
+      const url = $('#add-site-url').val();
+      const req = siteVerify({url: url});
+  
+      if(req.state() === 'pending') {        
+        const spinner = `
+        <div class="d-flex justify-content-center">
+          <div id="loading-spinner"class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        `;
+        $('#img-con').prepend(spinner);        
+      }
+  
+      req.done(function(data) {
+        let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
+        let srcBig = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.large : data.data.large;
+        const bigImgModal = `
+        <div class="modal fade" id="big-img" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <img id="add-site-img-big" src="${srcBig}" alt="test" class="img-fluid pb-3">
+            <div class="modal-footer">
+              <a class="btn btn-primary" href="#add-site-modal" data-bs-toggle="modal" data-bs-dismiss="modal" role="button">Назад</a>
+            </div>
+          </div>
+        </div>
+        </div>
+        `;
+
+        const zoomInBtn = `
+          <div class="col">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#big-img" data-bs-dismiss="modal">
+              Увеличить
+            </button>
+          </div>
+        `;        
+        $(document.body).append(bigImgModal);
+        $('#access-check-con').append(zoomInBtn);
+        $('#add-site-img').attr('src', src);        
+        $('#loading-spinner').remove();        
+      }).fail(function(data) {
+        $('#loading-spinner').remove();
+        const alertMsg = `
+          <div class="alert alert-primary" role="alert">
+            Картинка не может быть загружена. Функция проверки не работает.
+          </div>
+        `;
+        $('#img-con').prepend(alertMsg);
+      });
+    } else {
+      $('#add-site-url').addClass('is-invalid');
+    }  
   });
 }).fail(function(data) {
   console.log('fail', data);
