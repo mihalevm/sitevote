@@ -2,7 +2,7 @@ import config from '../config/config.json'
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify } from './lib/auth';
+import { checkAuth, siteVerify, siteSave } from './lib/auth';
 
 const container = () => `
 <div class="container">
@@ -25,9 +25,7 @@ document.title = config.select_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
-// Проверка аутентфикации
 createAddSite('#select-site-con');
-createCards('#cards-list');
 createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
@@ -39,17 +37,102 @@ $('#sites-cards-search').on('keyup', function() {
 
 checkAuth().done(function(data) {
   userLogged();
+  createCards('#cards-list');
+  
+  const clearAddSiteValues = () => {
+    $('#add-site-form input').each(function() {
+      $(this).val('');
+    });
+    $('#add-site-description').val('');
+    $('#add-site-form').removeAttr('data-sid');
+    $('.modal-title').text('Добавить сайт');
+  };
+  
+  $('#add-site-close').on('click', function() {
+    clearAddSiteValues();
+  });
 
   $('#add-site-check').on('click', function(e) {
-    e.preventDefault();
-    const url = $('#add-site-url').val();
-    siteVerify({url: url}).done(function(data) {
-      // console.log(data.data.small);
-      let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
-      let imgTag = `<img id="add-site-img-new" src="${src}" alt="test" class="img-fluid pb-3"></img>`
-      $('#add-site-img-old').hide();
-      $('#img-con').prepend(imgTag);
-    });
+    e.preventDefault();    
+    if($('#add-site-url').val().length !== 0) {
+      const url = $('#add-site-url').val();
+      const req = siteVerify({url: url});
+  
+      if(req.state() === 'pending') {        
+        const spinner = `
+        <div class="d-flex justify-content-center">
+          <div id="loading-spinner"class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        `;
+        $('#img-con').prepend(spinner);        
+      }
+  
+      req.done(function(data) {
+        let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
+        let srcBig = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.large : data.data.large;
+        console.log(src);
+        const bigImgModal = `
+        <div class="modal fade" id="big-img" aria-hidden="true" aria-labelledby="..." tabindex="-1">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <img id="add-site-img-big" src="${srcBig}" alt="test" class="img-fluid pb-3">
+            <div class="modal-footer">
+              <a class="btn btn-primary" href="#add-site-modal" data-bs-toggle="modal" data-bs-dismiss="modal" role="button">Назад</a>
+            </div>
+          </div>
+        </div>
+        </div>
+        `;
+
+        const zoomInBtn = `
+          <div class="col">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#big-img" data-bs-dismiss="modal">
+              Увеличить
+            </button>
+          </div>
+        `;        
+        $(document.body).append(bigImgModal);
+        $('#access-check-con').append(zoomInBtn);
+        $('#add-site-img').attr('src', src);        
+        $('#add-site-img').attr('data-origin', data.data.origin);
+        $('#loading-spinner').remove();        
+      }).fail(function(data) {
+        $('#loading-spinner').remove();
+        const alertMsg = `
+          <div class="alert alert-primary" role="alert">
+            Картинка не может быть загружена. Функция проверки не работает.
+          </div>
+        `;
+        $('#img-con').prepend(alertMsg);
+      });
+    } else {
+      $('#add-site-url').addClass('is-invalid');
+    }  
+  });
+
+  $('#add-site-form').on('submit', function(e) {
+    e.preventDefault();    
+    const newSite = {
+      sid: parseInt($('#add-site-form').data('sid')),
+      site_desc: $('#add-site-description').val(),
+      site_url: $('#add-site-url').val(),
+      short_link: $('#add-uniq-url').val(),
+      img_link: $('#add-site-img').data('origin')
+    };    
+    if(newSite.site_url.length != 0) {
+      siteSave(newSite).done(function() {
+        $('#add-site-form input').each(function() {
+          $(this).val('');
+        });
+        $('#add-site-description').val('');
+        $('#add-site-form').removeAttr('data-sid');
+        $('.modal-title').text('Добавить сайт');
+      });
+    } else {
+      $('#add-site-url').addClass('is-invalid');
+    }    
   });
 }).fail(function(data) {
   console.log('fail', data);

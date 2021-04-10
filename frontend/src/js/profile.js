@@ -5,6 +5,11 @@ import { createSiteAwards } from './templates/index.tmpl';
 import { checkAuth, loadProfile, updateProfile } from './lib/auth' 
 import '../styles/style.scss';
 
+function isValidEmail(email) {
+  const emailReg = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/gm;
+  return emailReg.test(email);
+}
+
 const container = () => `
 <div id="profile-main" class="container">
 </div>
@@ -29,27 +34,54 @@ checkAuth().done(function(data) {
     $('#profile-email').val(parsed.email);
     $('#profile-number').val(parsed.phone);    
   });
+
+  $('#profile-email').on('keyup', function() {
+    const value = $(this).val();
+    const valid = isValidEmail(value);
+    if(value.length !=0) {
+      if(valid) {
+        $(this).removeClass('is-invalid');
+        $('#profile-save').removeAttr('disabled');
+      } else {
+        $('#profile-e-inv').text('Формат Email не корректен, правильный формат: index@google.com');
+        $(this).addClass('is-invalid');  
+      }
+    } else {
+      $('#profile-e-inv').text('Поле Email не может быть пустым.');
+      $(this).addClass('is-invalid');
+      $('#profile-save').attr('disabled', true);
+    }
+  });
+
   $('#profile-edit-form').on('submit', function(e) {
-    e.preventDefault();     
+    e.preventDefault();
+
     let formFields = $(this).serializeArray();    
     formFields = formFields.reduce((obj, i) => {      
       obj[i.name] = i.value;
       return obj;
     }, {});
+    
+    if(formFields.email) {
     // Email required field
     updateProfile(formFields);
     // .done(() => {
-      // let form = $('#profile-edit-form');
-      // // Need to change
-      // const alertMessage = `
-      // <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      //   <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-      //   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      // </div>
-      // `;
-      // form.removeClass('was-validated');
-      // form.append(alertMessage);
+    // let form = $('#profile-edit-form');
+    // // Need to change
+    // const alertMessage = `
+    // <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    //   <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+    //   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    // </div>
+    // `;
+    // form.removeClass('was-validated');
+    // form.append(alertMessage);
     // });    
+    } else {
+      $('#profile-e-inv').text('Поле Email не может быть пустым.');
+      $('#profile-email').addClass('is-invalid');
+      $('#profile-save').attr('disabled', true);
+    }    
   });
 }).fail(function(data) {
   console.log('fail', data);
