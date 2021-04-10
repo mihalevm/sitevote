@@ -33,6 +33,7 @@ class VoteType(PrefixBase):
 
     id = Column(INTEGER(11), primary_key=True, autoincrement=True, comment="Уникальный идентификатор")
     value = Column(VARCHAR(16), nullable=True, comment="Значение поля")
+    weight = Column(INTEGER(11), nullable=True, comment="Вес голоса")
 
     def __init__(self):
         __table__ = metadata.tables[self.__tablename__]

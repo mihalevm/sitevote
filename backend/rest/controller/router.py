@@ -7,7 +7,7 @@ import logging
 
 from secrets import token_hex
 
-from sqlalchemy import create_engine, asc, desc
+from sqlalchemy import create_engine, asc, desc, or_, func
 from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
@@ -25,11 +25,15 @@ from typing import Optional, List
 from rest.lib.config import Configuration
 from rest.model.Users import Users
 from rest.model.Sites import Sites
+from rest.model.Votes import Votes
+from rest.model.Dictionary import VoteType
+
 from rest.lib.webscreen import WebScreen
 
 from pydantic import BaseModel
 from jose import JWTError, jwt
 from PIL import Image
+
 
 # Todo: remove modules for prod
 # from pprint import pprint
@@ -75,6 +79,7 @@ class SiteParams(BaseModel):
     site_url: str = Query(default=None, max_length=128, description='Адрес сайта')
     short_link: Optional[str] = Query(default=None, max_length=32, description='Сокращенная ссылка сайта')
     img_link: Optional[str] = Query(default=None, max_length=64, description='Базовое имя картинки')
+    disabled: Optional[str] = Query(default=None, max_length=1, description='Признак блокировки сайта')
 
 
 class SiteVerifyParams(BaseModel):
@@ -83,6 +88,14 @@ class SiteVerifyParams(BaseModel):
 
 class SiteGetParams(BaseModel):
     sid: int = Query(default=None, description="идентификатор сайта")
+
+
+class SiteSearchParams(BaseModel):
+    pattern: str = Query(default=None, description="Паттерн поиска сайта")
+
+
+class SiteTopParams(BaseModel):
+    top: int = Query(default=None, description="Колличество лидирующих сайтов")
 
 
 config: Configuration = Configuration('server.ini')
@@ -97,7 +110,6 @@ router = FastAPI()
 log = logging.getLogger("main")
 DBH = None
 
-
 router.add_middleware(
     CORSMiddleware,
     allow_origins=['*'],
@@ -111,12 +123,11 @@ def get_web_user(email: str) -> Users:
     account: Users = Users()
 
     try:
-        account = DBH.query(Users)\
+        account = DBH.query(Users) \
             .filter(Users.email == email).first() if email else None
     except SQLAlchemyError as exc:
         log.error('[Rest] DB connection error: %s', exc)
-        shutdown()
-        startup()
+        DBH.rollback()
 
     return account
 
@@ -124,7 +135,7 @@ def get_web_user(email: str) -> Users:
 def db_profile_save(uid: int, profile: UserParams) -> bool:
     result = False
 
-    user_profile: Users = DBH.query(Users)\
+    user_profile: Users = DBH.query(Users) \
         .filter(Users.id == uid).first()
 
     user_profile.email = profile.email
@@ -152,7 +163,7 @@ def db_profile_save(uid: int, profile: UserParams) -> bool:
 
 
 def db_profile_get(uid: int) -> Users:
-    return DBH.query(Users)\
+    return DBH.query(Users) \
         .filter(Users.id == uid).first()
 
 
@@ -160,20 +171,23 @@ def db_site_save(uid: int, site_params: SiteParams) -> bool:
     site: Site = Sites()
     result: bool = False
 
-    if hasattr(site_params, 'sid') and site_params.sid:
+    if site_params.sid:
         site = DBH.query(Sites).filter(Sites.id == site_params.sid).first()
 
-    if hasattr(site_params, 'site_desc'):
+    if site_params.site_desc:
         site.site_desc = site_params.site_desc
 
-    if hasattr(site_params, 'short_link'):
+    if site_params.short_link:
         site.short_link = site_params.short_link
 
-    if hasattr(site_params, 'img_link'):
+    if site_params.img_link:
         site.img_link = site_params.img_link
 
-    if hasattr(site_params, 'site_url'):
+    if site_params.site_url:
         site.site_url = site_params.site_url
+
+    if site_params.disabled:
+        site.disabled = site_params.disabled
 
     try:
         if not site_params.sid:
@@ -191,13 +205,79 @@ def db_site_save(uid: int, site_params: SiteParams) -> bool:
 
 
 def db_site_get(uid: int, sid: int) -> Sites:
-    return DBH.query(Sites)\
-        .filter(Sites.id == sid, Sites.uid == uid).first()
+    try:
+        site_profile: Sites = DBH.query(Sites) \
+            .filter(Sites.id == sid)
+
+        if uid:
+            site_profile = site_profile \
+                .filter(Sites.uid == uid)
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        site_profile = Sites()
+        log.error('[Rest] DB error: %s', exc)
+
+    return site_profile.first() if site_profile else None
+
+
+def db_site_del(uid: int, sid: int) -> bool:
+    result = False
+
+    try:
+        DBH.delete(Sites) \
+            .filter(Sites.id == sid, Sites.uid == uid)
+        DBH.delete(Votes) \
+            .filter(Votes.sid == sid)
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        log.error('[REST] DB error: %s', exc)
+    else:
+        result = True
+
+    return result
 
 
 def db_site_stats(uid: int) -> Sites:
-    return DBH.query(Sites)\
+    return DBH.query(Sites) \
         .filter(Sites.uid == uid).order_by(asc(Sites.fast_rait)).all()
+
+
+def db_site_search(uid: int, pattern: str) -> Sites:
+    try:
+        sites = DBH.query(Sites) \
+            .filter(or_(func.lower(Sites.site_desc).ilike(f'%{pattern.lower()}%'),
+                        func.lower(Sites.site_url).ilike(f'%{pattern.lower()}%')))
+
+        if uid:
+            sites = sites.filter(Sites.uid == uid)
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        sites = None
+        log.error('[Rest] DB error: %s', exc)
+
+    return sites.all() if sites else None
+
+
+def db_vote_type() -> VoteType:
+    try:
+        vote_type: VoteType = DBH.query(VoteType).all()
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        vote_type = VoteType()
+        log.error('[Rest] DB connection error: %s', exc)
+
+    return vote_type
+
+
+def db_site_top() -> Sites:
+    try:
+        sites: Sites = DBH.query(Sites).filter(Sites.disabled == 'N').order_by(Sites.fast_rait).all()
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        sites = Sites()
+        log.error('[Rest] DB connection error: %s', exc)
+
+    return sites
 
 
 def authenticate_user(email: str, password: str) -> Users:
@@ -219,7 +299,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 
 async def validate_user(token: str = Depends(oauth2_scheme)) -> SessionAccount:
-
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -274,8 +353,10 @@ async def startup():
                            max_overflow=5,
                            pool_timeout=5,
                            pool_recycle=3600,
+                           pool_pre_ping=True,
                            poolclass=QueuePool,
-                           connect_args={'connect_timeout': 5}
+                           connect_args={'connect_timeout': 5},
+                           isolation_level="READ UNCOMMITTED"
                            )
     try:
         engine.connect()
@@ -284,7 +365,11 @@ async def startup():
     else:
         base = declarative_base()
         base.metadata.bind = engine
-        db_session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
+        db_session = sessionmaker(
+            bind=engine,
+            autoflush=True,
+            autocommit=False
+        )
         global DBH
         DBH = db_session()
 
@@ -476,6 +561,28 @@ async def site_get(params: SiteGetParams, sess_acc: SessionAccount = Depends(val
     )
 
 
+@router.post("/site-del")
+async def site_del(params: SiteGetParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка удаления сайта",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    result: bool = db_site_del(sess_acc.id, params.sid)
+
+    if site:
+        j_obj["data"] = result
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
 @router.post("/site-stats")
 async def site_get(sess_acc: SessionAccount = Depends(validate_user)):
     j_obj = {
@@ -495,6 +602,100 @@ async def site_get(sess_acc: SessionAccount = Depends(validate_user)):
         headers={
             'x-auth-token': sess_acc.token
         }
+    )
+
+
+@router.post("/site-profile-search")
+async def site_profile_search(params: SiteSearchParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка поиска сайтов пользователя",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    sites: Sites = db_site_search(sess_acc.idm, params.pattern)
+
+    if sites:
+        j_obj["data"] = json.dumps(sites, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/site-search")
+async def site_search(params: SiteSearchParams):
+    j_obj = {
+        "data": "Ошибка поиска сайтов пользователя",
+        "error": 400,
+    }
+
+    sites: Sites = db_site_search(0, params.pattern)
+
+    if sites:
+        j_obj["data"] = json.dumps(sites, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+    )
+
+
+@router.post("/site-vote-get")
+async def site_get(params: SiteGetParams):
+    j_obj = {
+        "data": "Ошибка поиска натроек сайта",
+        "error": 400,
+    }
+
+    site: Sites = db_site_get(0, params.sid)
+
+    if site:
+        j_obj["data"] = json.dumps(site, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+    )
+
+
+@router.post("/vote-types")
+async def vote_types():
+    j_obj = {
+        "data": "Ошибка запроса типа голоса",
+        "error": 400,
+    }
+
+    vote_type: VoteType = db_vote_type()
+
+    if vote_type:
+        j_obj["data"] = json.dumps(vote_type, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+    )
+
+
+@router.post("/site-top")
+async def site_top(params: SiteTopParams):
+    j_obj = {
+        "data": "Ошибка запроса рейтинга сайтов",
+        "error": 400,
+    }
+
+    sites: Sites = db_site_top()
+
+    if sites:
+        j_obj["data"] = json.dumps(sites[0:params.top-1], cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
     )
 
 
