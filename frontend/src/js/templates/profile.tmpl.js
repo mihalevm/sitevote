@@ -66,7 +66,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     <div class="mb-3">
       <label for="profile-email" class="form-label">${email}</label>
       <input id="profile-email" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email" required>
-      <div id="profile-e-inv" class="invalid-feedback">        П
+      <div id="profile-e-inv" class="invalid-feedback">
       </div>
     </div>          
     <div class="mb-3">

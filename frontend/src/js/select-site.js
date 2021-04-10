@@ -2,7 +2,7 @@ import config from '../config/config.json'
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify } from './lib/auth';
+import { checkAuth, siteVerify, siteSave } from './lib/auth';
 
 const container = () => `
 <div class="container">
@@ -26,7 +26,6 @@ createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
 createAddSite('#select-site-con');
-createCards('#cards-list');
 createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
@@ -38,9 +37,23 @@ $('#sites-cards-search').on('keyup', function() {
 
 checkAuth().done(function(data) {
   userLogged();
+  createCards('#cards-list');
+  
+  const clearAddSiteValues = () => {
+    $('#add-site-form input').each(function() {
+      $(this).val('');
+    });
+    $('#add-site-description').val('');
+    $('#add-site-form').removeAttr('data-sid');
+    $('.modal-title').text('Добавить сайт');
+  };
+  
+  $('#add-site-close').on('click', function() {
+    clearAddSiteValues();
+  });
 
   $('#add-site-check').on('click', function(e) {
-    e.preventDefault();
+    e.preventDefault();    
     if($('#add-site-url').val().length !== 0) {
       const url = $('#add-site-url').val();
       const req = siteVerify({url: url});
@@ -59,6 +72,7 @@ checkAuth().done(function(data) {
       req.done(function(data) {
         let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
         let srcBig = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.large : data.data.large;
+        console.log(src);
         const bigImgModal = `
         <div class="modal fade" id="big-img" aria-hidden="true" aria-labelledby="..." tabindex="-1">
         <div class="modal-dialog modal-xl">
@@ -97,20 +111,28 @@ checkAuth().done(function(data) {
       $('#add-site-url').addClass('is-invalid');
     }  
   });
-  $('#add-site-save').on('click', function(e) {
-    e.preventDefault();
+
+  $('#add-site-form').on('submit', function(e) {
+    e.preventDefault();    
     const newSite = {
-      sid: $('#add-site-modal').data('sid'),
+      sid: parseInt($('#add-site-form').data('sid')),
       site_desc: $('#add-site-description').val(),
       site_url: $('#add-site-url').val(),
       short_link: $('#add-uniq-url').val(),
       img_link: $('#add-site-img').data('origin')
-    };
-
-    // $.each(newSite, function(index, value) {
-
-    // });
-    console.log(newSite);
+    };    
+    if(newSite.site_url.length != 0) {
+      siteSave(newSite).done(function() {
+        $('#add-site-form input').each(function() {
+          $(this).val('');
+        });
+        $('#add-site-description').val('');
+        $('#add-site-form').removeAttr('data-sid');
+        $('.modal-title').text('Добавить сайт');
+      });
+    } else {
+      $('#add-site-url').addClass('is-invalid');
+    }    
   });
 }).fail(function(data) {
   console.log('fail', data);

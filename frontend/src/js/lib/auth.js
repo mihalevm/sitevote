@@ -45,7 +45,6 @@ export const siteVerify = (data) => sendAjax('POST', '/site-verify', saveTokenTo
 export const siteSave = (data) => sendAjax('POST', '/site-save', saveTokenToStorage, messageToConsole, data);      // Not working
 export const siteGet = (data) => sendAjax('POST', '/site-get', saveTokenToStorage, messageToConsole, data);       // Not working
 export const siteStats = (data) => sendAjax('POST', '/site-stats', saveTokenToStorage, messageToConsole, data);   // Not working
-
 export const logIn = (username, password) => $.ajax({
   type: "POST",
   url: URL + "/login",
