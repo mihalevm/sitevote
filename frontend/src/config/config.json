@@ -16,18 +16,6 @@
     "byNumber": "По номеру телефона",
     "byEmail": "По Email"
   },
-  "cards_tmpl" : {
-    "h1":"Абвгедейка",
-    "h2":"Винни-Пух",
-    "h3":"Лось и белки",
-    "h4":"Дед Мороз",
-    "h6":"Снегурочка",
-    "h7":"Снежная королева",
-    "h8":"Зайцы",
-    "h9":"Зайцы-2",
-    "h10":"Снежная королева-2",
-    "h11":"Винни-Пух-2"
-  },
   "index" : {
     "page_title": "Конкурс сайтов",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -71,6 +59,18 @@
       "parent":"Родитель",
       "teacher":"Педагог",
       "maecenas":"Меценат"
+    }
+  },
+  "validationMessages": {
+    "email": {
+      "format_err": "Формат Email не корректен, правильный формат: index@google.com",
+      "email_empty_err": "Поле Email не может быть пустым."
+    },
+    "password": {
+      "password_empty_err": "Поле Пароль не может быть пустым"
+    },
+    "authentication": {
+      "unauthorized": "Комбинация логина и пароля не верна. Попробуйте заново."
     }
   }
 }

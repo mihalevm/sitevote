@@ -2,7 +2,7 @@ import config from './config/config.json';
 import { createAuthWindow, createHeader, createFooter, userLogged } from './js/templates/main.tmpl';
 import { createSiteAwards, createDescription } from './js/templates/index.tmpl';
 import './styles/style.scss';
-import { checkAuth } from './js/lib/auth';
+import { checkAuth } from './js/lib/clientRequests';
 
 const container = () => `
 <div id="index-main" class="container">

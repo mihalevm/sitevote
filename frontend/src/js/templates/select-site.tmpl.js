@@ -1,5 +1,5 @@
 import config from '../../config/config.json';
-import { siteStats, siteGet } from '../lib/auth';
+import { siteStats, siteGet } from '../lib/clientRequests';
 export const createCards = (el) => {
 
 const tmpl = (id, img_link, url, description, short_link) => `
@@ -7,7 +7,7 @@ const tmpl = (id, img_link, url, description, short_link) => `
 <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#add-site-modal" class="card" style="width: 18rem;">
   <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
   <div class="card-body">
-    <h6 class="card-title">${url}</h6>
+    <h6 class="card-title"></h6>
     <p class="card-text">${description}</p>    
   </div>
 </div>
@@ -42,13 +42,15 @@ const tmpl = (id, img_link, url, description, short_link) => `
       $(this).on('click', function() {        
         const id = $(this).data('sid');        
         siteGet({sid: id}).done(function(data) {
-          const site = JSON.parse(data.data);
+          const site = JSON.parse(data.data);          
           $('#add-site-form').attr('data-sid', site.id);
           for(let v in site) {            
-            $(`input[name="${v}"]`).val(site[v]);
+            $(`input[name="${v}"]`).val(site[v]);            
           }
+          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);
           $('#add-site-description').val(site.site_desc)
-          $('.modal-title').text(site.site_url);
+          $('.modal-title').text('Редактирование сайта');
+          $('#dummy-svg').hide();
         });
       });
     });
@@ -79,16 +81,17 @@ export const createAddSite = (el) => {
           </div>
         </div>
         <div id="img-con" class="mb-3">
-          <img id="add-site-img" src="" alt="test" class="img-fluid pb-3">
-          <div id="access-check-con" class="row">
-            <div class="col">
-              <button id="add-site-check" class="btn btn-primary">${access_check}</button>
-            </div>            
-          </div>          
+          <img id="add-site-img" src="" class="img-fluid pb-3">
+          <svg id="dummy-svg" class="bd-placeholder-img pb-3" width="466" height="326" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <title>Placeholder</title>
+            <rect width="100%" height="100%" fill="#868e96"></rect>
+            <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Картинка сайта</text>
+          </svg>          
+          <button id="add-site-check" class="btn btn-primary">${access_check}</button>          
         </div>
         <div class="mb-3">
           <label for=add-site-description" class="form-label">${description}</label>          
-          <textarea id="add-site-description" name="site_desc" class="form-control" placeholder="Описание сайта" style="height: 100px"></textarea>
+          <textarea id="add-site-description" name="site_desc" class="form-control" placeholder="Добавьте описание сайта" style="height: 100px"></textarea>
         </div>
         <div class="input-group mb-3">
           <span for="add-uniq-url" class="input-group-text">${uniq_url}</span>
@@ -96,7 +99,7 @@ export const createAddSite = (el) => {
         </div>
       </div>
       <div class="modal-footer">        
-        <button id="add-site-save" type="submit" class="btn btn-primary" data-bs-dismiss="modal">${save}</button>
+        <button id="add-site-save" type="submit" class="btn btn-primary">${save}</button>
       </div>
       </form> 
     </div>

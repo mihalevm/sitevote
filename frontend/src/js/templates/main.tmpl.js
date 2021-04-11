@@ -1,6 +1,7 @@
 import config from '../../config/config.json';
 import { Tabs } from 'bootstrap';
-import { logIn, logOut } from '../lib/auth';
+import { logIn, logOut } from '../lib/clientRequests';
+import { emailValidationEvent, passwordValidationEvent } from '../lib/events';
 
 export const userLogged = () => {
   const menuLink = $('#auth-modal-enter-link');
@@ -37,13 +38,14 @@ export const createAuthWindow = (el) => {
               <label for="auth-modal-email" class="form-label">${email}</label>
               <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
               <div id="email-hint" class="form-text">${hint}</div>
-              <div class="invalid-feedback">
-                Поле Email не может быть пустым
+              <div id="auth-e-inv" class="invalid-feedback">                
               </div>
             </div>
             <div class="mb-3">
               <label for="auth-modal-email-pass" class="form-label">${pass}</label>
-              <input type="password" class="form-control" id="auth-modal-email-pass" required>                  
+              <input type="password" class="form-control" id="auth-modal-email-pass" required>
+              <div id="pass-e-inv" class="invalid-feedback">                
+              </div>
             </div>
           </div>
           <div class="tab-pane fade p-3" id="auth-number-tab" role="tabpanel" aria-labelledby="number-tab">
@@ -62,7 +64,7 @@ export const createAuthWindow = (el) => {
         </div>
       </div>
       <div class="modal-footer">
-        <button id="auth-modal-enter" type="submit" class="btn btn-primary" data-bs-dismiss="modal">${enter}</button>
+        <button id="auth-modal-enter" type="submit" class="btn btn-primary">${enter}</button>
       </div>
     </div>
   </div>
@@ -78,33 +80,64 @@ export const createAuthWindow = (el) => {
     number: config.auth_tmpl.number,
     byNumber: config.auth_tmpl.byNumber,
     byEmail: config.auth_tmpl.byEmail,
-  }));
-  
-  $('#auth-modal-close').on('click', function() {
-    $('#auth-modal').hide();
+  }));  
+
+  $('#auth-modal-email').on('keydown', function(e) {
+    if(e.key && e.key.toLowerCase() == 'enter') {
+      emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
+    }
+  });
+  $('#auth-modal-email').on('keyup', function() {
+    emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
   });
   $('#auth-modal-enter').on('click', function() {
-    // Two classes active and show
     if($('#auth-email-tab').hasClass('show')) {
       const email = $('#auth-modal-email').val();
-      const pass = $('#auth-modal-email-pass').val();      
-      // For view
-      logIn(email, pass).done(function() {        
-        userLogged();
-      }).fail(function() {
-        console.log('fail');
-      });
+      const pass = $('#auth-modal-email-pass').val();
+
+      if(email.length != 0 && pass.length != 0) {
+        // DRY
+        logIn(email, pass).done(function() {        
+          userLogged();
+        }).fail(function(data) {
+          const errMsg = data.responseJSON.detail;
+          if(errMsg === 'User UNAUTHORIZED') {
+            $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
+            $('#auth-modal-email').addClass('is-invalid');
+          };        
+        });
+      } else {
+        // errorMsg
+      }
     } else {
       // const number = $('#auth-modal-number').val();
       // const pass = $('#auth-modal-number-pass').val();      
       // console.log(number, pass);
     }
   });
+  $('#auth-modal-email-pass').on('keydown', function(e) {
+    const email = $('#auth-modal-email').val();
+    const pass = $('#auth-modal-email-pass').val();
+    
+    if(e.key && e.key.toLowerCase() == 'enter') {
+      if(passwordValidationEvent(this, '#auth-modal-enter', '#pass-e-inv')) {
+        // DRY
+        logIn(email, pass).done(function() {        
+          userLogged();
+        }).fail(function(data) {
+          const errMsg = data.responseJSON.detail;
+          if(errMsg === 'User UNAUTHORIZED') {
+            $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
+            $('#auth-modal-email').addClass('is-invalid');
+          };        
+        });
+      }
+    }
+  })
 };
 
-export const createHeader = (el) => {
-  // profile gonna be visible only after user autorize
-  const tmpl = ({title, enter, select, vote, profile}) => `
+export const createHeader = (el) => {  
+  const tmpl = ({title, enter}) => `
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
       <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
