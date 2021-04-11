@@ -120,19 +120,15 @@ checkAuth().done(function(data) {
       site_url: $('#add-site-url').val(),
       short_link: $('#add-uniq-url').val(),
       img_link: $('#add-site-img').data('origin')
-    };    
-    if(newSite.site_url.length != 0) {
-      siteSave(newSite).done(function() {
-        $('#add-site-form input').each(function() {
-          $(this).val('');
-        });
-        $('#add-site-description').val('');
-        $('#add-site-form').removeAttr('data-sid');
-        $('.modal-title').text('Добавить сайт');
+    };     
+    siteSave(newSite).done(function() {
+      $('#add-site-form input').each(function() {
+        $(this).val('');
       });
-    } else {
-      $('#add-site-url').addClass('is-invalid');
-    }    
+      $('#add-site-description').val('');
+      $('#add-site-form').removeAttr('data-sid');
+      $('.modal-title').text('Добавить сайт');
+    });    
   });
 }).fail(function(data) {
   console.log('fail', data);

@@ -96,7 +96,7 @@ export const createAddSite = (el) => {
         </div>
       </div>
       <div class="modal-footer">        
-        <button id="add-site-save" type="submit" class="btn btn-primary" data-bs-dismiss="modal">${save}</button>
+        <button id="add-site-save" type="submit" class="btn btn-primary">${save}</button>
       </div>
       </form> 
     </div>

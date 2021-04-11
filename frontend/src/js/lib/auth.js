@@ -35,16 +35,24 @@ const sendAjax = (type, path, successCallback, errorCallback, data) => {
   return $.ajax(ajaxParams);
 }; 
 
+// export const logIn = (data) => {  
+//   data.password = sha256(data.password).toString();  
+//   return sendAjax('POST', '/login', saveTokenToStorage, messageToConsole, data);
+// };
+export const logOut = () => {
+  localStorage.clear();
+  window.location.replace('/');
+};
 export const checkAuth = () => sendAjax('GET', '/authtest', saveTokenToStorage, redirectToIndex);
 export const loadProfile = () => sendAjax('POST', '/profile-get', saveTokenToStorage, messageToConsole);
 export const updateProfile = (data) => {  
   data.password = sha256(data.password).toString();  
   return sendAjax('POST', '/profile-save', saveTokenToStorage, messageToConsole, data);
-}
+};
 export const siteVerify = (data) => sendAjax('POST', '/site-verify', saveTokenToStorage, messageToConsole, data);
-export const siteSave = (data) => sendAjax('POST', '/site-save', saveTokenToStorage, messageToConsole, data);      // Not working
-export const siteGet = (data) => sendAjax('POST', '/site-get', saveTokenToStorage, messageToConsole, data);       // Not working
-export const siteStats = (data) => sendAjax('POST', '/site-stats', saveTokenToStorage, messageToConsole, data);   // Not working
+export const siteSave = (data) => sendAjax('POST', '/site-save', saveTokenToStorage, messageToConsole, data);
+export const siteGet = (data) => sendAjax('POST', '/site-get', saveTokenToStorage, messageToConsole, data);
+export const siteStats = (data) => sendAjax('POST', '/site-stats', saveTokenToStorage, messageToConsole, data);
 export const logIn = (username, password) => $.ajax({
   type: "POST",
   url: URL + "/login",
@@ -61,7 +69,4 @@ export const logIn = (username, password) => $.ajax({
   }
 });
 
-export const logOut = () => {
-  localStorage.clear();
-  window.location.replace('/');
-};
+
