@@ -2,7 +2,7 @@ import config from '../config/config.json'
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave } from './lib/auth';
+import { checkAuth, siteVerify, siteSave } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -40,6 +40,7 @@ checkAuth().done(function(data) {
   createCards('#cards-list');
   
   const clearAddSiteValues = () => {
+    // DRY
     $('#add-site-form input').each(function() {
       $(this).val('');
     });
@@ -115,6 +116,7 @@ checkAuth().done(function(data) {
   $('#add-site-form').on('submit', function(e) {
     e.preventDefault();    
     const newSite = {
+      // Refactoring
       sid: parseInt($('#add-site-form').data('sid')),
       site_desc: $('#add-site-description').val(),
       site_url: $('#add-site-url').val(),
@@ -122,6 +124,7 @@ checkAuth().done(function(data) {
       img_link: $('#add-site-img').data('origin')
     };     
     siteSave(newSite).done(function() {
+      // DRY
       $('#add-site-form input').each(function() {
         $(this).val('');
       });

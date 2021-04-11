@@ -1,5 +1,5 @@
 import config from '../../config/config.json';
-import { siteStats, siteGet } from '../lib/auth';
+import { siteStats, siteGet } from '../lib/clientRequests';
 export const createCards = (el) => {
 
 const tmpl = (id, img_link, url, description, short_link) => `

@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createVote, createShare } from './templates/vote.tmpl';
-import { checkAuth } from './lib/auth';
+import { checkAuth } from './lib/clientRequests';
 
 import '../styles/style.scss';
 const container = () => `
