@@ -41,28 +41,8 @@ checkAuth().done(function(data) {
     formFields = formFields.reduce((obj, i) => {      
       obj[i.name] = i.value;
       return obj;
-    }, {});
-    
-    if(formFields.email) {
-    // Email required field
-    updateProfile(formFields);
-    // .done(() => {
-    // let form = $('#profile-edit-form');
-    // // Need to change
-    // const alertMessage = `
-    // <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    //   <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-    //   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    // </div>
-    // `;
-    // form.removeClass('was-validated');
-    // form.append(alertMessage);
-    // });    
-    } else {
-      $('#profile-e-inv').text(config.validationMessages.email.email_empty_err);
-      $('#profile-email').addClass('is-invalid');
-      $('#profile-save').attr('disabled', true);
-    }    
+    }, {});    
+    updateProfile(formFields);     
   });
 }).fail(function(data) {
   console.log('fail', data);

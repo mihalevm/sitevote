@@ -71,7 +71,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     </div>          
     <div class="mb-3">
       <label for="profile-number" class="form-label">${number}</label>
-      <input id="profile-number" name="phone" type="text" class="form-control" placeholder="+7(999)999-77-88" aria-label="number" aria-describedby="profile-number">
+      <input id="profile-number" name="phone" type="text" class="form-control" placeholder="89998887766" aria-label="number" aria-describedby="profile-number">
     </div>
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
@@ -154,7 +154,8 @@ const tmpl = () => `
               <th>Место</th>
               <th>Название сайта</th>
               <th>Кол-во голосов</th>
-              <th>Распостранить</th>              
+              <th>Распостранить</th>
+              <th>Удалить</th>
             </tr>
           </thead>
           <tbody>
@@ -163,12 +164,14 @@ const tmpl = () => `
               <td>Винни-Пух</td>
               <td>100</td>
               <td><div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp" data-url="https://localhost:8080"></div></td>
+              <td><a href="#">Удалить</a></div></td>
             </tr>
             <tr>
               <td>2</td>
               <td>Лось и белки</td>
               <td>99</td>
-              <td><div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div></td>              
+              <td><div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div></td>
+              <td><a href="#">Удалить</a></div></td>
             </tr>           
           </tbody>
         </table>
