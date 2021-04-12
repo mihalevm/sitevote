@@ -26,6 +26,7 @@ document.title = config.select_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
+createAddSite('#select-site-con');
 createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {

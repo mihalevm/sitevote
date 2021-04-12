@@ -2,7 +2,7 @@ import config from '../../config/config.json';
 
 export const createSiteAwards = (el) => {
   const tmpl = ({card_title, card_text}) => `
-  <div class="card-group pt-5">
+  <div class="card-group pt-5 g-4">
   <div class="card">
     <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
     <div class="card-body">

@@ -16,6 +16,7 @@ module.exports = {
   entry: {    
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
+    'profile-select-site': './src/js/profile-select-site.js',  
     'select-site': './src/js/select-site.js',    
     'vote': './src/js/vote.js',
     'share': './src/vendors/share.js'
@@ -108,6 +109,16 @@ module.exports = {
       inject: 'body',
       chunks: ['select-site'],
       filename: 'pages/select-site.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/profile-select-site.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['profile-select-site'],
+      filename: 'pages/profile-select-site.html'
     }),
     new HtmlWebpackPlugin({      
       template: './src/pages/vote.html',

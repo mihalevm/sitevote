@@ -177,13 +177,17 @@ const tmpl = ({place, site_url, ratings, share, del_site}) => `
   }));
 };
 
-export const createUserSites = (el) => {  
+export const createUserSites = (el) => { 
+  // Проблема не загружаемом скрипте 
   const tmpl = ({id, url, fast_rait}) => `
   <tr>
     <td>1</td>
     <td>${url}</td>
     <td>${fast_rait}</td>
-    <td><div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td>
+    <td>
+      <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
+      </div>
+    </td>
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
@@ -192,8 +196,8 @@ export const createUserSites = (el) => {
     const sites = JSON.parse(data.data);
     $.each(sites, function(i, v) {
       tableRows = tableRows + tmpl({id: v.id, url: v.site_url, fast_rait: v.fast_rait});
-    });
-    $(el).append(tableRows)
+    });    
+    $(el).append(tableRows);
   });  
 }; 
   

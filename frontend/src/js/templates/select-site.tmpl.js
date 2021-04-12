@@ -14,9 +14,8 @@ const tmpl = (id, img_link, url, description, short_link) => `
 </div>
 `;
   siteStats().done(function(data) {
-    // sid == id
-    const sites = JSON.parse(data.data);
-    // console.log(sites);
+    
+    const sites = JSON.parse(data.data);    
     let counter = 1;
     let cards = '';
     const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
