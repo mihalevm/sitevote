@@ -1,6 +1,6 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
-import { createProfileTabs, createProfile, createStatistics, createChart } from './templates/profile.tmpl';
+import { createProfileTabs, createProfile, createStatistics, createChart, createUserSites } from './templates/profile.tmpl';
 import { createSiteAwards } from './templates/index.tmpl';
 import { checkAuth, loadProfile, updateProfile } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
@@ -24,6 +24,8 @@ createChart('#statistics-tab');
 
 checkAuth().done(function(data) {
   userLogged();
+  createUserSites('#sites-table tbody');
+  
   loadProfile().done(function(data) {
     const parsed = JSON.parse(data.data);
     $('#profile-fio').val(parsed.fullname);

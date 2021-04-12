@@ -13,11 +13,12 @@ const fileName = ext => isDev ? `[name].bundle.${ext}` : `[name].bundle.[fullhas
 
 module.exports = {  
   mode: 'development',  
-  entry: {
+  entry: {    
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
     'select-site': './src/js/select-site.js',    
-    'vote': './src/js/vote.js', 
+    'vote': './src/js/vote.js',
+    'share': './src/vendors/share.js'
   },  
   output: {
     filename: `scripts/${fileName('js')}`,
@@ -95,7 +96,7 @@ module.exports = {
         collapseWhitespace: isProd
       },
       inject: 'body',
-      chunks: ['profile'],
+      chunks: ['share','profile'],
       filename: 'pages/profile.html'
     }),
     new HtmlWebpackPlugin({      
@@ -115,7 +116,7 @@ module.exports = {
         collapseWhitespace: isProd
       },
       inject: 'body',
-      chunks: ['vote'],
+      chunks: ['share','vote'],
       filename: 'pages/vote.html'
     }),
     new MiniCssExtractPlugin({
@@ -136,7 +137,7 @@ module.exports = {
           to: path.resolve(__dirname, 'dist/img')
         },  
       ]
-    }),
+    }),    
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',

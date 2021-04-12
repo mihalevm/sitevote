@@ -1,4 +1,5 @@
 import config from '../config/config.json'
+import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
@@ -64,8 +65,8 @@ checkAuth().done(function(data) {
       if(req.state() === 'pending') {
         $('#dummy-svg').hide();
         const spinner = `        
-        <div class="d-flex justify-content-center" width="466" height="326">
-          <div id="loading-spinner"class="spinner-border" role="status">
+        <div class="d-flex justify-content-center">
+          <div id="loading-spinner"class="spinner-border" role="status" width="466" height="326">
             <span class="visually-hidden">Loading...</span>
           </div>
         </div>        
@@ -93,8 +94,8 @@ checkAuth().done(function(data) {
     }  
   });
 
-  $('#add-site-form').on('submit', function(e) {
-    e.preventDefault();
+  $('#add-site-save').on('click', function(e) {
+    // e.preventDefault();
     if($('#add-site-url').val().length != 0) {
       const newSite = {
         // Refactoring
@@ -104,7 +105,11 @@ checkAuth().done(function(data) {
         short_link: $('#add-uniq-url').val(),
         img_link: $('#add-site-img').data('origin')
       };     
-      siteSave(newSite);
+      siteSave(newSite).done(function() {
+        let addSiteModal = new Modal(document.getElementById('add-site-modal'));
+        addSiteModal.hide();
+        console.log(addSiteModal);
+      });
     } else {
       $('#add-site-url').addClass('is-invalid');
     }  
