@@ -1,8 +1,9 @@
 import config from '../config/config.json'
+import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
-import { createAddSite, createCards } from './templates/select-site.tmpl';
+import { createCards } from './templates/select-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave } from './lib/clientRequests';
+import { checkAuth } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -25,7 +26,6 @@ document.title = config.select_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
-createAddSite('#select-site-con');
 createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
@@ -36,79 +36,7 @@ $('#sites-cards-search').on('keyup', function() {
 });  
 
 checkAuth().done(function(data) {
-  userLogged();
-  createCards('#cards-list');
-  
-  const clearAddSiteValues = () => {
-    // DRY
-    $('#add-site-form input').each(function() {
-      $(this).val('');
-    });
-    $('#add-site-description').val('');
-    $('#add-site-form').removeAttr('data-sid');
-    $('.modal-title').text('Добавить сайт');
-    $('#add-site-img').attr('src', '');
-    $('#dummy-svg').show();
-  };
-  
-  $('#add-site-close').on('click', function() {
-    clearAddSiteValues();
-  });
-
-  $('#add-site-check').on('click', function(e) {
-    e.preventDefault();    
-    if($('#add-site-url').val().length !== 0) {
-      const url = $('#add-site-url').val();
-      const req = siteVerify({url: url});
-  
-      if(req.state() === 'pending') {
-        $('#dummy-svg').hide();
-        const spinner = `        
-        <div class="d-flex justify-content-center" width="466" height="326">
-          <div id="loading-spinner"class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>        
-        `;
-        $('#img-con').prepend(spinner);        
-      }
-  
-      req.done(function(data) {
-        let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
-        
-        $('#add-site-img').attr('src', src);        
-        $('#add-site-img').attr('data-origin', data.data.origin);
-        $('#loading-spinner').remove();        
-      }).fail(function(data) {
-        $('#loading-spinner').remove();
-        const alertMsg = `
-          <div class="alert alert-primary" role="alert">
-            Картинка не может быть загружена. Функция проверки не работает.
-          </div>
-        `;
-        $('#img-con').prepend(alertMsg);
-      });
-    } else {
-      $('#add-site-url').addClass('is-invalid');
-    }  
-  });
-
-  $('#add-site-form').on('submit', function(e) {
-    e.preventDefault();
-    if($('#add-site-url').val().length != 0) {
-      const newSite = {
-        // Refactoring
-        sid: parseInt($('#add-site-form').data('sid')),
-        site_desc: $('#add-site-description').val(),
-        site_url: $('#add-site-url').val(),
-        short_link: $('#add-uniq-url').val(),
-        img_link: $('#add-site-img').data('origin')
-      };     
-      siteSave(newSite);
-    } else {
-      $('#add-site-url').addClass('is-invalid');
-    }  
-  });
+  userLogged();  
 }).fail(function(data) {
   console.log('fail', data);
 });

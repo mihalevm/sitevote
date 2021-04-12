@@ -1,7 +1,7 @@
 import config from '../../config/config.json';
 import { siteStats, siteGet } from '../lib/clientRequests';
-export const createCards = (el) => {
 
+export const createCards = (el) => {
 const tmpl = (id, img_link, url, description, short_link) => `
 <div class="col g-4">
 <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#add-site-modal" class="card" style="width: 18rem;">
@@ -14,9 +14,8 @@ const tmpl = (id, img_link, url, description, short_link) => `
 </div>
 `;
   siteStats().done(function(data) {
-    // sid == id
-    const sites = JSON.parse(data.data);
-    console.log(sites);
+    
+    const sites = JSON.parse(data.data);    
     let counter = 1;
     let cards = '';
     const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
@@ -70,9 +69,8 @@ export const createAddSite = (el) => {
       <div class="modal-header">
         <h5 class="modal-title">Добавить сайт</h5>
         <button id="add-site-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="add-site-form" data-sid="0">
-      <div class="modal-body" >
+      </div>      
+      <div id="add-site-form" data-sid="0" class="modal-body" >
         <div class="mb-3">
           <label for="add-site-url" class="form-label">${url}</label>
           <input id="add-site-url" name="site_url" type="text" class="form-control" placeholder="https://google.com" aria-label="add-site-url" aria-describedby="add-site-url">
@@ -100,8 +98,7 @@ export const createAddSite = (el) => {
       </div>
       <div class="modal-footer">        
         <button id="add-site-save" type="submit" class="btn btn-primary">${save}</button>
-      </div>
-      </form> 
+      </div>      
     </div>
   </div>
 </div>
