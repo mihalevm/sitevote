@@ -133,7 +133,10 @@ checkAuth().done(function(data) {
         img_link: $('#add-site-img').data('origin')
       };     
       siteSave(newSite).done(function() {
-        // window.location.reload();
+        $('#add-site-modal').hide();
+        window.location.reload();
+      }).fail(function(data) {
+
       });
     } else {
       $('#add-site-url').addClass('is-invalid');
