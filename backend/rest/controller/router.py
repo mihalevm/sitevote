@@ -87,7 +87,7 @@ class SiteVerifyParams(BaseModel):
 
 
 class SiteGetParams(BaseModel):
-    sid: int = Query(default=None, description="идентификатор сайта")
+    sid: int = Query(default=None, description="Идентификатор сайта")
 
 
 class SiteSearchParams(BaseModel):
@@ -95,7 +95,11 @@ class SiteSearchParams(BaseModel):
 
 
 class SiteTopParams(BaseModel):
-    top: int = Query(default=None, description="Колличество лидирующих сайтов")
+    top: int = Query(default=None, gt=0, le=10,  description="Колличество лидирующих сайтов")
+
+
+class AccountConfirmParams(BaseModel):
+    confirm_hash: str = Query(default=None, max_length=64, description="Строка-хеш подтверждения")
 
 
 config: Configuration = Configuration('server.ini')
@@ -280,6 +284,21 @@ def db_site_top() -> Sites:
     return sites
 
 
+def db_confirm_account(chash: str) -> Users:
+    try:
+        user: Users = DBH.query(Users).filter(Users.chash == chash).first()
+        if user:
+            user.chash = ''
+            user.verified = 'Y'
+            DBH.commit()
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        user = Users()
+        log.error('[Rest] DB connection error: %s', exc)
+
+    return user
+
+
 def authenticate_user(email: str, password: str) -> Users:
     user_account = get_web_user(email)
 
@@ -425,6 +444,31 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
     return JSONResponse(
         content={'token': token, 'type': 'bearer'},
+        headers={
+            'x-auth-token': token
+        }
+    )
+
+
+@router.post("/account-confirm")
+async def account_confirm(chash: AccountConfirmParams):
+    user: Users = db_confirm_account(chash.confirm_hash)
+    token: str = ''
+    error: int = 400
+
+    if user:
+        token = create_access_token(
+            data={"sub": user.email},
+            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        )
+        error = 200
+
+    return JSONResponse(
+        content={
+            'token': token,
+            'type': 'bearer',
+            'error': error
+        },
         headers={
             'x-auth-token': token
         }
@@ -697,6 +741,5 @@ async def site_top(params: SiteTopParams):
     return JSONResponse(
         content=j_obj,
     )
-
 
 __all__ = ['router']

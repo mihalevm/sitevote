@@ -1,4 +1,7 @@
 import os
+import time
+
+from secrets import token_hex
 
 from sqlalchemy import create_engine
 from sqlalchemy.pool import QueuePool
@@ -7,13 +10,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 
 from rest.lib.config import Configuration
-from rest.model.Sites import Sites
+from rest.lib.emailtemplates import TEmailConfirm
+from rest.lib.emailclient import send_confirmation
+from rest.model.Users import Users
 
 
 if __name__ == "__main__":
     config: Configuration = Configuration(os.path.dirname(os.path.abspath(__file__))+'/server.ini')
-    router_config = config.get_section('ROUTER')
     db_config = config.get_section('DATABASE')
+    rest_config = config.get_section('REST')
+    DBH = None
 
     engine = create_engine(f"mysql://"
                            f"{db_config['username']}:"
@@ -33,28 +39,29 @@ if __name__ == "__main__":
     try:
         engine.connect()
     except SQLAlchemyError as exc:
-        log.error('[STORAGE GRABBER] External DB connection error: %s', exc)
+        log.error('[EMAIL CONFIRMATION] External DB connection error: %s', exc)
     else:
         base = declarative_base()
         base.metadata.bind = engine
         db_session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
         DBH = db_session()
 
-    dir_files = [x for x in os.listdir(router_config['image_storage_dir']) if x.endswith("_small.png")]
-    sites: Sites = DBH.query(Sites.img_link).all()
+    users = DBH.query(Users).all()
+
+    for user in users:
+        if user.verified == 'N':
+            confirm_hash: str = token_hex(32)
+            confirmation: TEmailConfirm = TEmailConfirm(
+                confirm_hash=confirm_hash,
+                user_name=user.fullname,
+                to=user.email,
+                site_url=rest_config['site_url']
+            )
+
+            time.sleep(2)
+            if send_confirmation(confirmation):
+                user.verified = 'S'
+                user.chash = confirm_hash
+
+    DBH.commit()
     DBH.close()
-
-    for file in dir_files:
-        file = file.replace('_small.png', '')
-        has_file: bool = False
-        for site in sites:
-            if file.lower() == site.img_link.lower():
-                has_file = True
-        if not has_file:
-            os.remove(router_config['image_storage_dir']+'/'+file+'_small.png')
-            os.remove(router_config['image_storage_dir']+'/'+file+'.png')
-
-
-
-
-

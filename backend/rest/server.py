@@ -1,7 +1,8 @@
+import os
 import uvicorn
 from rest.lib.config import Configuration
 
-config: Configuration = Configuration('server.ini')
+config: Configuration = Configuration(os.path.dirname(os.path.abspath(__file__))+'/server.ini')
 rest_config = config.get_section('REST')
 
 if __name__ == "__main__":

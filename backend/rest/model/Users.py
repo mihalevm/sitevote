@@ -28,6 +28,7 @@ class Users(PrefixBase):
     user_desc = Column(VARCHAR(512), nullable=True, comment="Краткое описание")
     disabled = Column(CHAR(1), default=text('N'), comment="Признак блокировки аккаунта")
     verified = Column(CHAR(1), default=text('N'), comment="Признак верификации аккаунта")
+    chash = Column(VARCHAR(64), nullable=True, comment="Хеш подтверждения аккаунта")
     create_date = Column(TIMESTAMP, nullable=False, default=func.now(), comment="Дата создания аккаунта")
 
     def __init__(self):
