@@ -3,7 +3,7 @@ import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createCards } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth } from './lib/clientRequests';
+import { checkAuth, siteSearch } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -15,7 +15,7 @@ const container = () => `
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="cards-list" class="container pt-5 pb-5">      
+    <div id="all-sites-list" class="container pt-5 pb-5">      
     </div>
   </main>
 </div>
@@ -27,16 +27,21 @@ createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
 createFooter(document.body);
+siteSearch({pattern: ""}).done(function(data) {
+  const allSites = JSON.parse(data.data);
+  const cards = createCards(allSites, 'get-the-vote');
+  $('#all-sites-list').append(cards);
+});
 
 $('#sites-cards-search').on('keyup', function() {
   let value = $(this).val().toLowerCase();
-  $('#cards-list div.col').filter(function() {
+  $('#all-sites-list div.col').filter(function() {
     $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
 });  
 
 checkAuth().done(function(data) {
-  userLogged();  
+  userLogged();
 }).fail(function(data) {
   console.log('fail', data);
 });

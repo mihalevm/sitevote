@@ -30,11 +30,11 @@ export const createSiteAwards = (el) => {
 </div>
   `;
 
-  siteTop({top: 0}).done(function(data) {
-    // Top 3 site-Top 18
-    const top10 = JSON.parse(data.data);
-    console.log('get top sites');
-  })
+  // siteTop({top: 0}).done(function(data) {
+  //   // Top 3 site-Top 18
+  //   const top10 = JSON.parse(data.data);
+  //   console.log('get top sites');
+  // })
 
   $(el).append(tmpl({
     card_title: config.index.sites[0].card_title, 

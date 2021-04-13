@@ -15,7 +15,7 @@ const container = () => `
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="cards-list" class="container pt-5 pb-5">      
+    <div id="profile-sites-list" class="container pt-5 pb-5">      
     </div>
   </main>
 </div>
@@ -31,7 +31,7 @@ createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
   let value = $(this).val().toLowerCase();
-  $('#cards-list div.col').filter(function() {
+  $('#profile-sites-list div.col').filter(function() {
     $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
 });
@@ -40,10 +40,10 @@ checkAuth().done(function(data) {
   userLogged();
   siteStats().done(function(data) {
     const sites = JSON.parse(data.data);        
-    const cards = createCards(sites);
-    $('#cards-list').append(cards);
+    const cards = createCards(sites, 'add-site-modal');
+    $('#profile-sites-list').append(cards);
   }).done(function() {
-    $('.card').each(function() {
+    $('#profile-sites-list > div.card').each(function() {
       $(this).on('click', function() {        
         const id = $(this).data('sid');        
         siteGet({sid: id}).done(function(data) {
