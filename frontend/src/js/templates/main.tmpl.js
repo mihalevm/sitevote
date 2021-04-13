@@ -1,5 +1,6 @@
 import config from '../../config/config.json';
 import { Tabs } from 'bootstrap';
+// Need refactoring this
 import { logIn, logOut } from '../lib/clientRequests';
 import { emailValidationEvent, passwordValidationEvent } from '../lib/events';
 
@@ -13,7 +14,7 @@ export const userLogged = () => {
     logOut();
   });
   $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
-  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile-select-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
+  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile-add-edit-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
 };
 
 export const createAuthWindow = (el) => {  
@@ -144,7 +145,7 @@ export const createHeader = (el) => {
       <span class="fs-4">${title}</span>
     </a>
     <ul id="menu-list" class="nav nav-pills">
-      <li class="nav-item"><a href="/pages/select-site.html" class="nav-link">Посмотреть все сайты</a></li>            
+      <li class="nav-item"><a href="/pages/vote.html" class="nav-link">Голосование</a></li>            
       <li class="nav-item"><a id="auth-modal-enter-link" href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#auth-modal">${enter}</a></li>
     </ul>
   </header>
@@ -166,3 +167,40 @@ export const createFooter = (el) => {
 `;
   $(el).append(tmpl());
 };
+
+export const createCards = (arrayOfCards, modalId) => {
+  
+  const card = (id, img_link, url, description, short_link, modal_name) => `
+  <div class="col g-4">
+  <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card" style="width: 18rem;">
+    <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
+    <div class="card-body">
+      <h6 class="card-title"></h6>
+      <p class="card-text">${description}</p>    
+    </div>
+  </div>
+  </div>
+  `;
+  const cardsHTML = (array) => {    
+    let counter = 1;
+    let resultHTML = '';
+    const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
+    const endTag = '\n</div>\n';
+    $.each(array, function(i, v) {
+      if(counter == 1) {
+          resultHTML = resultHTML + beginTag + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);      
+        }
+        if(counter >= 2 && counter < 4) {
+          resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);
+        }        
+        if(counter == 4) {
+          resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId) + endTag;
+          counter = 1;    
+        } else {
+          counter++;
+        }
+      });
+      return resultHTML;
+    }
+  return cardsHTML(arrayOfCards);  
+}

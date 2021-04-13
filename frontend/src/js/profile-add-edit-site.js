@@ -1,9 +1,9 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
-import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
-import { createAddSite, createCards } from './templates/select-site.tmpl';
+import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
+import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave } from './lib/clientRequests';
+import { checkAuth, siteVerify, siteSave, siteStats } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -15,7 +15,7 @@ const container = () => `
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="cards-list" class="container pt-5 pb-5">      
+    <div id="profile-sites-list" class="container pt-5 pb-5">      
     </div>
   </main>
 </div>
@@ -31,14 +31,36 @@ createFooter(document.body);
 
 $('#sites-cards-search').on('keyup', function() {
   let value = $(this).val().toLowerCase();
-  $('#cards-list div.col').filter(function() {
+  $('#profile-sites-list div.col').filter(function() {
     $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
-});  
+});
 
 checkAuth().done(function(data) {
   userLogged();
-  createCards('#cards-list');
+  siteStats().done(function(data) {
+    const sites = JSON.parse(data.data);        
+    const cards = createCards(sites, 'add-site-modal');
+    $('#profile-sites-list').append(cards);
+  }).done(function() {
+    $('#profile-sites-list > div.card').each(function() {
+      $(this).on('click', function() {        
+        const id = $(this).data('sid');        
+        siteGet({sid: id}).done(function(data) {
+          const site = JSON.parse(data.data);          
+          $('#add-site-form').attr('data-sid', site.id);
+          for(let v in site) {            
+            $(`input[name="${v}"]`).val(site[v]);            
+          }
+          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);
+          $('#add-site-description').val(site.site_desc)
+          $('.modal-title').text('Редактирование сайта');
+          $('#dummy-svg').hide();
+        });
+      });
+    });
+  });
+  
   
   const clearAddSiteValues = () => {
     // DRY

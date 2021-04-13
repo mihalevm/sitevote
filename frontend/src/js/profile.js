@@ -1,10 +1,11 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
-import { createProfileTabs, createProfile, createStatistics, createChart, createUserSites, userSiteDeleteConfirm } from './templates/profile.tmpl';
+import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, userSiteDeleteConfirm } from './templates/profile.tmpl';
 import { createSiteAwards } from './templates/index.tmpl';
-import { checkAuth, loadProfile, updateProfile } from './lib/clientRequests';
+import { checkAuth, loadProfile, updateProfile, siteTop } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
+import { CategoryScale } from 'chart.js';
 
 const container = () => `
 <div id="profile-main" class="container">
@@ -25,7 +26,11 @@ userSiteDeleteConfirm('#statistics-tab');
 
 checkAuth().done(function(data) {
   userLogged();
-  createUserSites('#sites-table tbody');
+  siteTop({top:0}).done(function(data) {
+    const sites = JSON.parse(data.data);    
+    const tableRows = createSitesRows(sites);      
+    $('#sites-table tbody').append(tableRows);
+  });
   
   loadProfile().done(function(data) {
     const parsed = JSON.parse(data.data);

@@ -16,8 +16,8 @@ module.exports = {
   entry: {    
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
-    'profile-select-site': './src/js/profile-select-site.js',  
-    'select-site': './src/js/select-site.js',    
+    'profile-add-edit-site': './src/js/profile-add-edit-site.js',
+    // 'select-site': './src/js/select-site.js',    
     'vote': './src/js/vote.js',
     'share': './src/vendors/share.js'
   },  
@@ -100,25 +100,25 @@ module.exports = {
       chunks: ['share','profile'],
       filename: 'pages/profile.html'
     }),
+    // new HtmlWebpackPlugin({      
+    //   template: './src/pages/select-site.html',
+    //   minify: {
+    //     removeComments: isProd,
+    //     collapseWhitespace: isProd
+    //   },
+    //   inject: 'body',
+    //   chunks: ['select-site'],
+    //   filename: 'pages/select-site.html'
+    // }),
     new HtmlWebpackPlugin({      
-      template: './src/pages/select-site.html',
+      template: './src/pages/profile-add-edit-site.html',
       minify: {
         removeComments: isProd,
         collapseWhitespace: isProd
       },
       inject: 'body',
-      chunks: ['select-site'],
-      filename: 'pages/select-site.html'
-    }),
-    new HtmlWebpackPlugin({      
-      template: './src/pages/profile-select-site.html',
-      minify: {
-        removeComments: isProd,
-        collapseWhitespace: isProd
-      },
-      inject: 'body',
-      chunks: ['profile-select-site'],
-      filename: 'pages/profile-select-site.html'
+      chunks: ['profile-add-edit-site'],
+      filename: 'pages/profile-add-edit-site.html'
     }),
     new HtmlWebpackPlugin({      
       template: './src/pages/vote.html',

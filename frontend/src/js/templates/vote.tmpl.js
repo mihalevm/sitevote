@@ -1,4 +1,5 @@
 import config from '../../config/config.json';
+import { siteVoteGet, siteVote, voteTypes} from '../lib/clientRequests';
 
 export const createVote = (el) => {
 const tmpl = ({ site_name, img_src, img_alt, description, vote_opt }) => `
