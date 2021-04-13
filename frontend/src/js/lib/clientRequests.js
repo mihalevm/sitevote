@@ -8,13 +8,15 @@ const redirectToIndex = function() {
   }
 };
 
-const messageToConsole = function() {
-  console.log('Verify not loaded');
+const messageToConsole = (msg) => {
+  console.log(msg);
 };
 
-const saveTokenToStorage = function(data) {  
-  localStorage.token = data.token;        
-  console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
+const saveTokenToStorage = function(data) {
+  if(data.token) {
+    localStorage.token = data.token;
+    console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
+  }
 };
 
 const sendAjax = (type, path, successCallback, errorCallback, data) => {

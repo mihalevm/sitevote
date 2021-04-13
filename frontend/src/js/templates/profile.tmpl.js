@@ -142,15 +142,14 @@ export const createProfileTabs = (el) => {
     statistics: config.profile.statistics,
   }));
 };
-
+// <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
 export const createStatistics = (el) => {
 const tmpl = ({place, site_url, ratings, share, del_site}) => `
 <div class="row">
   <main>
     <div class="container pt-5">
       <div class="table-responsive">
-        <table id="sites-table" class="table table-hover table-sm">
-        <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
+        <table id="sites-table" class="table table-hover table-sm">        
           <thead>          
             <tr>
               <th>${place}</th>
