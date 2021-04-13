@@ -3,7 +3,7 @@ import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
 import { createAddSite, createCards } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave } from './lib/clientRequests';
+import { checkAuth, siteVerify, siteSave, siteStats } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -38,7 +38,29 @@ $('#sites-cards-search').on('keyup', function() {
 
 checkAuth().done(function(data) {
   userLogged();
-  createCards('#cards-list');
+  siteStats().done(function(data) {
+    const sites = JSON.parse(data.data);        
+    const cards = createCards(sites);
+    $('#cards-list').append(cards);
+  }).done(function() {
+    $('.card').each(function() {
+      $(this).on('click', function() {        
+        const id = $(this).data('sid');        
+        siteGet({sid: id}).done(function(data) {
+          const site = JSON.parse(data.data);          
+          $('#add-site-form').attr('data-sid', site.id);
+          for(let v in site) {            
+            $(`input[name="${v}"]`).val(site[v]);            
+          }
+          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);
+          $('#add-site-description').val(site.site_desc)
+          $('.modal-title').text('Редактирование сайта');
+          $('#dummy-svg').hide();
+        });
+      });
+    });
+  });
+  
   
   const clearAddSiteValues = () => {
     // DRY

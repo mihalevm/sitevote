@@ -1,8 +1,8 @@
 import config from '../../config/config.json';
-import { siteStats, siteGet } from '../lib/clientRequests';
 
-export const createCards = (el, ajaxReq) => {
-const tmpl = (id, img_link, description, short_link) => `
+export const createCards = (arrayOfCards) => {
+  
+const card = (id, img_link, description, short_link) => `
 <div class="col g-4">
 <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#add-site-modal" class="card" style="width: 18rem;">
   <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
@@ -13,61 +13,29 @@ const tmpl = (id, img_link, description, short_link) => `
 </div>
 </div>
 `;
-  // // Make card by ajax req data
-  // if(ajaxReq) {
 
-  //   ajaxReq
-  //          .done()
-  //          .done()
-  // }
-
-  const cardsHTML = (obj) => {    
+  const cardsHTML = (array) => {    
     let counter = 1;
-    let cards = '';
+    let resultHTML = '';
     const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
     const endTag = '\n</div>\n';
-    $.each(obj, function(i, v) {
+    $.each(array, function(i, v) {
       if(counter == 1) {
-        cards = cards + beginTag + tmpl(v.id, v.img_link, v.site_url, v.site_desc, v.short_link);
+        resultHTML = resultHTML + beginTag + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link);
       }
       if(counter >= 2 && counter < 4) {
-        cards = cards + tmpl(v.id, v.img_link, v.site_url, v.site_desc, v.short_link);
+        resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link);
       }        
       if(counter == 4) {
-        cards = cards + tmpl(v.id, v.img_link, v.site_url, v.site_desc, v.short_link) + endTag;
+        resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link) + endTag;
         counter = 1;    
       } else {
         counter++;
       }
     });
-    return cards;
+    return resultHTML;
   }
-
-  // $(el).append(cards);    
-
-
-  siteStats().done(function(data) {
-    const sites = JSON.parse(data.data);        
-    const cards = cardsHTML(sites);
-    $(el).append(cards);
-  }).done(function() {
-    $('.card').each(function() {
-      $(this).on('click', function() {        
-        const id = $(this).data('sid');        
-        siteGet({sid: id}).done(function(data) {
-          const site = JSON.parse(data.data);          
-          $('#add-site-form').attr('data-sid', site.id);
-          for(let v in site) {            
-            $(`input[name="${v}"]`).val(site[v]);            
-          }
-          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);
-          $('#add-site-description').val(site.site_desc)
-          $('.modal-title').text('Редактирование сайта');
-          $('#dummy-svg').hide();
-        });
-      });
-    });
-  });
+  return cardsHTML(arrayOfCards);  
 }
 
 export const createAddSite = (el) => {
