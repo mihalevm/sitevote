@@ -32,17 +32,15 @@ siteSearch({pattern: ""}).done(function(data) {
   const allSites = JSON.parse(data.data);
   const cards = createCards(allSites, 'get-the-vote');
   $('#all-sites-list').append(cards);
-}).done(function() {  
-  $('#all-sites-list > div.card').each(function(data) {
-    console.log(data);
-    console.log(this);
-    debugger;
+}).done(function() {
+  // Auth check shoud be for vote block
+  $('#all-sites-list .card').each(function(data) {    
     $(this).on('click', function() {        
-      const id = $(this).data('sid');        
+      const id = $(this).data('sid');
       siteVoteGet({sid: id}).done(function(data) {
         const site = JSON.parse(data.data);
         console.log(site);
-        // $('#add-site-form').attr('data-sid', site.id);
+        $('#get-the-vote').attr('data-sid', site.id);
         // for(let v in site) {            
         //   $(`input[name="${v}"]`).val(site[v]);            
         // }

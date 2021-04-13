@@ -3,7 +3,7 @@ import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave, siteStats } from './lib/clientRequests';
+import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -43,7 +43,7 @@ checkAuth().done(function(data) {
     const cards = createCards(sites, 'add-site-modal');
     $('#profile-sites-list').append(cards);
   }).done(function() {
-    $('#profile-sites-list > div.card').each(function() {
+    $('#profile-sites-list .card').each(function() {
       $(this).on('click', function() {        
         const id = $(this).data('sid');        
         siteGet({sid: id}).done(function(data) {
@@ -51,8 +51,8 @@ checkAuth().done(function(data) {
           $('#add-site-form').attr('data-sid', site.id);
           for(let v in site) {            
             $(`input[name="${v}"]`).val(site[v]);            
-          }
-          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);
+          }          
+          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
           $('#add-site-description').val(site.site_desc)
           $('.modal-title').text('Редактирование сайта');
           $('#dummy-svg').hide();
@@ -97,8 +97,9 @@ checkAuth().done(function(data) {
       }
   
       req.done(function(data) {
+        console.log(data.data);
         let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
-        
+        console.log(src);
         $('#add-site-img').attr('src', src);        
         $('#add-site-img').attr('data-origin', data.data.origin);
         $('#loading-spinner').remove();        

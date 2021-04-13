@@ -5,7 +5,6 @@ import { createSiteAwards } from './templates/index.tmpl';
 import { checkAuth, loadProfile, updateProfile, siteTop } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
-// import { CategoryScale } from 'chart.js';
 
 const container = () => `
 <div id="profile-main" class="container">
@@ -24,10 +23,9 @@ createSiteAwards('#statistics-tab');
 createChart('#statistics-tab');
 userSiteDeleteConfirm('#statistics-tab');
 
-checkAuth().done(function(data) {
+checkAuth().done(function() {
   userLogged();
   siteTop({top:4}).done(function(data) {
-    console.log(data);
     const sites = JSON.parse(data.data);    
     const tableRows = createSitesRows(sites);      
     $('#sites-table tbody').append(tableRows);
