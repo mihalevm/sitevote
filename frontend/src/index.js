@@ -16,6 +16,13 @@ createSiteAwards('#index-main');
 createDescription('#index-main');
 createFooter(document.body);
 
+// siteTop({top: 0}).done(function(data) {
+//   // Top 3 site-Top 18
+//   const top10 = JSON.parse(data.data);
+//   console.log('get top sites');
+// })
+
+
 checkAuth().done(function(data) {
   userLogged()
 }).fail(function(data) {

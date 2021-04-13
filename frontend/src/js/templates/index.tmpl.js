@@ -1,5 +1,5 @@
 import config from '../../config/config.json';
-import { siteTop } from '../lib/clientRequests';
+
 export const createSiteAwards = (el) => {
   const tmpl = ({card_title, card_text}) => `
   <div class="card-group pt-5 g-4">
@@ -29,12 +29,6 @@ export const createSiteAwards = (el) => {
   </div>
 </div>
   `;
-
-  // siteTop({top: 0}).done(function(data) {
-  //   // Top 3 site-Top 18
-  //   const top10 = JSON.parse(data.data);
-  //   console.log('get top sites');
-  // })
 
   $(el).append(tmpl({
     card_title: config.index.sites[0].card_title, 

@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
-import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
-import { createAddSite, createCards } from './templates/profile-add-edit-site.tmpl';
+import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
+import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
 import { checkAuth, siteVerify, siteSave, siteStats } from './lib/clientRequests';
 
