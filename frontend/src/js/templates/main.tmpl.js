@@ -1,6 +1,8 @@
 import config from '../../config/config.json';
 import { Tabs } from 'bootstrap';
-import { logIn, logOut } from '../lib/auth';
+// Need refactoring this
+import { logIn, logOut } from '../lib/clientRequests';
+import { emailValidationEvent, passwordValidationEvent } from '../lib/events';
 
 export const userLogged = () => {
   const menuLink = $('#auth-modal-enter-link');
@@ -12,7 +14,7 @@ export const userLogged = () => {
     logOut();
   });
   $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
-  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/select-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);
+  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile-add-edit-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
 };
 
 export const createAuthWindow = (el) => {  
@@ -34,13 +36,17 @@ export const createAuthWindow = (el) => {
         <div id="auth-modal-tabs" class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active p-3" id="auth-email-tab" role="tabpanel" aria-labelledby="email-tab">
             <div class="mb-3">
-            <label for="auth-modal-email" class="form-label">${email}</label>
-            <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
-            <div id="email-hint" class="form-text">${hint}</div>
+              <label for="auth-modal-email" class="form-label">${email}</label>
+              <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
+              <div id="email-hint" class="form-text">${hint}</div>
+              <div id="auth-e-inv" class="invalid-feedback">                
+              </div>
             </div>
             <div class="mb-3">
               <label for="auth-modal-email-pass" class="form-label">${pass}</label>
-              <input type="password" class="form-control" id="auth-modal-email-pass" required>                  
+              <input type="password" class="form-control" id="auth-modal-email-pass" required>
+              <div id="pass-e-inv" class="invalid-feedback">                
+              </div>
             </div>
           </div>
           <div class="tab-pane fade p-3" id="auth-number-tab" role="tabpanel" aria-labelledby="number-tab">
@@ -75,41 +81,71 @@ export const createAuthWindow = (el) => {
     number: config.auth_tmpl.number,
     byNumber: config.auth_tmpl.byNumber,
     byEmail: config.auth_tmpl.byEmail,
-  }));
-  
-  $('#auth-modal-close').on('click', function() {
-    $('#auth-modal').hide();
+  }));  
+
+  $('#auth-modal-email').on('keydown', function(e) {
+    if(e.key && e.key.toLowerCase() == 'enter') {
+      emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
+    }
+  });
+  $('#auth-modal-email').on('keyup', function() {
+    emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
   });
   $('#auth-modal-enter').on('click', function() {
-    // Two classes active and show
     if($('#auth-email-tab').hasClass('show')) {
       const email = $('#auth-modal-email').val();
       const pass = $('#auth-modal-email-pass').val();
-      // Pass check min 8 chars
-      // For view
-      logIn(email, pass).done(function() {        
-        userLogged();
-      }).fail(function() {
-        console.log('fail');
-      });
+
+      if(email.length != 0 && pass.length != 0) {
+        // DRY
+        logIn(email, pass).done(function() {        
+          userLogged();
+        }).fail(function(data) {
+          const errMsg = data.responseJSON.detail;
+          if(errMsg === 'User UNAUTHORIZED') {
+            $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
+            $('#auth-modal-email').addClass('is-invalid');
+          };        
+        });
+      } else {
+        // errorMsg
+      }
     } else {
       // const number = $('#auth-modal-number').val();
-      // const pass = $('#auth-modal-number-pass').val();
-      // // Pass check min 8 chars
+      // const pass = $('#auth-modal-number-pass').val();      
       // console.log(number, pass);
     }
   });
+  $('#auth-modal-email-pass').on('keydown', function(e) {
+    const email = $('#auth-modal-email').val();
+    const pass = $('#auth-modal-email-pass').val();
+    
+    if(e.key && e.key.toLowerCase() == 'enter') {
+      if(passwordValidationEvent(this, '#auth-modal-enter', '#pass-e-inv')) {
+        // DRY
+        logIn(email, pass).done(function() {        
+          userLogged();
+        }).fail(function(data) {
+          const errMsg = data.responseJSON.detail;
+          if(errMsg === 'User UNAUTHORIZED') {
+            $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
+            $('#auth-modal-email').addClass('is-invalid');
+          };        
+        });
+      }
+    }
+  })
 };
 
-export const createHeader = (el) => {
-  // profile gonna be visible only after user autorize
-  const tmpl = ({title, enter, select, vote, profile}) => `
+export const createHeader = (el) => {  
+  const tmpl = ({title, enter}) => `
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
       <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
       <span class="fs-4">${title}</span>
     </a>
-    <ul id="menu-list" class="nav nav-pills">      
+    <ul id="menu-list" class="nav nav-pills">
+      <li class="nav-item"><a href="/pages/vote.html" class="nav-link">Голосование</a></li>            
       <li class="nav-item"><a id="auth-modal-enter-link" href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#auth-modal">${enter}</a></li>
     </ul>
   </header>
@@ -131,3 +167,40 @@ export const createFooter = (el) => {
 `;
   $(el).append(tmpl());
 };
+
+export const createCards = (arrayOfCards, modalId) => {
+  
+  const card = (id, img_link, url, description, short_link, modal_name) => `
+  <div class="col g-4">
+  <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card" style="width: 18rem;">
+    <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
+    <div class="card-body">
+      <h6 class="card-title"></h6>
+      <p class="card-text">${description}</p>    
+    </div>
+  </div>
+  </div>
+  `;
+  const cardsHTML = (array) => {    
+    let counter = 1;
+    let resultHTML = '';
+    const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
+    const endTag = '\n</div>\n';
+    $.each(array, function(i, v) {
+      if(counter == 1) {
+          resultHTML = resultHTML + beginTag + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);      
+        }
+        if(counter >= 2 && counter < 4) {
+          resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);
+        }        
+        if(counter == 4) {
+          resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId) + endTag;
+          counter = 1;    
+        } else {
+          counter++;
+        }
+      });
+      return resultHTML;
+    }
+  return cardsHTML(arrayOfCards);  
+}

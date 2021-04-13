@@ -13,11 +13,13 @@ const fileName = ext => isDev ? `[name].bundle.${ext}` : `[name].bundle.[fullhas
 
 module.exports = {  
   mode: 'development',  
-  entry: {
+  entry: {    
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
-    'select-site': './src/js/select-site.js',    
-    'vote': './src/js/vote.js', 
+    'profile-add-edit-site': './src/js/profile-add-edit-site.js',
+    // 'select-site': './src/js/select-site.js',    
+    'vote': './src/js/vote.js',
+    'share': './src/vendors/share.js'
   },  
   output: {
     filename: `scripts/${fileName('js')}`,
@@ -95,18 +97,28 @@ module.exports = {
         collapseWhitespace: isProd
       },
       inject: 'body',
-      chunks: ['profile'],
+      chunks: ['share','profile'],
       filename: 'pages/profile.html'
     }),
+    // new HtmlWebpackPlugin({      
+    //   template: './src/pages/select-site.html',
+    //   minify: {
+    //     removeComments: isProd,
+    //     collapseWhitespace: isProd
+    //   },
+    //   inject: 'body',
+    //   chunks: ['select-site'],
+    //   filename: 'pages/select-site.html'
+    // }),
     new HtmlWebpackPlugin({      
-      template: './src/pages/select-site.html',
+      template: './src/pages/profile-add-edit-site.html',
       minify: {
         removeComments: isProd,
         collapseWhitespace: isProd
       },
       inject: 'body',
-      chunks: ['select-site'],
-      filename: 'pages/select-site.html'
+      chunks: ['profile-add-edit-site'],
+      filename: 'pages/profile-add-edit-site.html'
     }),
     new HtmlWebpackPlugin({      
       template: './src/pages/vote.html',
@@ -115,7 +127,7 @@ module.exports = {
         collapseWhitespace: isProd
       },
       inject: 'body',
-      chunks: ['vote'],
+      chunks: ['share','vote'],
       filename: 'pages/vote.html'
     }),
     new MiniCssExtractPlugin({
@@ -136,7 +148,7 @@ module.exports = {
           to: path.resolve(__dirname, 'dist/img')
         },  
       ]
-    }),
+    }),    
     new webpack.ProvidePlugin({
       $: 'jquery',
       jQuery: 'jquery',
