@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-import { Modal } from 'bootstrap';
+// import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
@@ -10,12 +10,17 @@ const container = () => `
 <div class="row pt-3">
   <main>
     <div id="select-site-con" class="container pt-5">
+      <div class="pb-5">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-site-modal">
+          Добавить сайт
+        </button>
+      </div>  
       <div class="input-group input-group-lg">
         <span class="input-group-text">${config.select_site.search}</span>
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="profile-sites-list" class="container pt-5 pb-5">      
+    <div id="profile-sites-list" class="container pt-5 pb-5">
     </div>
   </main>
 </div>
@@ -117,8 +122,7 @@ checkAuth().done(function(data) {
     }  
   });
 
-  $('#add-site-save').on('click', function(e) {
-    // e.preventDefault();
+  $('#add-site-save').on('click', function(e) {    
     if($('#add-site-url').val().length != 0) {
       const newSite = {
         // Refactoring
@@ -129,13 +133,11 @@ checkAuth().done(function(data) {
         img_link: $('#add-site-img').data('origin')
       };     
       siteSave(newSite).done(function() {
-        let addSiteModal = new Modal(document.getElementById('add-site-modal'));
-        addSiteModal.hide();
-        console.log(addSiteModal);
+        // window.location.reload();
       });
     } else {
       $('#add-site-url').addClass('is-invalid');
-    }  
+    }
   });
 }).fail(function(data) {
   console.log('fail', data);

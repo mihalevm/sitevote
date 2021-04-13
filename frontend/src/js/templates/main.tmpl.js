@@ -13,8 +13,13 @@ export const userLogged = () => {
   menuLink.on('click', function() {
     logOut();
   });
-  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
-  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile-add-edit-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
+  $('#menu-list').prepend(`<li id="profile-link" class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
+  $('#menu-list').prepend(`<li id="profile-add-site-link" class="nav-item"><a href="/pages/profile-add-edit-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
+};
+
+export const unAuthroizedUser = () => {
+  $('#profile-link').remove();
+  $('#profile-add-site-link').remove();
 };
 
 export const createAuthWindow = (el) => {  

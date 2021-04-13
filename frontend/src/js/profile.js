@@ -1,7 +1,6 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
 import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, userSiteDeleteConfirm } from './templates/profile.tmpl';
-import { createSiteAwards } from './templates/index.tmpl';
 import { checkAuth, loadProfile, updateProfile, siteTop } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
@@ -19,7 +18,6 @@ createFooter(document.body);
 createProfileTabs('#profile-main');
 createProfile('#profile-tab');
 createStatistics('#statistics-tab');
-createSiteAwards('#statistics-tab');
 createChart('#statistics-tab');
 userSiteDeleteConfirm('#statistics-tab');
 
