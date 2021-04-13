@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged } from './templates/main.tmpl';
-import { createAddSite, createCards } from './templates/select-site.tmpl';
+import { createAddSite, createCards } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
 import { checkAuth, siteVerify, siteSave } from './lib/clientRequests';
 
@@ -34,7 +34,7 @@ $('#sites-cards-search').on('keyup', function() {
   $('#cards-list div.col').filter(function() {
     $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
-});  
+});
 
 checkAuth().done(function(data) {
   userLogged();

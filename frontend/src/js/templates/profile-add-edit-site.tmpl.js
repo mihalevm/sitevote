@@ -1,8 +1,8 @@
 import config from '../../config/config.json';
 import { siteStats, siteGet } from '../lib/clientRequests';
 
-export const createCards = (el) => {
-const tmpl = (id, img_link, url, description, short_link) => `
+export const createCards = (el, ajaxReq) => {
+const tmpl = (id, img_link, description, short_link) => `
 <div class="col g-4">
 <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#add-site-modal" class="card" style="width: 18rem;">
   <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
@@ -13,14 +13,20 @@ const tmpl = (id, img_link, url, description, short_link) => `
 </div>
 </div>
 `;
-  siteStats().done(function(data) {
-    
-    const sites = JSON.parse(data.data);    
+  // // Make card by ajax req data
+  // if(ajaxReq) {
+
+  //   ajaxReq
+  //          .done()
+  //          .done()
+  // }
+
+  const cardsHTML = (obj) => {    
     let counter = 1;
     let cards = '';
     const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
     const endTag = '\n</div>\n';
-    $.each(sites, function(i, v) {
+    $.each(obj, function(i, v) {
       if(counter == 1) {
         cards = cards + beginTag + tmpl(v.id, v.img_link, v.site_url, v.site_desc, v.short_link);
       }
@@ -34,8 +40,16 @@ const tmpl = (id, img_link, url, description, short_link) => `
         counter++;
       }
     });
+    return cards;
+  }
+
+  // $(el).append(cards);    
+
+
+  siteStats().done(function(data) {
+    const sites = JSON.parse(data.data);        
+    const cards = cardsHTML(sites);
     $(el).append(cards);
-    
   }).done(function() {
     $('.card').each(function() {
       $(this).on('click', function() {        

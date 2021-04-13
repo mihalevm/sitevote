@@ -184,7 +184,7 @@ export const createUserSites = (el) => {
     <td>1</td>
     <td>${url}</td>
     <td>${fast_rait}</td>
-    <td>
+    <td>    
       <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
       </div>
     </td>
