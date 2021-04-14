@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
 import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, userSiteDeleteConfirm } from './templates/profile.tmpl';
-import { checkAuth, loadProfile, updateProfile, siteStats } from './lib/clientRequests';
+import { checkAuth, loadProfile, updateProfile, siteStats, siteGet, siteDel } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
 
@@ -27,6 +27,17 @@ checkAuth().done(function() {
     const sites = JSON.parse(data.data);    
     const tableRows = createSitesRows(sites);      
     $('#sites-table tbody').append(tableRows);
+  }).done(function() {   
+    $('#sites-table td > a').each(function(data) {
+      $(this).on('click', function() {        
+        const id = $(this).data('sid');        
+        siteGet({sid: id}).done(function(data) {
+          const site = JSON.parse(data.data);          
+          $('#delete-site-body').attr('data-sid', site.id);          
+          $('#delete-site-body').text('Вы действительно желаете удалить сайт ' + site.site_url);          
+        });
+      });
+    });
   });
   
   loadProfile().done(function(data) {
@@ -36,6 +47,21 @@ checkAuth().done(function() {
     $('#profile-number').val(parsed.phone);    
   });
 
+  $('#delete-site').on('click', function() {
+    const id = $('#delete-site-body').data('sid');
+    siteDel({sid: id}).done(function() {      
+      $('#delete-site-confirm').hide();
+      const alertMsg = `
+      <div class="alert alert-success" role="alert">
+        Сайт успешно удален
+      </div>
+      `;
+      $('#stat-con').prepend(alertMsg);
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500); 
+    });
+  });
   $('#profile-email').on('keyup', function() {
     emailValidationEvent(this, '#profile-save', '#profile-e-inv');
   });
@@ -56,7 +82,7 @@ checkAuth().done(function() {
       $('#profile-edit-form').prepend(alertMsg);
       setTimeout(() => {
         window.location.reload()
-      }, 1000);      
+      }, 1500);      
     });     
   });
 }).fail(function(data) {

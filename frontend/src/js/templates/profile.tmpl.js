@@ -85,7 +85,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
       <label for="profile-confirm-pass" class="form-label" >${confirm_pass}</label>
       <input id="profile-confirm-pass" type="password" class="form-control">
     </div>
-    <div class="d-flex justify-content-end pt-3">    
+    <div class="d-flex justify-content-end pt-3">
       <button id="profile-save" type="submit" class="btn btn-primary">${save}</button>       
     </div>
     </form>
@@ -149,7 +149,7 @@ export const createStatistics = (el) => {
 const tmpl = ({site_url, ratings, del_site}) => `
 <div class="row">
   <main>
-    <div class="container pt-5">
+    <div id="stat-con" class="container pt-5">
       <div class="table-responsive">
         <table id="sites-table" class="table table-hover table-sm">        
           <thead>          
@@ -211,11 +211,11 @@ export const userSiteDeleteConfirm = (el) => {
           <h5 class="modal-title">Удаление сайта</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div id="delete-site-body" class="modal-body">
+        <div id="delete-site-body" data-sid="" class="modal-body">          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
-          <button type="button" class="btn btn-danger">Удалить</button>
+          <button id="delete-site" type="button" class="btn btn-danger">Удалить</button>
         </div>
       </div>
     </div>

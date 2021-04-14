@@ -54,8 +54,8 @@ checkAuth().done(function(data) {
         siteGet({sid: id}).done(function(data) {
           const site = JSON.parse(data.data);          
           $('#add-site-form').attr('data-sid', site.id);
-          for(let v in site) {            
-            $(`input[name="${v}"]`).val(site[v]);            
+          for(let v in site) {
+            $(`input[name="${v}"]`).val(site[v]);
           }          
           $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
           $('#add-site-description').val(site.site_desc)
@@ -87,9 +87,9 @@ checkAuth().done(function(data) {
     e.preventDefault();    
     if($('#add-site-url').val().length !== 0) {
       const url = $('#add-site-url').val();
-      const req = siteVerify({url: url});
+      const getImg = siteVerify({url: url});
   
-      if(req.state() === 'pending') {
+      if(getImg.state() === 'pending') {
         $('#dummy-svg').hide();
         const spinner = `        
         <div class="d-flex justify-content-center">
@@ -101,7 +101,7 @@ checkAuth().done(function(data) {
         $('#img-con').prepend(spinner);        
       }
   
-      req.done(function(data) {
+      getImg.done(function(data) {
         console.log(data.data);
         let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
         console.log(src);
