@@ -59,6 +59,7 @@ export const logOut = () => {
 
 export const checkAuthVote = () => sendAjax('GET', '/authtest', saveTokenToStorage, messageToConsole('Не авторизованный пользователь'));
 export const checkAuth = () => sendAjax('GET', '/authtest', saveTokenToStorage, redirectToIndex);
+export const accountConfirm = (data) => sendAjax('POST', '/account-confirm', saveTokenToStorage, messageToConsole, data);
 export const loadProfile = () => sendAjax('POST', '/profile-get', saveTokenToStorage, messageToConsole);
 export const updateProfile = (data) => {  
   data.password = sha256(data.password).toString();  
@@ -72,5 +73,5 @@ export const siteDel = (data) => sendAjax('POST', '/site-del', saveTokenToStorag
 export const siteSearch = (data) => sendAjax('POST', '/site-search', saveTokenToStorage, messageToConsole, data);
 export const siteVoteGet = (data) => sendAjax('POST', '/site-vote-get', saveTokenToStorage, messageToConsole, data); // Not working Голосование
 export const voteTypes = (data) => sendAjax('POST', '/vote-types', saveTokenToStorage, messageToConsole, data); 
-export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data);
+export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data); // Not woriking
 // export const siteProfileSearch = (data) => sendAjax('POST', '/site-profile-search', saveTokenToStorage, messageToConsole, data); // Not working
