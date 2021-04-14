@@ -68,6 +68,9 @@
       "maecenas":"Меценат"
     }
   },
+  "confirm": {
+    "title":"Подтверждение аккаунта"
+  },
   "validationMessages": {
     "email": {
       "format_err": "Формат Email не корректен, правильный формат: index@google.com",
