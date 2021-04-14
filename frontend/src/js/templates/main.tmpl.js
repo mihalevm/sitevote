@@ -178,7 +178,7 @@ export const createCards = (arrayOfCards, modalId) => {
   const card = (id, img_link, url, description, short_link, modal_name) => `
   <div class="col g-4">
   <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card" style="width: 18rem;">
-    <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
+    <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}_small.png">
     <div class="card-body">
       <h6 class="card-title"></h6>
       <p class="card-text">${description}</p>    
