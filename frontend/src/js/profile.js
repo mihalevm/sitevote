@@ -1,11 +1,9 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
 import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, userSiteDeleteConfirm } from './templates/profile.tmpl';
-import { createSiteAwards } from './templates/index.tmpl';
-import { checkAuth, loadProfile, updateProfile, siteTop } from './lib/clientRequests';
+import { checkAuth, loadProfile, updateProfile, siteStats, siteGet, siteDel } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
-import { CategoryScale } from 'chart.js';
 
 const container = () => `
 <div id="profile-main" class="container">
@@ -20,16 +18,26 @@ createFooter(document.body);
 createProfileTabs('#profile-main');
 createProfile('#profile-tab');
 createStatistics('#statistics-tab');
-createSiteAwards('#statistics-tab');
 createChart('#statistics-tab');
 userSiteDeleteConfirm('#statistics-tab');
 
-checkAuth().done(function(data) {
+checkAuth().done(function() {
   userLogged();
-  siteTop({top:0}).done(function(data) {
+  siteStats().done(function(data) {
     const sites = JSON.parse(data.data);    
     const tableRows = createSitesRows(sites);      
     $('#sites-table tbody').append(tableRows);
+  }).done(function() {   
+    $('#sites-table td > a').each(function(data) {
+      $(this).on('click', function() {        
+        const id = $(this).data('sid');        
+        siteGet({sid: id}).done(function(data) {
+          const site = JSON.parse(data.data);          
+          $('#delete-site-body').attr('data-sid', site.id);          
+          $('#delete-site-body').text('Вы действительно желаете удалить сайт ' + site.site_url);          
+        });
+      });
+    });
   });
   
   loadProfile().done(function(data) {
@@ -39,6 +47,21 @@ checkAuth().done(function(data) {
     $('#profile-number').val(parsed.phone);    
   });
 
+  $('#delete-site').on('click', function() {
+    const id = $('#delete-site-body').data('sid');
+    siteDel({sid: id}).done(function() {      
+      $('#delete-site-confirm').hide();
+      const alertMsg = `
+      <div class="alert alert-success" role="alert">
+        Сайт успешно удален
+      </div>
+      `;
+      $('#stat-con').prepend(alertMsg);
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500); 
+    });
+  });
   $('#profile-email').on('keyup', function() {
     emailValidationEvent(this, '#profile-save', '#profile-e-inv');
   });
@@ -50,10 +73,20 @@ checkAuth().done(function(data) {
       obj[i.name] = i.value;
       return obj;
     }, {});    
-    updateProfile(formFields);     
+    updateProfile(formFields).done(function(data) {      
+      const alertMsg = `
+      <div class="alert alert-success" role="alert">
+        Учетные данные обновлены.
+      </div>
+      `;
+      $('#profile-edit-form').prepend(alertMsg);
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500);      
+    });     
   });
 }).fail(function(data) {
-  console.log('fail', data);
+  
 });
 
 

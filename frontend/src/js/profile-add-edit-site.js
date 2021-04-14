@@ -1,21 +1,26 @@
 import config from '../config/config.json'
-import { Modal } from 'bootstrap';
+// import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave, siteStats } from './lib/clientRequests';
+import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
 <div class="row pt-3">
   <main>
     <div id="select-site-con" class="container pt-5">
+      <div class="pb-5">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-site-modal">
+          Добавить сайт
+        </button>
+      </div>  
       <div class="input-group input-group-lg">
         <span class="input-group-text">${config.select_site.search}</span>
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
-    <div id="profile-sites-list" class="container pt-5 pb-5">      
+    <div id="profile-sites-list" class="container pt-5 pb-5">
     </div>
   </main>
 </div>
@@ -43,16 +48,16 @@ checkAuth().done(function(data) {
     const cards = createCards(sites, 'add-site-modal');
     $('#profile-sites-list').append(cards);
   }).done(function() {
-    $('#profile-sites-list > div.card').each(function() {
+    $('#profile-sites-list .card').each(function() {
       $(this).on('click', function() {        
         const id = $(this).data('sid');        
         siteGet({sid: id}).done(function(data) {
           const site = JSON.parse(data.data);          
           $('#add-site-form').attr('data-sid', site.id);
-          for(let v in site) {            
-            $(`input[name="${v}"]`).val(site[v]);            
-          }
-          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);
+          for(let v in site) {
+            $(`input[name="${v}"]`).val(site[v]);
+          }          
+          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
           $('#add-site-description').val(site.site_desc)
           $('.modal-title').text('Редактирование сайта');
           $('#dummy-svg').hide();
@@ -82,9 +87,9 @@ checkAuth().done(function(data) {
     e.preventDefault();    
     if($('#add-site-url').val().length !== 0) {
       const url = $('#add-site-url').val();
-      const req = siteVerify({url: url});
+      const getImg = siteVerify({url: url});
   
-      if(req.state() === 'pending') {
+      if(getImg.state() === 'pending') {
         $('#dummy-svg').hide();
         const spinner = `        
         <div class="d-flex justify-content-center">
@@ -96,9 +101,10 @@ checkAuth().done(function(data) {
         $('#img-con').prepend(spinner);        
       }
   
-      req.done(function(data) {
+      getImg.done(function(data) {
+        console.log(data.data);
         let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
-        
+        console.log(src);
         $('#add-site-img').attr('src', src);        
         $('#add-site-img').attr('data-origin', data.data.origin);
         $('#loading-spinner').remove();        
@@ -116,8 +122,7 @@ checkAuth().done(function(data) {
     }  
   });
 
-  $('#add-site-save').on('click', function(e) {
-    // e.preventDefault();
+  $('#add-site-save').on('click', function(e) {    
     if($('#add-site-url').val().length != 0) {
       const newSite = {
         // Refactoring
@@ -128,13 +133,14 @@ checkAuth().done(function(data) {
         img_link: $('#add-site-img').data('origin')
       };     
       siteSave(newSite).done(function() {
-        let addSiteModal = new Modal(document.getElementById('add-site-modal'));
-        addSiteModal.hide();
-        console.log(addSiteModal);
+        $('#add-site-modal').hide();
+        window.location.reload();
+      }).fail(function(data) {
+
       });
     } else {
       $('#add-site-url').addClass('is-invalid');
-    }  
+    }
   });
 }).fail(function(data) {
   console.log('fail', data);

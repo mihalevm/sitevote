@@ -56,8 +56,8 @@ import 'jquery-mask-plugin';
 
 export const createProfile = (el) => {
 const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
-<div class="container">
-<div class="row pt-5">
+<div class="d-flex justify-content-center">
+<div class="row w-75 pt-5">
   <main>
     <form id="profile-edit-form" class="needs-validation" novalidate>
     <div class="mb-3">      
@@ -85,7 +85,9 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
       <label for="profile-confirm-pass" class="form-label" >${confirm_pass}</label>
       <input id="profile-confirm-pass" type="password" class="form-control">
     </div>
-    <button id="profile-save" type="submit" class="btn btn-primary">${save}</button>    
+    <div class="d-flex justify-content-end pt-3">
+      <button id="profile-save" type="submit" class="btn btn-primary">${save}</button>       
+    </div>
     </form>
   </main>
 </div>
@@ -142,21 +144,18 @@ export const createProfileTabs = (el) => {
     statistics: config.profile.statistics,
   }));
 };
-
+// <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
 export const createStatistics = (el) => {
-const tmpl = ({place, site_url, ratings, share, del_site}) => `
+const tmpl = ({site_url, ratings, del_site}) => `
 <div class="row">
   <main>
-    <div class="container pt-5">
+    <div id="stat-con" class="container pt-5">
       <div class="table-responsive">
-        <table id="sites-table" class="table table-hover table-sm">
-        <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
+        <table id="sites-table" class="table table-hover table-sm">        
           <thead>          
-            <tr>
-              <th>${place}</th>
+            <tr>              
               <th>${site_url}</th>
-              <th>${ratings}</th>
-              <th>${share}</th>
+              <th>${ratings}</th>              
               <th>${del_site}</th>
             </tr>
           </thead>
@@ -169,25 +168,24 @@ const tmpl = ({place, site_url, ratings, share, del_site}) => `
 </div>
 `;
   $(el).append(tmpl({
-    place: config.profile.statistics_tab.place,
+    // place: config.profile.statistics_tab.place,
     site_url: config.profile.statistics_tab.site_url,
     ratings: config.profile.statistics_tab.ratings,
-    share: config.profile.statistics_tab.share,
+    // share: config.profile.statistics_tab.share,
     del_site: config.profile.statistics_tab.del_site,
   }));
 };
 
 export const createSitesRows = (arrayOfSites) => { 
+  //<td>    
+  //   <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"> 
+  //   </div>
+  // </td>
   // Проблема не загружаемом скрипте 
-  const tmpl = ({id, url, fast_rait}) => `
-  <tr>
-    <td>1</td>
-    <td>${url}</td>
+  const tmpl = (id, url, fast_rait) => `
+  <tr>    
+    <td>${url}</td>    
     <td>${fast_rait}</td>
-    <td>    
-      <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
-      </div>
-    </td>
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
@@ -195,7 +193,7 @@ export const createSitesRows = (arrayOfSites) => {
   const sitesRowsHTML = (array) => {
     let rows = '';  
     $.each(array, function(i, v) {
-      rows = rows + tmpl({id: v.id, url: v.site_url, fast_rait: v.fast_rait});
+      rows = rows + tmpl(v.id, v.site_url, v.fast_rait);
     }); 
     
     return rows;
@@ -213,11 +211,11 @@ export const userSiteDeleteConfirm = (el) => {
           <h5 class="modal-title">Удаление сайта</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div id="delete-site-body" class="modal-body">
+        <div id="delete-site-body" data-sid="" class="modal-body">          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
-          <button type="button" class="btn btn-danger">Удалить</button>
+          <button id="delete-site" type="button" class="btn btn-danger">Удалить</button>
         </div>
       </div>
     </div>
@@ -229,7 +227,11 @@ export const userSiteDeleteConfirm = (el) => {
 export const createChart = (el) => {
 const tmpl = () => `
 <div class="row pt-5">
-  <canvas id="chart" class="col"></canvas>
+<main>
+  <div class="container h-25 d-inline-block">
+    <canvas id="chart"></canvas>
+  </div>
+</main>
 </div>
 `;
 $(el).append(tmpl);

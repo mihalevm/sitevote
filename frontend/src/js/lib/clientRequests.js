@@ -8,13 +8,15 @@ const redirectToIndex = function() {
   }
 };
 
-const messageToConsole = function() {
-  console.log('Verify not loaded');
+const messageToConsole = (msg) => {
+  console.log(msg);
 };
 
-const saveTokenToStorage = function(data) {  
-  localStorage.token = data.token;        
-  console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
+const saveTokenToStorage = function(data) {
+  if(data.token) {
+    localStorage.token = data.token;
+    console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
+  }
 };
 
 const sendAjax = (type, path, successCallback, errorCallback, data) => {
@@ -54,6 +56,8 @@ export const logOut = () => {
   localStorage.clear();
   window.location.replace('/');
 };
+
+export const checkAuthVote = () => sendAjax('GET', '/authtest', saveTokenToStorage, messageToConsole('Не авторизованный пользователь'));
 export const checkAuth = () => sendAjax('GET', '/authtest', saveTokenToStorage, redirectToIndex);
 export const loadProfile = () => sendAjax('POST', '/profile-get', saveTokenToStorage, messageToConsole);
 export const updateProfile = (data) => {  
@@ -64,9 +68,9 @@ export const siteStats = (data) => sendAjax('POST', '/site-stats', saveTokenToSt
 export const siteGet = (data) => sendAjax('POST', '/site-get', saveTokenToStorage, messageToConsole, data);
 export const siteVerify = (data) => sendAjax('POST', '/site-verify', saveTokenToStorage, messageToConsole, data);
 export const siteSave = (data) => sendAjax('POST', '/site-save', saveTokenToStorage, messageToConsole, data);
-export const siteDel = (data) => sendAjax('POST', '/site-del', saveTokenToStorage, messageToConsole, data); // Not working
-export const siteProfileSearch = (data) => sendAjax('POST', '/site-profile-search', saveTokenToStorage, messageToConsole, data); // Not working
+export const siteDel = (data) => sendAjax('POST', '/site-del', saveTokenToStorage, messageToConsole, data);
 export const siteSearch = (data) => sendAjax('POST', '/site-search', saveTokenToStorage, messageToConsole, data);
 export const siteVoteGet = (data) => sendAjax('POST', '/site-vote-get', saveTokenToStorage, messageToConsole, data); // Not working Голосование
-export const voteTypes = (data) => sendAjax('POST', '/vote-types', saveTokenToStorage, messageToConsole, data); // Not working Голосование
-export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data); // Not working 18 сайтов
+export const voteTypes = (data) => sendAjax('POST', '/vote-types', saveTokenToStorage, messageToConsole, data); 
+export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data);
+// export const siteProfileSearch = (data) => sendAjax('POST', '/site-profile-search', saveTokenToStorage, messageToConsole, data); // Not working
