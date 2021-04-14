@@ -615,7 +615,7 @@ async def site_del(params: SiteGetParams, sess_acc: SessionAccount = Depends(val
 
     result: bool = db_site_del(sess_acc.id, params.sid)
 
-    if site:
+    if result:
         j_obj["data"] = result
         j_obj["error"] = 200
 
@@ -657,7 +657,7 @@ async def site_profile_search(params: SiteSearchParams, sess_acc: SessionAccount
         "token": sess_acc.token
     }
 
-    sites: Sites = db_site_search(sess_acc.idm, params.pattern)
+    sites: Sites = db_site_search(sess_acc.id, params.pattern)
 
     if sites:
         j_obj["data"] = json.dumps(sites, cls=Encoder)
