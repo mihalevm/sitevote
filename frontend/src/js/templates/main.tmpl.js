@@ -86,24 +86,23 @@ export const createAuthWindow = (el) => {
     number: config.auth_tmpl.number,
     byNumber: config.auth_tmpl.byNumber,
     byEmail: config.auth_tmpl.byEmail,
-  }));  
+  }));
 
-  $('#auth-modal-email').on('keydown', function(e) {
-    if(e.key && e.key.toLowerCase() == 'enter') {
-      emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
-    }
-  });
   $('#auth-modal-email').on('keyup', function() {
     emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
   });
+  $('#auth-modal-email-pass').on('keyup', function() {
+    passwordValidationEvent('#auth-modal-email-pass', '#auth-modal-enter', '#pass-e-inv');
+  });
+  
   $('#auth-modal-enter').on('click', function() {
     if($('#auth-email-tab').hasClass('show')) {
-      const email = $('#auth-modal-email').val();
-      const pass = $('#auth-modal-email-pass').val();
-
-      if(email.length != 0 && pass.length != 0) {
+      const email = $('#auth-modal-email');
+      const pass = $('#auth-modal-email-pass');
+      
+      if(email.val().length != 0 && pass.val().length != 0) {
         // DRY
-        logIn(email, pass).done(function() {        
+        logIn(email.val(), pass.val()).done(function() {        
           userLogged();
         }).fail(function(data) {
           const errMsg = data.responseJSON.detail;
@@ -112,30 +111,27 @@ export const createAuthWindow = (el) => {
             $('#auth-modal-email').addClass('is-invalid');
           };        
         });
-      } else {
-        // errorMsg
       }
-    } else {
-      // const number = $('#auth-modal-number').val();
-      // const pass = $('#auth-modal-number-pass').val();      
-      // console.log(number, pass);
     }
   });
-  $('#auth-modal-email-pass').on('keydown', function(e) {
+  $('#auth-modal-email-pass').on('keydown', function(e) {    
     const email = $('#auth-modal-email').val();
     const pass = $('#auth-modal-email-pass').val();
-    
     if(e.key && e.key.toLowerCase() == 'enter') {
-      if(passwordValidationEvent(this, '#auth-modal-enter', '#pass-e-inv')) {
+      if(email.length != 0 && pass.length != 0) {
         // DRY
         logIn(email, pass).done(function() {        
           userLogged();
-        }).fail(function(data) {
-          const errMsg = data.responseJSON.detail;
-          if(errMsg === 'User UNAUTHORIZED') {
-            $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
-            $('#auth-modal-email').addClass('is-invalid');
-          };        
+        }).fail(function(data) {          
+          if(data.responseJSON.detail) {
+            const errMsg = data.responseJSON.detail;
+            if(errMsg === 'User UNAUTHORIZED') {
+              $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
+              $('#auth-modal-email').addClass('is-invalid');
+            };        
+          } else {
+            console.log('Ошибка выполнения запроса.')
+          }
         });
       }
     }
