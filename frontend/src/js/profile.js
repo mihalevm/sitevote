@@ -57,8 +57,8 @@ checkAuth().done(function() {
       </div>
       `;
       $('#stat-con').prepend(alertMsg);
-      setTimeout(() => {
-        window.location.reload()
+      setTimeout(() => {        
+        window.location.replace('/pages/profile.html#statistics-tab');
       }, 1500); 
     });
   });
