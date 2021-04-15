@@ -28,12 +28,10 @@ export const passwordValidationEvent = (passEl, saveBtnEl, invalidDiv) => {
 
   if(value.length != 0) {
     $(passEl).removeClass('is-invalid');
-    $(saveBtnEl).removeAttr('disabled');
-    return true;
+    $(saveBtnEl).removeAttr('disabled');    
   } else {
     $(invalidDiv).text(config.validationMessages.password.password_empty_err);
     $(passEl).addClass('is-invalid');
     $(saveBtnEl).attr('disabled', true);
-    return false;
   }
 };
