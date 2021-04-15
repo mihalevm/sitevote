@@ -44,9 +44,9 @@ export const logIn = (username, password) => $.ajax({
     username: username,
     password: sha256(password).toString()
   },
-  success: function(data) {
+  success: function(data) {    
     localStorage.token = data.token;
-    console.log(data);
+    console.log(data);    
   },
   error: function(data) {    
     console.log(data);

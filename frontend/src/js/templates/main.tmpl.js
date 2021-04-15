@@ -130,12 +130,16 @@ export const createAuthWindow = (el) => {
         // DRY
         logIn(email, pass).done(function() {        
           userLogged();
-        }).fail(function(data) {
-          const errMsg = data.responseJSON.detail;
-          if(errMsg === 'User UNAUTHORIZED') {
-            $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
-            $('#auth-modal-email').addClass('is-invalid');
-          };        
+        }).fail(function(data) {          
+          if(data.responseJSON.detail) {
+            const errMsg = data.responseJSON.detail;
+            if(errMsg === 'User UNAUTHORIZED') {
+              $('#auth-e-inv').text(config.validationMessages.authentication.unauthorized);
+              $('#auth-modal-email').addClass('is-invalid');
+            };        
+          } else {
+            console.log('Ошибка выполнения запроса.')
+          }
         });
       }
     }

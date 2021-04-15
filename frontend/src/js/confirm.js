@@ -19,19 +19,18 @@ $(function() {
       setTimeout(() => {
         $('.alert').removeClass('alert-primary');
         $('.alert').addClass('alert-success');
-        $('.alert').text('Аккаут успешно подтвержден. Переход на страницу профиля.');
-        console.log(hash);
+        $('.alert').text('Аккаунт успешно подтвержден. Переход на страницу профиля.');        
         setTimeout(() => window.location.replace('/pages/profile.html'), 1000);
       }, 2000);
     } else {
       setTimeout(() => {
         $('.alert').removeClass('alert-primary');
         $('.alert').addClass('alert-warning');
-        $('.alert').text('Ошибка подтверждения аккаута. Возможно вы уже зарегистрированы, попробуйте авторизоваться.');
+        $('.alert').text('Ошибка подтверждения аккаунта. Возможно вы уже зарегистрированы, попробуйте авторизоваться.');
         setTimeout(() => window.location.replace('/'), 5000);
       }, 2000);
     }        
-  }).fail(function(data) {
+  }).fail(function() {
     setTimeout(() => {
       $('.alert').removeClass('alert-primary');
       $('.alert').addClass('alert-danger');
