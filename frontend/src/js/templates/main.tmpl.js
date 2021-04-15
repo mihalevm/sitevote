@@ -13,8 +13,13 @@ export const userLogged = () => {
   menuLink.on('click', function() {
     logOut();
   });
-  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
-  $('#menu-list').prepend(`<li class="nav-item"><a href="/pages/profile-add-edit-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
+  $('#menu-list').prepend(`<li id="profile-link" class="nav-item"><a href="/pages/profile.html" class="nav-link">${config.header_tmpl.profile}</a></li>`);
+  $('#menu-list').prepend(`<li id="profile-add-site-link" class="nav-item"><a href="/pages/profile-add-edit-site.html" class="nav-link">${config.header_tmpl.select}</a></li>`);  
+};
+
+export const unAuthroizedUser = () => {
+  $('#profile-link').remove();
+  $('#profile-add-site-link').remove();
 };
 
 export const createAuthWindow = (el) => {  
@@ -173,7 +178,7 @@ export const createCards = (arrayOfCards, modalId) => {
   const card = (id, img_link, url, description, short_link, modal_name) => `
   <div class="col g-4">
   <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card" style="width: 18rem;">
-    <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}.png">
+    <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}_small.png">
     <div class="card-body">
       <h6 class="card-title"></h6>
       <p class="card-text">${description}</p>    
