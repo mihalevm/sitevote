@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from rest.lib.config import Configuration
-from rest.lib.emailtemplates import TEmailConfirm, render_email_confirm
+from rest.lib.emailtemplates import TEmailConfirm, render_email_confirm, TEmailVoteConfirm, render_vote_email_confirm
 
 
 def __send_email(to: str, subj: str, msg: str) -> bool:
@@ -48,4 +48,12 @@ def send_confirmation(params: TEmailConfirm):
         params.to,
         'Уведомление о подтверждении учетной записи на сайте голосования',
         render_email_confirm(params)
+    )
+
+
+def send_vote_confirmation(params: TEmailVoteConfirm):
+    return __send_email(
+        params.to,
+        'Подверждение голоса',
+        render_vote_email_confirm(params)
     )

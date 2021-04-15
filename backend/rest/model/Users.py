@@ -21,7 +21,7 @@ class Users(PrefixBase):
     __table_name__ = "users"
 
     id = Column(INTEGER(11), primary_key=True, autoincrement=True, comment="Уникальный идентификатор пользователя")
-    email = Column(VARCHAR(32), nullable=False, comment="Эл почта пользователя и логин")
+    email = Column(VARCHAR(32), nullable=False, unique=True, comment="Эл почта пользователя и логин")
     password = Column(VARCHAR(64), nullable=False, comment="Пароль пользователя")
     fullname = Column(VARCHAR(64), nullable=True, comment="ФИО пользователя")
     phone = Column(VARCHAR(16), nullable=True, comment="Номер телефона")

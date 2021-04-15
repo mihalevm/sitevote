@@ -22,9 +22,9 @@ class Sites(PrefixBase):
 
     id = Column(INTEGER(11), primary_key=True, autoincrement=True, comment="Уникальный идентификатор ресурса")
     uid = Column(INTEGER(11), nullable=False, comment="Уникальный идентификатор владельца сайта")
-    site_url = Column(VARCHAR(128), nullable=True, comment="Адрес сайта")
+    site_url = Column(VARCHAR(128), nullable=True, unique=True, comment="Адрес сайта")
     site_desc = Column(VARCHAR(512), nullable=True, comment="Краткое описание")
-    short_link = Column(VARCHAR(64), nullable=True, comment="Короткая ссылка")
+    short_link = Column(VARCHAR(64), nullable=True, unique=True, comment="Короткая ссылка")
     img_link = Column(VARCHAR(64), nullable=True, comment="Ссылка на снимок экрана сайта")
     fast_rait = Column(INTEGER(11), default=0, comment="Рейтинг сайта")
     create_date = Column(TIMESTAMP, nullable=False, default=func.now(), comment="Дата создания аккаунта")

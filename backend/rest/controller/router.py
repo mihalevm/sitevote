@@ -29,6 +29,8 @@ from rest.model.Votes import Votes
 from rest.model.Dictionary import VoteType
 
 from rest.lib.webscreen import WebScreen
+from rest.lib.emailtemplates import TEmailVoteConfirm
+from rest.lib.emailclient import send_vote_confirmation
 
 from pydantic import BaseModel
 from jose import JWTError, jwt
@@ -102,9 +104,16 @@ class AccountConfirmParams(BaseModel):
     confirm_hash: str = Query(default=None, max_length=64, description="Строка-хеш подтверждения")
 
 
+class VoteConfirmParams(BaseModel):
+    sid: int = Query(default=None, description="Идентификатор сайта")
+    vtype: int = Query(default=None, description="Тип голосующего")
+    email: str = Query(default=None, max_length=64, description="Эл. адрес голосующего")
+
+
 config: Configuration = Configuration('server.ini')
 DB_ACCOUNT = config.get_section('DATABASE')
 ROUTER = config.get_section('ROUTER')
+REST = config.get_section('REST')
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(ROUTER['token_expire'])
 SECRET_KEY = ROUTER['secret']
@@ -113,6 +122,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 router = FastAPI()
 log = logging.getLogger("main")
 DBH = None
+
 
 router.add_middleware(
     CORSMiddleware,
@@ -188,6 +198,8 @@ def db_site_save(uid: int, site_params: SiteParams) -> bool:
         site.img_link = site_params.img_link
 
     if site_params.site_url:
+        if not site_params.site_url.lower().startswith('http'):
+            site_params.site_url = 'http://' + site_params.site_url
         site.site_url = site_params.site_url
 
     if site_params.disabled:
@@ -228,10 +240,13 @@ def db_site_del(uid: int, sid: int) -> bool:
     result = False
 
     try:
-        DBH.delete(Sites) \
-            .filter(Sites.id == sid, Sites.uid == uid)
-        DBH.delete(Votes) \
-            .filter(Votes.sid == sid)
+        DBH.query(Sites) \
+            .filter(Sites.id == sid, Sites.uid == uid)\
+            .delete(synchronize_session=False)
+        DBH.query(Votes) \
+            .filter(Votes.sid == sid)\
+            .delete(synchronize_session=False)
+        DBH.commit()
     except SQLAlchemyError as exc:
         DBH.rollback()
         log.error('[REST] DB error: %s', exc)
@@ -250,7 +265,8 @@ def db_site_search(uid: int, pattern: str) -> Sites:
     try:
         sites = DBH.query(Sites) \
             .filter(or_(func.lower(Sites.site_desc).ilike(f'%{pattern.lower()}%'),
-                        func.lower(Sites.site_url).ilike(f'%{pattern.lower()}%')))
+                        func.lower(Sites.site_url).ilike(f'%{pattern.lower()}%')))\
+            .filter(Sites.img_link.isnot(None))
 
         if uid:
             sites = sites.filter(Sites.uid == uid)
@@ -297,6 +313,52 @@ def db_confirm_account(chash: str) -> Users:
         log.error('[Rest] DB connection error: %s', exc)
 
     return user
+
+
+def db_vote_confirm_email_add(params: VoteConfirmParams) -> str:
+    chash: str = ''
+
+    has_vote: Votes = DBH.query(Votes)\
+        .filter(Votes.email == params.email, Votes.vote_date+86400 > func.now())\
+        .first()
+
+    if not has_vote:
+        chash: str = token_hex(32)
+        vote: Votes = Votes()
+        vote.email = params.email
+        vote.sid = params.sid
+        vote.vote_type = params.vtype
+        vote.chash = chash
+        DBH.add(vote)
+        DBH.commit()
+
+    return chash
+
+
+def db_vote_confirm_email(chash) -> bool:
+    result: bool = False
+
+    vote: Votes = DBH.query(Votes)\
+        .filter(Votes.chash == chash)\
+        .first()
+
+    if vote:
+        vote.chash = None
+        vote_weight = DBH.query(VoteType.weight)\
+            .filter(VoteType.id == vote.vote_type)\
+            .first()
+
+        site: Sites = DBH.query(Sites)\
+            .filter(Sites.id == vote.sid)\
+            .first()
+
+        if vote_weight and site:
+            site.fast_rait = site.fast_rait + vote_weight[0]
+            result = True
+
+        DBH.commit()
+
+    return result
 
 
 def authenticate_user(email: str, password: str) -> Users:
@@ -541,6 +603,9 @@ async def site_verify(p: SiteVerifyParams, sess_acc: SessionAccount = Depends(va
     pic_small = pic_name + '_small' + '.png'
     web_screen: WebScreen = WebScreen(config)
 
+    if not p.url.lower().startswith('http'):
+        p.url = 'http://'+p.url
+
     if web_screen.take_screenshot(p.url, ROUTER['image_storage_dir'] + '/' + pic_large):
         pic = Image.open(ROUTER['image_storage_dir'] + '/' + pic_large)
         spic = pic.resize((480, 320))
@@ -736,6 +801,51 @@ async def site_top(params: SiteTopParams):
 
     if sites:
         j_obj["data"] = json.dumps(sites[0:params.top-1], cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+    )
+
+
+@router.post("/vote-email-send-confirm")
+async def vote_email_send_confirm(params: VoteConfirmParams):
+    j_obj = {
+        "data": "Вы уже проголосовали. Следующее голосование для вас доступно через 24 часа.",
+        "error": 400,
+    }
+
+    chash: str = db_vote_confirm_email_add(params)
+    site: Sites = db_site_get(0, params.sid)
+
+    if len(chash) and site:
+        email_params: TEmailVoteConfirm = TEmailVoteConfirm(
+            to=params.email,
+            site_url=REST['site_url'],
+            confirm_hash=chash,
+            site_name=site.site_desc
+        )
+
+        if send_vote_confirmation(email_params):
+            j_obj["data"] = True
+            j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+    )
+
+
+@router.post("/vote-email-confirm")
+async def vote_email_confirm(params: AccountConfirmParams):
+    j_obj = {
+        "data": "Ошибка подтверждения вашего голоса. Попробуйте проголосовать заново.",
+        "error": 400,
+    }
+
+    result: bool = db_vote_confirm_email(params.confirm_hash)
+
+    if result:
+        j_obj["data"] = result
         j_obj["error"] = 200
 
     return JSONResponse(
