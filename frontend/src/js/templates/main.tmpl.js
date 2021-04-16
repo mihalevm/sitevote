@@ -44,8 +44,7 @@ export const createAuthWindow = (el) => {
               <label for="auth-modal-email" class="form-label">${email}</label>
               <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
               <div id="email-hint" class="form-text">${hint}</div>
-              <div id="auth-e-inv" class="invalid-feedback">                
-              </div>
+              <div id="auth-e-inv" class="invalid-feedback"></div>
             </div>
             <div class="mb-3">
               <label for="auth-modal-email-pass" class="form-label">${pass}</label>

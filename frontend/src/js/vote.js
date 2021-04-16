@@ -39,22 +39,18 @@ siteSearch({pattern: ""}).done(function(data) {
   const allSites = JSON.parse(data.data);
   const cards = createCards(allSites, 'get-the-vote');
   $('#all-sites-list').append(cards);
-}).done(function() {  
+}).done(function() {
   $('#all-sites-list .card').each(function(data) {    
     $(this).on('click', function() {        
       const id = $(this).data('sid');
       siteVoteGet({sid: id}).done(function(data) {
-        const site = JSON.parse(data.data);        
+        const site = JSON.parse(data.data);
+        console.log(site);
+        $('#get-the-vote-body h5').text(site.site_url);
         $('#get-the-vote').attr('data-sid', site.id);
         $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);        
         $('#share-site').attr('data-url', site.site_url);
         $('#get-the-vote-desc').text(site.site_desc);
-        voteTypes().done(function(data) {
-          const votes = JSON.parse(data.data);
-          console.log(votes);
-          const votesBlock = createVotes(votes)
-          $('#get-the-vote-body').append(votesBlock);
-        })
       });
     });
   });

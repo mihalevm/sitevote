@@ -71,9 +71,9 @@ export const siteVerify = (data) => sendAjax('POST', '/site-verify', saveTokenTo
 export const siteSave = (data) => sendAjax('POST', '/site-save', saveTokenToStorage, messageToConsole, data);
 export const siteDel = (data) => sendAjax('POST', '/site-del', saveTokenToStorage, messageToConsole, data);
 export const siteSearch = (data) => sendAjax('POST', '/site-search', saveTokenToStorage, messageToConsole, data);
-export const siteVoteGet = (data) => sendAjax('POST', '/site-vote-get', saveTokenToStorage, messageToConsole, data); // Not working Голосование
+export const siteVoteGet = (data) => sendAjax('POST', '/site-vote-get', saveTokenToStorage, messageToConsole, data);
 export const voteTypes = (data) => sendAjax('POST', '/vote-types', saveTokenToStorage, messageToConsole, data); 
-export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data); // Not woriking
+export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data);
 export const voteEmailSendConfirm = (data) => sendAjax('POST', '/vote-email-send-confirm', saveTokenToStorage, messageToConsole, data); // Not woriking
 export const voteEmailConfirm = (data) => sendAjax('POST', '/vote-email-confirm', saveTokenToStorage, messageToConsole, data); // Not woriking
 // export const siteProfileSearch = (data) => sendAjax('POST', '/site-profile-search', saveTokenToStorage, messageToConsole, data); // Not working
