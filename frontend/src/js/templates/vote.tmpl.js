@@ -1,5 +1,7 @@
+import { fromJSON } from 'postcss';
 import config from '../../config/config.json';
 import { voteTypes } from '../lib/clientRequests';
+import { emailValidationEvent } from '../lib/events';
 export const createVote = (el) => {
 const tmpl = ({ site_name, img_src, img_alt, description }) => `
 <div id="get-the-vote" data-sid="0" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="get-the-vote" aria-hidden="true">
@@ -42,8 +44,9 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
   voteTypes().done(function(data) {
     const votes = JSON.parse(data.data);    
     const votesBlock = createVotes(votes);    
-    $('#get-the-vote-body').append(votesBlock);    
-  });
+    $('#get-the-vote-body').append(votesBlock);
+    emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');    
+  });  
 };
 
 export const createVotes = (arrayOfVotes) => { 
@@ -58,7 +61,7 @@ export const createVotes = (arrayOfVotes) => {
   </div>
   `;
   const saveVoteBlock = `
-  <div id="save-vote" class="row pt-3 pb-5">
+  <div class="row pt-3 pb-5">
     <div class="col">
       <label for="save-vote-email" class="form-label">Email</label>
       <input id="save-vote-email" type="email" class="form-control" aria-describedby="emailHelp" required>
@@ -66,7 +69,7 @@ export const createVotes = (arrayOfVotes) => {
     </div>    
   </div>
   <div class="row">
-    <button type="button" class="btn btn-primary">${config.vote.vote_btn}</button>
+    <button id="save-vote" type="button" class="btn btn-primary">${config.vote.vote_btn}</button>
   </div>
   `;
   let votesHTML = '';

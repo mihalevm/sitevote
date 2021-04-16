@@ -17,7 +17,8 @@ module.exports = {
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
     'profile-add-edit-site': './src/js/profile-add-edit-site.js',
-    'confirm': './src/js/confirm.js',    
+    'confirm': './src/js/confirm.js',
+    'congratulations': './src/js/congratulations.js',
     'vote': './src/js/vote.js',
     'share': './src/vendors/share.js'
   },  
