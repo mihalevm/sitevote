@@ -1,39 +1,27 @@
 import config from '../../config/config.json';
 
-export const createSiteAwards = (el) => {
-  const tmpl = ({card_title, card_text}) => `
-  <div class="card-group pt-5 g-4">
-  <div class="card">
-    <img src="/img/img-site-1.webp" class="card-img-top" alt="...">
+export const createSiteAwards = (arrayOfTopSites) => {
+  const rowBeginTag = '<div class="row pt-5">';
+  const divEndTag = '</div>'
+  let awardsHTML = '';
+  awardsHTML = awardsHTML + rowBeginTag;   
+  const tmpl = (id, imgLink, cardTitle, cardText) => `  
+  <div class="col g-4">
+  <div class="card" data-sid="${id}">
+    <img src="http://sitevote.e-arbitrage.ru/storage/${imgLink}.png" class="card-img-top" alt="Картинка сайта">
     <div class="card-body">
-      <h5 class="card-title">${card_title}</h5>
-      <p class="card-text">${card_text}</p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      <h5 class="card-title">${cardTitle}</h5>
+      <p class="card-text">${cardText}</p>      
     </div>
   </div>
-  <div class="card">
-    <img src="/img/img-site-2.webp" class="card-img-top" alt="...">
-    <div class="card-body">
-      <h5 class="card-title">${card_title}</h5>
-      <p class="card-text">${card_text}</p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
-  </div>
-  <div class="card">
-    <img src="/img/img-site-3.webp" class="card-img-top" alt="...">
-    <div class="card-body">
-      <h5 class="card-title">${card_title}</h5>
-      <p class="card-text">${card_text}</p>
-      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
-  </div>
-</div>
+  </div> 
   `;
 
-  $(el).append(tmpl({
-    card_title: config.index.sites[0].card_title, 
-    card_text: config.index.sites[0].card_text
-  }));
+  $.each(arrayOfTopSites, function(i, v) {
+    awardsHTML = awardsHTML + tmpl(v.id, v.img_link, v.site_url, v.site_desc);
+  })
+  awardsHTML = awardsHTML + divEndTag;
+  return awardsHTML;
 };
 
 export const createDescription = (el) => {
