@@ -1,6 +1,5 @@
-import { fromJSON } from 'postcss';
 import config from '../../config/config.json';
-import { voteTypes } from '../lib/clientRequests';
+import { voteTypes, voteEmailSendConfirm } from '../lib/clientRequests';
 import { emailValidationEvent } from '../lib/events';
 export const createVote = (el) => {
 const tmpl = ({ site_name, img_src, img_alt, description }) => `
@@ -29,10 +28,6 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
 </div>  
 `;
 
-/* <div class="modal-footer">        
-<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-</div> */
-
   $(el).append(tmpl({
     site_name: config.vote.site_name,
     img_src: config.vote.img_src,
@@ -43,20 +38,38 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
 
   voteTypes().done(function(data) {
     const votes = JSON.parse(data.data);    
-    const votesBlock = createVotes(votes);    
-    $('#get-the-vote-body').append(votesBlock);
-    emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');    
-  });  
+    const votesBlock = createVotes(votes);  
+    console.log(votes);
+    $('#get-the-vote-body').append(votesBlock);     
+  }).done(function(data) {
+    $($('.form-check-input')[3]).attr('checked', true);
+    $('#save-vote-email').on('keyup', function() {
+      emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');
+    });    
+    $('#save-vote').on('click', function() {
+      emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');
+      const vote = {
+        sid: parseInt($('#get-the-vote').data('sid')),
+        vtype: parseInt($(':checked').data('vtype')),
+        email: $('#save-vote-email').val()
+      };
+      // console.log(vote);
+      if($('#save-vote-email').val != 0)
+        voteEmailSendConfirm(vote)
+    });
+
+  });
+
 };
 
 export const createVotes = (arrayOfVotes) => { 
   const beginTag = `<form id="get-the-vote-form" class="pt-5">`;
   const endTag = `</form>`;
-  const vote = (idName, voteName) => `
+  const vote = (id, value) => `
   <div class="form-check pt-3">
-    <input class="form-check-input" type="radio" name="vote-opt" id="vote-${idName}">
-    <label class="form-check-label" for="vote-${idName}">
-      ${voteName}
+    <input class="form-check-input" type="radio" name="vote-opt" id="vote-${id}" data-vtype=${id}>
+    <label class="form-check-label" for="vote-${id}">
+      ${value}
     </label>    
   </div>
   `;
