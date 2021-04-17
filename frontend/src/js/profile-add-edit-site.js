@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-// import { Modal } from 'bootstrap';
+import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
@@ -140,23 +140,28 @@ checkAuth().done(function(data) {
   });
 
   $('#add-site-save').on('click', function(e) {    
-    if($('#add-site-url').val().length != 0) {
-      const newSite = {
+    if($('#add-site-url').val().length != 0) {      
+      const site = {
         // Refactoring
         sid: parseInt($('#add-site-form').data('sid')),
-        site_desc: ($('#add-site-description').val()) ? $('#add-site-description').val() : ' ',
+        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : ' ',
         site_url: $('#add-site-url').val(),
         short_link: $('#add-uniq-url').val(),
-        img_link: $('#add-site-img').data('origin')
-      };      
-      if($('#add-site-img').data('origin')) {
-        console.log(newSite);
-        siteSave(newSite).done(function(data) {
-          if(data.error === 200) {
+        img_link: ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin')
+      };
+      // const modalEl = document.getElementById('add-site-modal');
+      // const modal = Modal.getInstance(modalEl);            
+      // console.log(site)
+      if($('#add-site-img').attr('src') !== '') {        
+        siteSave(site).done(function(data) {
+          if(data.error === 200) {            
+            // modal.hide();              
+            // clearAddSiteValues();
             $('#add-site-modal').hide();
-            window.location.reload();
-          } else {
-            console.log('Ошибка сохранения параметров сайта.');
+            window.location.reload();            
+          } else {            
+            console.log(data.data, data, site);
+            // modal.hide();
           }
         }).fail(function(data) {
           console.log(data.error);
