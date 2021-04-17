@@ -63,7 +63,7 @@ $('#sites-cards-search').on('keyup', function() {
   })
 });  
 
-checkAuthVote().done(function(data) {
+checkAuthVote().done(function(data) {  
   userLogged();
 }).fail(function(data) {
   unAuthroizedUser();

@@ -66,6 +66,9 @@
   "confirm": {
     "title":"Подтверждение аккаунта"
   },
+  "congratulations": {
+    "title":"Подтверждение голосования"
+  },
   "validationMessages": {
     "email": {
       "format_err": "Формат Email не корректен, правильный формат: index@google.com",
