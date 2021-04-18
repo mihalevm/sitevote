@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление пользователями</title>
+    <script src="main.js"></script>
+    <script src="vendor.js"></script>
+</head>
+<style>
+    .send-validation {
+        cursor: pointer;
+    }
+</style>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="offset-3 col-lg-6 mb-4">
+                <button type="button" class="btn btn-primary float-end" id="bnt_AddUser">
+                    <i class="bi-person-plus"></i> Добавить
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-3 col-lg-6">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Поиск пользователя" id="search">
+                    <span class="input-group-text" id="basic-addon2"><i class="bi-search"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-lg-8">
+                <table class="table" id="searchResult">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">ФИО/Компания</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Телефон</th>
+                        <th scope="col"><i class="bi-gear"></i></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addUser" data-uid="1" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавление пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <input type="text" class="form-control" placeholder="Адрес эл. почты" id="email">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <input type="text" class="form-control" placeholder="ФИО\Компания" id="full_name">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <input type="text" class="form-control" placeholder="Телефон" id="phone">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <textarea class="form-control" placeholder="Описание" id="user_desc"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="saveUser">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="loginModal" data-uid="1" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Авторизация</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <input type="text" class="form-control" placeholder="Логин" id="account_login">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <input type="password" class="form-control" placeholder="Пароль" id="account_password">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <label id="account_status"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="act_login">Авторизоваться</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1040">
+        <div class="toast align-items-center text-white bg-primary border-0 mb-4" role="alert" aria-live="assertive" aria-atomic="true" id="send-successful">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Приглашение успешно отправлено
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1040">
+        <div class="toast align-items-center text-white bg-warning border-0 mb-4" role="alert" aria-live="assertive" aria-atomic="true" id="send-error">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Ошибка отправления приглашения.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
