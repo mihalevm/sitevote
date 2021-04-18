@@ -15,7 +15,7 @@ const messageToConsole = (msg) => {
 const saveTokenToStorage = function(data) {
   if(data.token) {
     localStorage.token = data.token;
-    console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
+    // console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
   }
 };
 
@@ -44,9 +44,9 @@ export const logIn = (username, password) => $.ajax({
     username: username,
     password: sha256(password).toString()
   },
-  success: function(data) {
+  success: function(data) {    
     localStorage.token = data.token;
-    console.log(data);
+    console.log(data);    
   },
   error: function(data) {    
     console.log(data);
@@ -71,7 +71,9 @@ export const siteVerify = (data) => sendAjax('POST', '/site-verify', saveTokenTo
 export const siteSave = (data) => sendAjax('POST', '/site-save', saveTokenToStorage, messageToConsole, data);
 export const siteDel = (data) => sendAjax('POST', '/site-del', saveTokenToStorage, messageToConsole, data);
 export const siteSearch = (data) => sendAjax('POST', '/site-search', saveTokenToStorage, messageToConsole, data);
-export const siteVoteGet = (data) => sendAjax('POST', '/site-vote-get', saveTokenToStorage, messageToConsole, data); // Not working Голосование
+export const siteVoteGet = (data) => sendAjax('POST', '/site-vote-get', saveTokenToStorage, messageToConsole, data);
 export const voteTypes = (data) => sendAjax('POST', '/vote-types', saveTokenToStorage, messageToConsole, data); 
-export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data); // Not woriking
+export const siteTop = (data) => sendAjax('POST', '/site-top', saveTokenToStorage, messageToConsole, data);
+export const voteEmailSendConfirm = (data) => sendAjax('POST', '/vote-email-send-confirm', saveTokenToStorage, messageToConsole, data);
+export const voteEmailConfirm = (data) => sendAjax('POST', '/vote-email-confirm', saveTokenToStorage, messageToConsole, data);
 // export const siteProfileSearch = (data) => sendAjax('POST', '/site-profile-search', saveTokenToStorage, messageToConsole, data); // Not working

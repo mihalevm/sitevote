@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-// import { Modal } from 'bootstrap';
+import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
@@ -73,7 +73,7 @@ checkAuth().done(function(data) {
       $(this).val('');
     });
     $('#add-site-description').val('');
-    $('#add-site-form').removeAttr('data-sid');
+    $('#add-site-form').attr('data-sid', '0');
     $('.modal-title').text('Добавить сайт');
     $('#add-site-img').attr('src', '');
     $('#dummy-svg').show();
@@ -90,28 +90,45 @@ checkAuth().done(function(data) {
       const getImg = siteVerify({url: url});
   
       if(getImg.state() === 'pending') {
-        $('#dummy-svg').hide();
-        const spinner = `        
-        <div class="d-flex justify-content-center">
-          <div id="loading-spinner"class="spinner-border" role="status" width="466" height="326">
+        $('#dummy-svg').hide();            
+        const spinner = `
+        <div id="loading-spinner" style="width:466px; height:326px;">    
+        <div class="position-relative top-50 start-50 translate-middle d-flex justify-content-center">
+          <div class="spinner-border" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
-        </div>        
-        `;
-        $('#img-con').prepend(spinner);        
-      }
-  
-      getImg.done(function(data) {
-        console.log(data.data);
-        let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru/'+ data.data.small : data.data.small;
-        console.log(src);
-        $('#add-site-img').attr('src', src);        
-        $('#add-site-img').attr('data-origin', data.data.origin);
+        </div>
+        </div>
+        `;        
+        $('#img-con').prepend(spinner);
+      }  
+      getImg.done(function(data) {        
+        if(data.error === 200) {
+          let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru'+ data.data.small : data.data.small;
+          // console.log(src);
+          $('#add-site-img').attr('src', src);        
+          $('#add-site-img').attr('data-origin', data.data.origin);
+        } else {          
+          const alertMsg = `
+          <div id="al-img" style="width:466px; height:326px;">    
+          <div class="position-relative top-50 start-50 translate-middle d-flex justify-content-center">
+            <div class="alert alert-danger" role="alert">
+              Проверьте правильность URL. Картинка сайта не была загружена.
+            </div>
+          </div>
+          </div>
+          `;
+          $('#img-con').prepend(alertMsg);
+          setTimeout(() => {
+            $('#al-img').remove();
+            $('#dummy-svg').show();
+          }, 2000)
+        }        
         $('#loading-spinner').remove();        
       }).fail(function(data) {
         $('#loading-spinner').remove();
         const alertMsg = `
-          <div class="alert alert-primary" role="alert">
+          <div class="alert alert-danger" role="alert">
             Картинка не может быть загружена. Функция проверки не работает.
           </div>
         `;
@@ -123,21 +140,49 @@ checkAuth().done(function(data) {
   });
 
   $('#add-site-save').on('click', function(e) {    
-    if($('#add-site-url').val().length != 0) {
-      const newSite = {
+    if($('#add-site-url').val().length != 0) {      
+      const site = {
         // Refactoring
         sid: parseInt($('#add-site-form').data('sid')),
-        site_desc: $('#add-site-description').val(),
+        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : ' ',
         site_url: $('#add-site-url').val(),
         short_link: $('#add-uniq-url').val(),
-        img_link: $('#add-site-img').data('origin')
-      };     
-      siteSave(newSite).done(function() {
-        $('#add-site-modal').hide();
-        window.location.reload();
-      }).fail(function(data) {
-
-      });
+        img_link: ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin')
+      };
+      // const modalEl = document.getElementById('add-site-modal');
+      // const modal = Modal.getInstance(modalEl);            
+      // console.log(site)
+      if($('#add-site-img').attr('src') !== '') {        
+        siteSave(site).done(function(data) {
+          if(data.error === 200) {            
+            // modal.hide();              
+            // clearAddSiteValues();
+            $('#add-site-modal').hide();
+            window.location.reload();            
+          } else {            
+            console.log(data.data, data, site);
+            // modal.hide();
+          }
+        }).fail(function(data) {
+          console.log(data.error);
+        });
+      } else {
+        $('#dummy-svg').hide();
+        const alertMsg = `
+        <div id="al-img" style="width:466px; height:326px;">    
+        <div class="position-relative top-50 start-50 translate-middle d-flex justify-content-center">
+          <div class="alert alert-warning" role="alert">
+            Картинка не была загружена. Нажмите кнопку Проверить.
+          </div>
+        </div>
+        </div>
+        `;
+        $('#img-con').prepend(alertMsg);
+        setTimeout(() => {
+          $('#al-img').remove();
+          $('#dummy-svg').show();
+        }, 2000);        
+      }      
     } else {
       $('#add-site-url').addClass('is-invalid');
     }

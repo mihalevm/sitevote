@@ -17,7 +17,8 @@ module.exports = {
     'index' : './src/index.js',    
     'profile': './src/js/profile.js',
     'profile-add-edit-site': './src/js/profile-add-edit-site.js',
-    'confirm': './src/js/confirm.js',    
+    'confirm': './src/js/confirm.js',
+    'congratulations': './src/js/congratulations.js',
     'vote': './src/js/vote.js',
     'share': './src/vendors/share.js'
   },  
@@ -101,16 +102,6 @@ module.exports = {
       filename: 'pages/profile.html'
     }),
     new HtmlWebpackPlugin({      
-      template: './src/pages/confirm.html',
-      minify: {
-        removeComments: isProd,
-        collapseWhitespace: isProd
-      },
-      inject: 'body',
-      chunks: ['confirm'],
-      filename: 'pages/confirm.html'
-    }),
-    new HtmlWebpackPlugin({      
       template: './src/pages/profile-add-edit-site.html',
       minify: {
         removeComments: isProd,
@@ -129,6 +120,26 @@ module.exports = {
       inject: 'body',
       chunks: ['share','vote'],
       filename: 'pages/vote.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/confirm.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['confirm'],
+      filename: 'pages/confirm.html'
+    }),
+    new HtmlWebpackPlugin({      
+      template: './src/pages/congratulations.html',
+      minify: {
+        removeComments: isProd,
+        collapseWhitespace: isProd
+      },
+      inject: 'body',
+      chunks: ['congratulations'],
+      filename: 'pages/congratulations.html'
     }),
     new MiniCssExtractPlugin({
       filename: `styles/${fileName('css')}`

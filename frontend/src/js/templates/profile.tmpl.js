@@ -167,11 +167,9 @@ const tmpl = ({site_url, ratings, del_site}) => `
   </main>
 </div>
 `;
-  $(el).append(tmpl({
-    // place: config.profile.statistics_tab.place,
+  $(el).append(tmpl({    
     site_url: config.profile.statistics_tab.site_url,
-    ratings: config.profile.statistics_tab.ratings,
-    // share: config.profile.statistics_tab.share,
+    ratings: config.profile.statistics_tab.ratings,    
     del_site: config.profile.statistics_tab.del_site,
   }));
 };
@@ -180,8 +178,7 @@ export const createSitesRows = (arrayOfSites) => {
   //<td>    
   //   <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"> 
   //   </div>
-  // </td>
-  // Проблема не загружаемом скрипте 
+  // </td>  
   const tmpl = (id, url, fast_rait) => `
   <tr>    
     <td>${url}</td>    
