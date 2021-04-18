@@ -65,8 +65,8 @@ checkAuth().done(function(data) {
       let firstLoadingList = sites.slice(0, 12); 
       let endList = sites.slice(12);
       $('#profile-sites-list').append(createCards(firstLoadingList, 'add-site-modal'));
-      $(window).on('scroll', function() {     
-        if(window.scrollY + window.innerHeight >= document.body.scrollHeight) {          
+      $(window).on('scroll', function() {
+        if(window.scrollY + window.innerHeight >= document.body.scrollHeight) {
           if(endList.length - 4 >= 0) {
             let slice = endList.slice(0, 4);
             $('#profile-sites-list').append(createCards(slice, 'add-site-modal'));
