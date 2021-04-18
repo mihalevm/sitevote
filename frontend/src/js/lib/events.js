@@ -1,4 +1,5 @@
-import config from '../../config/config.json'
+import config from '../../config/config.json';
+
 // Input -> Objects ids
 export const emailValidationEvent = (emailEl, saveBtnEl, invalidDiv) => {
   const isValidEmail = (email) => {

@@ -40,8 +40,7 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
 
   voteTypes().done(function(data) {
     const votes = JSON.parse(data.data);    
-    const votesBlock = createVotes(votes);  
-    console.log(votes);
+    const votesBlock = createVotes(votes);      
     $('#get-the-vote-body').append(votesBlock);     
   }).done(function(data) {
     $($('.form-check-input')[3]).attr('checked', true);

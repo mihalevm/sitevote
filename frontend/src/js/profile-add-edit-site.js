@@ -1,9 +1,9 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
-import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
+import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
+import { createAuthWindow, createHeader, createFooter, userLogged, loadingCardIntoPage } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
-import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
 
 const container = () => `
 <div class="container">
@@ -43,25 +43,27 @@ $('#sites-cards-search').on('keyup', function() {
 
 checkAuth().done(function(data) {
   userLogged();
+  const loadDataToForm = (el) => {
+    const id = $(el).data('sid');        
+    siteGet({sid: id}).done(function(data) {
+      const site = JSON.parse(data.data);          
+      $('#add-site-form').attr('data-sid', site.id);
+      for(let v in site) {
+        $(`input[name="${v}"]`).val(site[v]);
+      }          
+      $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
+      $('#add-site-description').val(site.site_desc)
+      $('.modal-title').text('Редактирование сайта');
+      $('#dummy-svg').hide();
+    });
+  }; 
   siteStats().done(function(data) {
-    const sites = JSON.parse(data.data);        
-    const cards = createCards(sites, 'add-site-modal');
-    $('#profile-sites-list').append(cards);
+    const sites = JSON.parse(data.data);
+    loadingCardIntoPage(sites, '#profile-sites-list', 'add-site-modal', loadDataToForm);   
   }).done(function() {
     $('#profile-sites-list .card').each(function() {
       $(this).on('click', function() {        
-        const id = $(this).data('sid');        
-        siteGet({sid: id}).done(function(data) {
-          const site = JSON.parse(data.data);          
-          $('#add-site-form').attr('data-sid', site.id);
-          for(let v in site) {
-            $(`input[name="${v}"]`).val(site[v]);
-          }          
-          $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
-          $('#add-site-description').val(site.site_desc)
-          $('.modal-title').text('Редактирование сайта');
-          $('#dummy-svg').hide();
-        });
+        loadDataToForm(this);
       });
     });
   });
@@ -149,19 +151,19 @@ checkAuth().done(function(data) {
         short_link: $('#add-uniq-url').val(),
         img_link: ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin')
       };
+      // without reload
       // const modalEl = document.getElementById('add-site-modal');
       // const modal = Modal.getInstance(modalEl);            
       // console.log(site)
+      // modal.hide();              
+      // clearAddSiteValues();
       if($('#add-site-img').attr('src') !== '') {        
         siteSave(site).done(function(data) {
-          if(data.error === 200) {            
-            // modal.hide();              
-            // clearAddSiteValues();
+          if(data.error === 200) {
             $('#add-site-modal').hide();
             window.location.reload();            
           } else {            
-            console.log(data.data, data, site);
-            // modal.hide();
+            console.log(data.data, data, site);            
           }
         }).fail(function(data) {
           console.log(data.error);

@@ -1,8 +1,9 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
-import { checkAuthVote, siteSearch, siteVoteGet, voteTypes } from './lib/clientRequests';
-import { createAuthWindow, createHeader, createFooter, userLogged, createCards, unAuthroizedUser } from './templates/main.tmpl';
-import { createVote, createVotes } from './templates/vote.tmpl';
+import { createAuthWindow, createHeader, createFooter, 
+  userLogged, unAuthroizedUser, loadingCardIntoPage } from './templates/main.tmpl';
+import { checkAuthVote, siteSearch, siteVoteGet } from './lib/clientRequests';
+import { createVote } from './templates/vote.tmpl';
 import '../styles/style.scss';
 
 const container = () => `
@@ -35,23 +36,24 @@ createAuthWindow(document.body);
 $(document.body).append(container);
 createFooter(document.body);
 createVote(document.body);
+const loadDataToForm = (el) => {
+  const id = $(el).data('sid');
+  siteVoteGet({sid: id}).done(function(data) {
+    const site = JSON.parse(data.data);
+    $('#get-the-vote-body h5').text(site.site_url);
+    $('#get-the-vote').attr('data-sid', site.id);
+    $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);        
+    $('#share-site').attr('data-url', site.site_url);
+    $('#get-the-vote-desc').text(site.site_desc);
+  });
+};
 siteSearch({pattern: ""}).done(function(data) {
   const allSites = JSON.parse(data.data);
-  const cards = createCards(allSites, 'get-the-vote');
-  $('#all-sites-list').append(cards);
+  loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm); 
 }).done(function() {
   $('#all-sites-list .card').each(function(data) {    
     $(this).on('click', function() {        
-      const id = $(this).data('sid');
-      siteVoteGet({sid: id}).done(function(data) {
-        const site = JSON.parse(data.data);
-        console.log(site);
-        $('#get-the-vote-body h5').text(site.site_url);
-        $('#get-the-vote').attr('data-sid', site.id);
-        $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);        
-        $('#share-site').attr('data-url', site.site_url);
-        $('#get-the-vote-desc').text(site.site_desc);
-      });
+      loadDataToForm(this);
     });
   });
 });;
@@ -61,7 +63,7 @@ $('#sites-cards-search').on('keyup', function() {
   $('#all-sites-list div.col').filter(function() {
     $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
-});  
+}); 
 
 checkAuthVote().done(function(data) {  
   userLogged();
