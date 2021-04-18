@@ -1,6 +1,5 @@
 import config from '../../config/config.json';
 import { Tabs } from 'bootstrap';
-// Need refactoring this
 import { logIn, logOut } from '../lib/clientRequests';
 import { emailValidationEvent, passwordValidationEvent } from '../lib/events';
 
@@ -168,8 +167,7 @@ export const createFooter = (el) => {
   $(el).append(tmpl());
 };
 
-export const createCards = (arrayOfCards, modalId) => {
-  
+export const createCards = (arrayOfCards, modalId) => {  
   const card = (id, img_link, url, description, short_link, modal_name) => `
   <div class="col g-4">
   <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card" style="width: 18rem;">
@@ -181,26 +179,16 @@ export const createCards = (arrayOfCards, modalId) => {
   </div>
   </div>
   `;
-  const cardsHTML = (array) => {    
-    let counter = 1;
+  const cardsHTML = (array) => {
     let resultHTML = '';
     const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
     const endTag = '\n</div>\n';
-    $.each(array, function(i, v) {
-      if(counter == 1) {
-          resultHTML = resultHTML + beginTag + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);      
-        }
-        if(counter >= 2 && counter < 4) {
-          resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);
-        }        
-        if(counter == 4) {
-          resultHTML = resultHTML + card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId) + endTag;
-          counter = 1;    
-        } else {
-          counter++;
-        }
-      });
-      return resultHTML;
-    }
+    resultHTML += beginTag;
+    $.each(array, function(i, v) {      
+      resultHTML += card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);     
+    });
+    resultHTML += endTag;    
+    return resultHTML;
+  }
   return cardsHTML(arrayOfCards);  
 }
