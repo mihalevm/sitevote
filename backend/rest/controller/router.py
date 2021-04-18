@@ -27,6 +27,8 @@ from rest.model.Users import Users
 from rest.model.Sites import Sites
 from rest.model.Votes import Votes
 from rest.model.Dictionary import VoteType
+from rest.lib.emailtemplates import TEmailConfirm
+from rest.lib.emailclient import send_confirmation
 
 from rest.lib.webscreen import WebScreen
 from rest.lib.emailtemplates import TEmailVoteConfirm
@@ -68,6 +70,7 @@ class SessionAccount(Users):
 
 
 class UserParams(BaseModel):
+    uid: Optional[int] = Query(default=0, description='Идентификатор пользователя')
     email: str = Query(default=None, max_length=32, description='Эл. почта пользователя используемая в качестве логина')
     password: Optional[str] = Query(default=None, max_length=64, description='Пароль пользователя')
     fullname: Optional[str] = Query(default=None, max_length=128, description='ФИО либо название компании')
@@ -108,6 +111,14 @@ class VoteConfirmParams(BaseModel):
     sid: int = Query(default=None, description="Идентификатор сайта")
     vtype: int = Query(default=None, description="Тип голосующего")
     email: str = Query(default=None, max_length=64, description="Эл. адрес голосующего")
+
+
+class UserSearchParams(BaseModel):
+    pattern: str = Query(default=None, description="Паттерн поиска пользователей")
+
+
+class GetUserParams(BaseModel):
+    uid: int = Query(default=None, description="Идентификатор пользователя")
 
 
 config: Configuration = Configuration('server.ini')
@@ -359,6 +370,49 @@ def db_vote_confirm_email(chash) -> bool:
         DBH.commit()
 
     return result
+
+
+def db_save_user(user: UserParams) -> bool:
+    result = True
+
+    if user.uid > 0:
+        db_user: Users = DBH.query(Users)\
+            .filter(Users.id == user.uid)\
+            .first()
+        db_user.email = user.email
+        db_user.fullname = user.fullname
+        db_user.phone = db_user.phone
+        db_user.user_desc = user.user_desc
+        DBH.commit()
+    else:
+        db_user: Users = Users()
+        db_user.email = user.email
+        db_user.fullname = user.fullname
+        db_user.phone = db_user.phone
+        db_user.user_desc = user.user_desc
+        db_user.password = token_hex(32)
+        db_user.disabled = 'N'
+        db_user.verified = 'N'
+
+        DBH.add(db_user)
+        DBH.commit()
+
+    return result
+
+
+def db_search_user(pattern: str) -> Users:
+    try:
+        users = DBH.query(Users) \
+            .filter(or_(func.lower(Users.email).ilike(f'%{pattern.lower()}%'),
+                        func.lower(Users.fullname).ilike(f'%{pattern.lower()}%'),
+                        func.lower(Users.user_desc).ilike(f'%{pattern.lower()}%'),
+                        func.lower(Users.phone).ilike(f'%{pattern.lower()}%')))
+    except SQLAlchemyError as exc:
+        DBH.rollback()
+        users = None
+        log.error('[Rest] DB error: %s', exc)
+
+    return users.all() if users else None
 
 
 def authenticate_user(email: str, password: str) -> Users:
@@ -851,5 +905,108 @@ async def vote_email_confirm(params: AccountConfirmParams):
     return JSONResponse(
         content=j_obj,
     )
+
+
+@router.post("/user-save")
+async def save_user(params: UserParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка сохранения пользователя",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    result: bool = db_save_user(params)
+
+    if result:
+        j_obj["data"] = result
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/user-search")
+async def save_user(params: UserSearchParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка поиска пользователя",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    users: Users = db_search_user(params.pattern)
+
+    if users:
+        j_obj["data"] = json.dumps(users, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/get-user")
+async def get_user(params: GetUserParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка запроса пользователя",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    profile: Users = db_profile_get(params.uid)
+
+    if profile:
+        j_obj["data"] = json.dumps(profile, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/send-validation")
+async def send_validation(params: GetUserParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка запроса пользователя",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    profile: Users = db_profile_get(params.uid)
+    confirm_hash: str = token_hex(32)
+
+    confirmation: TEmailConfirm = TEmailConfirm(
+                confirm_hash=confirm_hash,
+                user_name=profile.fullname,
+                to=profile.email,
+                site_url=REST['site_url']
+            )
+
+    if send_confirmation(confirmation):
+        profile.verified = 'S'
+        profile.chash = confirm_hash
+        DBH.commit()
+        j_obj["data"] = True
+        j_obj["error"] = 200
+    else:
+        j_obj["data"] = False
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
 
 __all__ = ['router']

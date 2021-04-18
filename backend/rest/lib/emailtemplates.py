@@ -81,13 +81,13 @@ def render_vote_email_confirm(params: TEmailVoteConfirm) -> str:
         text-decoration: none;
         padding: 10px;
         cursor: pointer;"
-        title="Проголосовать" href="{params.site_url+'/pages/vote_confirm.html?h='+params.confirm_hash}">
+        title="Проголосовать" href="{params.site_url+'/pages/congratulations.html?h='+params.confirm_hash}">
         Проголосовать
     </a>
 </p>
 <p>&nbsp;</p>
 <p style="text-align: left;">Если кнопка не работает скопируйте ссылку ниже в Ваш браузер:</p>
-<p style="text-align: center; color: blue;">{params.site_url+'/pages/vote_confirm.html?h='+params.confirm_hash}</p>
+<p style="text-align: center; color: blue;">{params.site_url+'/pages/congratulations.html?h='+params.confirm_hash}</p>
 <p>&nbsp;</p>
 <p style="text-align: left;">
     Для получения дополнительной информации обратитесь в наш
