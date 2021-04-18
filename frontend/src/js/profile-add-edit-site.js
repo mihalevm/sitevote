@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
 import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
-import { createAuthWindow, createHeader, createFooter, userLogged, createCards } from './templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter, userLogged, loadingCardIntoPage } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
 
@@ -58,36 +58,8 @@ checkAuth().done(function(data) {
     });
   }; 
   siteStats().done(function(data) {
-    const sites = JSON.parse(data.data);              
-    if(sites.length <= 12) {       
-      $('#profile-sites-list').append(createCards(sites, 'add-site-modal'));
-    } else {
-      let firstLoadingList = sites.slice(0, 12); 
-      let endList = sites.slice(12);
-      $('#profile-sites-list').append(createCards(firstLoadingList, 'add-site-modal'));
-      $(window).on('scroll', function() {
-        if(window.scrollY + window.innerHeight >= document.body.scrollHeight) {
-          if(endList.length - 4 >= 0) {
-            let slice = endList.slice(0, 4);
-            $('#profile-sites-list').append(createCards(slice, 'add-site-modal'));
-            $.each(slice, function(i, v) {
-              $(`#profile-sites-list [data-sid=${v.id}]`).on('click', function() {
-                loadDataToForm(this);
-              });
-            });
-            endList = endList.slice(4);
-          } else {            
-            $('#profile-sites-list').append(createCards(endList, 'add-site-modal'));            
-            $.each(endList, function(i, v) {
-              $(`#profile-sites-list [data-sid=${v.id}]`).on('click', function() {
-                loadDataToForm(this);
-              });
-            });
-            $(window).off('scroll');
-          }
-        }
-      });
-    }    
+    const sites = JSON.parse(data.data);
+    loadingCardIntoPage(sites, '#profile-sites-list', 'add-site-modal', loadDataToForm);   
   }).done(function() {
     $('#profile-sites-list .card').each(function() {
       $(this).on('click', function() {        

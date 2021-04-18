@@ -1,8 +1,9 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
-import { checkAuthVote, siteSearch, siteVoteGet, voteTypes } from './lib/clientRequests';
-import { createAuthWindow, createHeader, createFooter, userLogged, createCards, unAuthroizedUser } from './templates/main.tmpl';
-import { createVote, createVotes } from './templates/vote.tmpl';
+import { createAuthWindow, createHeader, createFooter, 
+  userLogged, unAuthroizedUser, loadingCardIntoPage } from './templates/main.tmpl';
+import { checkAuthVote, siteSearch, siteVoteGet } from './lib/clientRequests';
+import { createVote } from './templates/vote.tmpl';
 import '../styles/style.scss';
 
 const container = () => `
@@ -48,47 +49,11 @@ const loadDataToForm = (el) => {
 };
 siteSearch({pattern: ""}).done(function(data) {
   const allSites = JSON.parse(data.data);
-  if(allSites.length <= 12) {       
-    $('#all-sites-list').append(createCards(allSites, 'get-the-vote'));
-  } else {
-    let firstLoadingList = allSites.slice(0, 12); 
-    let endList = allSites.slice(12);
-    $('#all-sites-list').append(createCards(firstLoadingList, 'get-the-vote'));
-    $(window).on('scroll', function() {
-      if(window.scrollY + window.innerHeight >= document.body.scrollHeight) {
-        if(endList.length - 4 >= 0) {
-          let slice = endList.slice(0, 4);
-          $('#all-sites-list').append(createCards(slice, 'get-the-vote'));
-          $.each(slice, function(i, v) {
-            $(`#all-sites-list [data-sid=${v.id}]`).on('click', function() {
-              loadDataToForm(this);
-            });
-          });
-          endList = endList.slice(4);
-        } else {            
-          $('#all-sites-list').append(createCards(endList, 'get-the-vote'));            
-          $.each(endList, function(i, v) {
-            $(`#all-sites-list [data-sid=${v.id}]`).on('click', function() {
-              loadDataToForm(this);
-            });
-          });
-          $(window).off('scroll');
-        }
-      }
-    });
-  }  
+  loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm); 
 }).done(function() {
   $('#all-sites-list .card').each(function(data) {    
     $(this).on('click', function() {        
-      const id = $(this).data('sid');
-      siteVoteGet({sid: id}).done(function(data) {
-        const site = JSON.parse(data.data);        
-        $('#get-the-vote-body h5').text(site.site_url);
-        $('#get-the-vote').attr('data-sid', site.id);
-        $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);        
-        $('#share-site').attr('data-url', site.site_url);
-        $('#get-the-vote-desc').text(site.site_desc);
-      });
+      loadDataToForm(this);
     });
   });
 });;
@@ -98,7 +63,7 @@ $('#sites-cards-search').on('keyup', function() {
   $('#all-sites-list div.col').filter(function() {
     $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
   })
-});  
+}); 
 
 checkAuthVote().done(function(data) {  
   userLogged();

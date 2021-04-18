@@ -191,4 +191,36 @@ export const createCards = (arrayOfCards, modalId) => {
     return resultHTML;
   }
   return cardsHTML(arrayOfCards);  
-}
+};
+
+export const loadingCardIntoPage = (array, parent, idModal, clickCallback) => {
+  if(array.length <= 12) {       
+    $(parent).append(createCards(array, idModal));
+  } else {
+    let firstLoadingList = array.slice(0, 12); 
+    let endList = array.slice(12);
+    $(parent).append(createCards(firstLoadingList, idModal));
+    $(window).on('scroll', function() {
+      if(window.scrollY + window.innerHeight >= document.body.scrollHeight) {
+        if(endList.length - 4 >= 0) {
+          let slice = endList.slice(0, 4);
+          $(parent).append(createCards(slice, idModal));
+          $.each(slice, function(i, v) {
+            $(`${parent} [data-sid=${v.id}]`).on('click', function() {
+              clickCallback(this);
+            });
+          });
+          endList = endList.slice(4);
+        } else {            
+          $(parent).append(createCards(endList, idModal));            
+          $.each(endList, function(i, v) {
+            $(`${parent} [data-sid=${v.id}]`).on('click', function() {
+              clickCallback(this);
+            });
+          });
+          $(window).off('scroll');
+        }
+      }
+    });
+  } 
+};
