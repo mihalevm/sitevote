@@ -15,8 +15,8 @@ $(document.body).append(container);
 $(function() {
   const hash = window.location.search.split('=')[1]; 
   if(hash) {
-    voteEmailConfirm({confirm_hash: hash}).done(function(data) {    
-      if(data.token) {
+    voteEmailConfirm({confirm_hash: hash}).done(function(data) { 
+      if(data.data) {
         changeMainBlock('alert-primary', 'alert-success', config.congratulations.alerts.success, '/', 3000);          
       } else {
         changeMainBlock('alert-primary', 'alert-warning', config.congratulations.alerts.warning, '/', 3000);

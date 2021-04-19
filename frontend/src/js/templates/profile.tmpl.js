@@ -66,7 +66,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     </div>          
     <div class="mb-3">
       <label for="profile-email" class="form-label">${email}</label>
-      <input id="profile-email" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email" required>
+      <input id="profile-email" autocomplete="username" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email" required>
       <div id="profile-e-inv" class="invalid-feedback">
       </div>
     </div>          
@@ -76,14 +76,14 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     </div>
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
-      <input id="profile-password" name="password" type="password" class="form-control" autocomplete="current-password">
+      <input id="profile-password" name="password" type="password" class="form-control" autocomplete="new-password">
       <div class="invalid-feedback">
         Пароль и подтверждение пароля должны быть одинаковыми!
       </div>
     </div>
     <div class="mb-3">
       <label for="profile-confirm-pass" class="form-label" >${confirm_pass}</label>
-      <input id="profile-confirm-pass" type="password" class="form-control">
+      <input id="profile-confirm-pass" type="password" class="form-control" autocomplete="new-password">
     </div>
     <div class="d-flex justify-content-end pt-3">
       <button id="profile-save" type="submit" class="btn btn-primary">${save}</button>       
@@ -177,22 +177,19 @@ const tmpl = ({site_url, ratings, share, del_site}) => `
 };
 
 export const createSitesRows = (arrayOfSites) => { 
- 
   const tmpl = (id, url, fast_rait) => `
   <tr>    
     <td>${url}</td>    
     <td>${fast_rait}</td>
-    <td><div class="ya-share2" data-curtain data-size="s" data-url="${url}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
+    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${url}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
-
   const sitesRowsHTML = (array) => {
     let rows = '';  
     $.each(array, function(i, v) {
       rows = rows + tmpl(v.id, v.site_url, v.fast_rait);
-    }); 
-    
+    });     
     return rows;
   };
 
@@ -236,9 +233,18 @@ let ctx = document.getElementById('chart').getContext('2d');
 siteTop({top: 10}).done(function(data) {
   const top10 = JSON.parse(data.data);  
   const labels = [];
-  const getData = [];
+  const getData = [];  
+  top10.sort(function(r1, r2) {
+    if (r1.fast_rait > r2.fast_rait) {
+      return 1;
+    }
+    if (r1.fast_rait < r2.fast_rait) {
+      return -1;
+    }    
+    return 0;
+  });  
   $.each(top10, function(i,v) {
-    labels.push(v.site_url)
+    labels.push(v.site_url);
     getData.push(v.fast_rait);
   });  
   let myChart = new Chart(ctx, {
@@ -280,14 +286,22 @@ siteTop({top: 10}).done(function(data) {
     options: {
       scales: {
         y: {
+          title:{
+            display: true,
+          text: 'Кол-во голосов',
+          },          
           beginAtZero: true
         },
         x: {
-          ticks: {
-            autoSkip: false,
+          ticks: {            
             maxRotation: 75,
             minRotation: 75
           }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
         }
       }
     }

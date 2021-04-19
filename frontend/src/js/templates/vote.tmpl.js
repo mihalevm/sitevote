@@ -2,25 +2,23 @@ import config from '../../config/config.json';
 import { voteTypes, voteEmailSendConfirm } from '../lib/clientRequests';
 import { emailValidationEvent } from '../lib/events';
 export const createVote = (el) => {
-const tmpl = ({ site_name, img_src, img_alt, description }) => `
+const tmpl = () => `
 <div id="get-the-vote" data-sid="0" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="get-the-vote" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Голосуйте</h5>
+        <h5 class="modal-title"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div id="get-the-vote-body">
-          <div class="ya-share2" data-curtain data-size="l" data-shape="round" data-url="" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>          
-          <h5 class="pt-5">${site_name}</h5>
+          <div class="ya-share2" data-curtain data-shape="round" data-url="" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>                    
           <div class="pt-5">
-            <img id="get-the-vote-img" src="${img_src}" alt="${img_alt}" class="img-fluid">
+            <img id="get-the-vote-img" src="" class="img-fluid">
           </div>
           <h4 class="pt-5">Описание:</h4>
           <div class="pt-5">
-            <p id="get-the-vote-desc">
-              ${description}
+            <p id="get-the-vote-desc">              
             </p>
           </div>
         </div>
@@ -30,13 +28,7 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
 </div>  
 `;
 
-  $(el).append(tmpl({
-    site_name: config.vote.site_name,
-    img_src: config.vote.img_src,
-    img_alt: config.vote.img_alt,
-    description: config.vote.description,
-    vote_opt: config.vote.vote_opt
-  }));
+  $(el).append(tmpl());
 
   voteTypes().done(function(data) {
     const votes = JSON.parse(data.data);    
@@ -57,7 +49,7 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
       
       if($('#save-vote-email').val != 0) {
         voteEmailSendConfirm(vote).done(function(data) {
-          
+          console.log('Email send')
         });
       }        
     });

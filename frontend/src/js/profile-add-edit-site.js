@@ -105,7 +105,7 @@ checkAuth().done(function(data) {
       }  
       getImg.done(function(data) {        
         if(data.error === 200) {
-          let src = (window.location.origin === "http://localhost:8080") ? 'http://sitevote.e-arbitrage.ru'+ data.data.small : data.data.small;
+          let src = (window.location.origin === "http://localhost:8081") ? 'http://sitevote.e-arbitrage.ru'+ data.data.small : data.data.small;
           // console.log(src);
           $('#add-site-img').attr('src', src);        
           $('#add-site-img').attr('data-origin', data.data.origin);
@@ -145,7 +145,7 @@ checkAuth().done(function(data) {
       const site = {
         // Refactoring
         sid: parseInt($('#add-site-form').data('sid')),
-        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : ' ',
+        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : 'Нет описания',
         site_url: $('#add-site-url').val(),
         short_link: $('#add-uniq-url').val(),
         img_link: ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin')

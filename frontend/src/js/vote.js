@@ -40,10 +40,9 @@ const loadDataToForm = (el) => {
   const id = $(el).data('sid');
   siteVoteGet({sid: id}).done(function(data) {
     const site = JSON.parse(data.data);
-    $('#get-the-vote-body h5').text(site.site_url);
+    $('#get-the-vote h5').text(site.site_url);
     $('#get-the-vote').attr('data-sid', site.id);
-    $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);        
-    $('#share-site').attr('data-url', site.site_url);
+    $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);            
     $('#get-the-vote-desc').text(site.site_desc);
   });
 };

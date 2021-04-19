@@ -26,14 +26,16 @@ checkAuth().done(function() {
   siteStats().done(function(data) {
     const sites = JSON.parse(data.data);    
     const tableRows = createSitesRows(sites);      
-    $('#sites-table tbody').append(tableRows);
-    $('.ya-share2').each(function(data) {
-      Ya.share2(this,  {
+    $('#sites-table tbody').append(tableRows);  
+    // Reflow warning
+    $.each(sites, function(i,v) {
+      const div = $(`div[data-item-id=${v.id}]`)[0];      
+      Ya.share2(div,  {
         content: {
-          url: $(this).data('url')
-        }        
+          url: $(div).data('url')
+        }
       });
-    });
+    });    
   }).done(function() {   
     $('#sites-table td > a').each(function(data) {
       $(this).on('click', function() {        
