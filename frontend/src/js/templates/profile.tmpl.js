@@ -76,7 +76,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     </div>
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
-      <input id="profile-password" name="password" type="password" class="form-control">
+      <input id="profile-password" name="password" type="password" class="form-control" autocomplete="current-password">
       <div class="invalid-feedback">
         Пароль и подтверждение пароля должны быть одинаковыми!
       </div>
@@ -144,7 +144,7 @@ export const createProfileTabs = (el) => {
     statistics: config.profile.statistics,
   }));
 };
-// <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
+
 export const createStatistics = (el) => {
 const tmpl = ({site_url, ratings, share, del_site}) => `
 <div class="row">
@@ -293,5 +293,4 @@ siteTop({top: 10}).done(function(data) {
     }
   });
 });
-
 };
