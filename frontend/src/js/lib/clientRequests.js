@@ -60,8 +60,8 @@ export const logOut = () => {
 export const checkAuthVote = () => sendAjax('GET', '/authtest', saveTokenToStorage, messageToConsole('Не авторизованный пользователь'));
 export const checkAuth = () => sendAjax('GET', '/authtest', saveTokenToStorage, redirectToIndex);
 export const accountConfirm = (data) => sendAjax('POST', '/account-confirm', saveTokenToStorage, messageToConsole, data);
-export const loadProfile = () => sendAjax('POST', '/profile-get', saveTokenToStorage, messageToConsole);
-export const updateProfile = (data) => {  
+export const profileGet = () => sendAjax('POST', '/profile-get', saveTokenToStorage, messageToConsole);
+export const profileSave = (data) => {  
   data.password = sha256(data.password).toString();  
   return sendAjax('POST', '/profile-save', saveTokenToStorage, messageToConsole, data);
 };

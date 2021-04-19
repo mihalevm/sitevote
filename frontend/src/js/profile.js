@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
 import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, userSiteDeleteConfirm } from './templates/profile.tmpl';
-import { checkAuth, loadProfile, updateProfile, siteStats, siteGet, siteDel } from './lib/clientRequests';
+import { checkAuth, profileGet, profileSave, siteStats, siteGet, siteDel } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
 
@@ -40,7 +40,7 @@ checkAuth().done(function() {
     });
   });
   
-  loadProfile().done(function(data) {
+  profileGet().done(function(data) {
     const parsed = JSON.parse(data.data);
     $('#profile-fio').val(parsed.fullname);
     $('#profile-email').val(parsed.email);
@@ -74,7 +74,7 @@ checkAuth().done(function() {
       obj[i.name] = i.value;
       return obj;
     }, {});    
-    updateProfile(formFields).done(function(data) {      
+    profileSave(formFields).done(function(data) {      
       const alertMsg = `
       <div class="alert alert-success" role="alert">
         Учетные данные обновлены.

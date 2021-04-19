@@ -247,15 +247,19 @@ siteTop({top: 10}).done(function(data) {
       labels: labels,
       datasets: [
         {
-          label: '# of Votes',
-          data: getData,
+          label: '10 лучших сайтов',
+          data: getData,          
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
             'rgba(255, 206, 86, 0.2)',
             'rgba(75, 192, 192, 0.2)',
             'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(18, 158, 83, 0.2)',
+            'rgba(246, 126, 70, 0.2)',
+            'rgba(80, 192, 210, 0.2)',
+            'rgba(30, 72, 211, 0.2)'
           ],
           borderColor: [
             'rgba(255, 99, 132, 1)',
@@ -263,7 +267,11 @@ siteTop({top: 10}).done(function(data) {
             'rgba(255, 206, 86, 1)',
             'rgba(75, 192, 192, 1)',
             'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
+            'rgba(255, 159, 64, 1)',
+            'rgba(18, 158, 83, 1)',
+            'rgba(246, 126, 70, 1)',
+            'rgba(80, 192, 210, 1)',
+            'rgba(30, 72, 211, 1)'
           ],
           borderWidth: 1
         }
