@@ -127,7 +127,7 @@ export const createFooter = (el) => {
   const tmpl = () => `
 <footer class="footer mt-auto py-3 bg-light">
   <div class="footer-container">
-    <span class="text-muted">Place sticky footer content here.</span>
+    <span class="text-muted">${config.footer_tmpl.main}</span>
   </div>
 </footer>
 `;
@@ -137,11 +137,11 @@ export const createFooter = (el) => {
 export const createCards = (arrayOfCards, modalId) => {  
   const card = (id, img_link, url, description, short_link, modal_name) => `
   <div class="col g-4">
-  <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card" style="width: 18rem;">
+  <div data-sid="${id}" data-link-short="${short_link}" data-bs-toggle="modal" data-bs-target="#${modal_name}" class="card card-extend" style="width: 18rem;">
     <img src="http://sitevote.e-arbitrage.ru/storage/${img_link}_small.png">
     <div class="card-body">
       <h6 class="card-title"></h6>
-      <p class="card-text">${description}</p>    
+      <p class="card-text card-text-extend">${description}</p>    
     </div>
   </div>
   </div>
