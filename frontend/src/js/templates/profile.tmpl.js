@@ -146,7 +146,7 @@ export const createProfileTabs = (el) => {
 };
 // <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
 export const createStatistics = (el) => {
-const tmpl = ({site_url, ratings, del_site}) => `
+const tmpl = ({site_url, ratings, share, del_site}) => `
 <div class="row">
   <main>
     <div id="stat-con" class="container pt-5">
@@ -156,6 +156,7 @@ const tmpl = ({site_url, ratings, del_site}) => `
             <tr>              
               <th>${site_url}</th>
               <th>${ratings}</th>              
+              <th>${share}</th> 
               <th>${del_site}</th>
             </tr>
           </thead>
@@ -170,19 +171,18 @@ const tmpl = ({site_url, ratings, del_site}) => `
   $(el).append(tmpl({    
     site_url: config.profile.statistics_tab.site_url,
     ratings: config.profile.statistics_tab.ratings,    
+    share: config.profile.statistics_tab.share,
     del_site: config.profile.statistics_tab.del_site,
   }));
 };
 
 export const createSitesRows = (arrayOfSites) => { 
-  //<td>    
-  //   <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"> 
-  //   </div>
-  // </td>  
+ 
   const tmpl = (id, url, fast_rait) => `
   <tr>    
     <td>${url}</td>    
     <td>${fast_rait}</td>
+    <td><div class="ya-share2" data-curtain data-size="s" data-url="${url}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;

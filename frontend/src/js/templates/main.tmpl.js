@@ -29,17 +29,17 @@ export const createAuthWindow = (el) => {
       <div class="modal-header">
         <h5 class="modal-title">${title}</h5>
         <button id="auth-modal-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>      
+      </div>          
       <div class="modal-body">      
         <div class="mb-3">
           <label for="auth-modal-email" class="form-label">${email}</label>
-          <input type="email" class="form-control" id="auth-modal-email" aria-describedby="emailHelp" required>
+          <input id="auth-modal-email" type="email" class="form-control"  aria-describedby="emailHelp" autocomplete="username" required>
           <div id="email-hint" class="form-text">${hint}</div>
           <div id="auth-e-inv" class="invalid-feedback"></div>
         </div>
         <div class="mb-3">
           <label for="auth-modal-email-pass" class="form-label">${pass}</label>
-          <input type="password" class="form-control" id="auth-modal-email-pass" required>
+          <input id="auth-modal-email-pass" type="password" class="form-control" autocomplete="current-password" required>
           <div id="pass-e-inv" class="invalid-feedback">                
           </div>
         </div>
@@ -59,7 +59,6 @@ export const createAuthWindow = (el) => {
     enter: config.auth_tmpl.enter,
     email: config.auth_tmpl.email,    
   }));
-
   $('#auth-modal-email').on('keyup', function() {
     emailValidationEvent(this, '#auth-modal-enter', '#auth-e-inv');
   });

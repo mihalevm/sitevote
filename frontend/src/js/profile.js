@@ -27,6 +27,13 @@ checkAuth().done(function() {
     const sites = JSON.parse(data.data);    
     const tableRows = createSitesRows(sites);      
     $('#sites-table tbody').append(tableRows);
+    $('.ya-share2').each(function(data) {
+      Ya.share2(this,  {
+        content: {
+          url: $(this).data('url')
+        }        
+      });
+    });
   }).done(function() {   
     $('#sites-table td > a').each(function(data) {
       $(this).on('click', function() {        
