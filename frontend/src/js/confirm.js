@@ -1,5 +1,6 @@
 import config from '../config/config.json';
 import { accountConfirm } from './lib/clientRequests';
+import { changeMainBlock } from './lib/events';
 import '../styles/style.scss';
 document.title = config.confirm.title;
 
@@ -10,17 +11,7 @@ const container = () => `
   </div>
 </div>`;
 
-const changeMainBlock = (rClass, aClass, text, url, rTime) => {
-  setTimeout(() => {
-    $('.alert').removeClass(rClass);
-    $('.alert').addClass(aClass);
-    $('.alert').text(text);        
-    setTimeout(() => window.location.replace(url), rTime);
-  }, 2000);
-};
-
 $(document.body).append(container);
-
 $(function() {
   const hash = window.location.search.split('=')[1]; 
   if(hash) {

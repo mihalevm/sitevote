@@ -36,3 +36,12 @@ export const passwordValidationEvent = (passEl, saveBtnEl, invalidDiv) => {
     $(saveBtnEl).attr('disabled', true);
   }
 };
+
+export const changeMainBlock = (rClass, aClass, text, url, rTime) => {
+  setTimeout(() => {
+    $('.alert').removeClass(rClass);
+    $('.alert').addClass(aClass);
+    $('.alert').text(text);        
+    setTimeout(() => window.location.replace(url), rTime);
+  }, 2000);
+};
