@@ -6,9 +6,18 @@ document.title = config.confirm.title;
 const container = () => `
 <div class="position-absolute top-50 start-50 translate-middle d-flex justify-content-center">
   <div class="alert alert-primary" role="alert">
-    Страница подтверждения регистрации.
+    ${config.confirm.main}
   </div>
 </div>`;
+
+const changeMainBlock = (rClass, aClass, text, url, rTime) => {
+  setTimeout(() => {
+    $('.alert').removeClass(rClass);
+    $('.alert').addClass(aClass);
+    $('.alert').text(text);        
+    setTimeout(() => window.location.replace(url), rTime);
+  }, 2000);
+};
 
 $(document.body).append(container);
 
@@ -17,27 +26,12 @@ $(function() {
   if(hash) {
     accountConfirm({confirm_hash: hash}).done(function(data) {    
       if(data.token) {
-        setTimeout(() => {
-          $('.alert').removeClass('alert-primary');
-          $('.alert').addClass('alert-success');
-          $('.alert').text('Аккаунт успешно подтвержден. Переход на страницу профиля.');        
-          setTimeout(() => window.location.replace('/pages/profile.html'), 1000);
-        }, 2000);
+        changeMainBlock('alert-primary', 'alert-success', config.confirm.alerts.success, '/pages/profile.html', 3000);        
       } else {
-        setTimeout(() => {
-          $('.alert').removeClass('alert-primary');
-          $('.alert').addClass('alert-warning');
-          $('.alert').text('Ошибка подтверждения аккаунта. Возможно вы уже зарегистрированы, попробуйте авторизоваться.');
-          setTimeout(() => window.location.replace('/'), 5000);
-        }, 2000);
+        changeMainBlock('alert-primary', 'alert-warning', config.confirm.alerts.warning, '/', 3000);
       }        
     }).fail(function() {
-      setTimeout(() => {
-        $('.alert').removeClass('alert-primary');
-        $('.alert').addClass('alert-danger');
-        $('.alert').text('Ошибка выполнения запроса. Переход на главную ...');
-        setTimeout(() => window.location.replace('/'), 5000);
-      }, 2000);
+      changeMainBlock('alert-primary', 'alert-danger', config.confirm.alerts.error, '/', 5000);
     });
   } else {
     window.location.replace('/');
