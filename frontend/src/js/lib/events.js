@@ -1,4 +1,5 @@
-import config from '../../config/config.json'
+import config from '../../config/config.json';
+
 // Input -> Objects ids
 export const emailValidationEvent = (emailEl, saveBtnEl, invalidDiv) => {
   const isValidEmail = (email) => {
@@ -34,4 +35,13 @@ export const passwordValidationEvent = (passEl, saveBtnEl, invalidDiv) => {
     $(passEl).addClass('is-invalid');
     $(saveBtnEl).attr('disabled', true);
   }
+};
+
+export const changeMainBlock = (rClass, aClass, text, url, rTime) => {
+  setTimeout(() => {
+    $('.alert').removeClass(rClass);
+    $('.alert').addClass(aClass);
+    $('.alert').text(text);        
+    setTimeout(() => window.location.replace(url), rTime);
+  }, 2000);
 };
