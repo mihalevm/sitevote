@@ -1,5 +1,5 @@
 import config from '../../config/config.json';
-import { siteStats } from '../lib/clientRequests';
+import { siteTop } from '../lib/clientRequests';
 import {
   Chart,
   ArcElement,
@@ -76,7 +76,7 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     </div>
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
-      <input id="profile-password" name="password" type="password" class="form-control">
+      <input id="profile-password" name="password" type="password" class="form-control" autocomplete="current-password">
       <div class="invalid-feedback">
         Пароль и подтверждение пароля должны быть одинаковыми!
       </div>
@@ -144,9 +144,9 @@ export const createProfileTabs = (el) => {
     statistics: config.profile.statistics,
   }));
 };
-// <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp">
+
 export const createStatistics = (el) => {
-const tmpl = ({site_url, ratings, del_site}) => `
+const tmpl = ({site_url, ratings, share, del_site}) => `
 <div class="row">
   <main>
     <div id="stat-con" class="container pt-5">
@@ -156,6 +156,7 @@ const tmpl = ({site_url, ratings, del_site}) => `
             <tr>              
               <th>${site_url}</th>
               <th>${ratings}</th>              
+              <th>${share}</th> 
               <th>${del_site}</th>
             </tr>
           </thead>
@@ -170,19 +171,18 @@ const tmpl = ({site_url, ratings, del_site}) => `
   $(el).append(tmpl({    
     site_url: config.profile.statistics_tab.site_url,
     ratings: config.profile.statistics_tab.ratings,    
+    share: config.profile.statistics_tab.share,
     del_site: config.profile.statistics_tab.del_site,
   }));
 };
 
 export const createSitesRows = (arrayOfSites) => { 
-  //<td>    
-  //   <div class="ya-share2" data-curtain data-size="s" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"> 
-  //   </div>
-  // </td>  
+ 
   const tmpl = (id, url, fast_rait) => `
   <tr>    
     <td>${url}</td>    
     <td>${fast_rait}</td>
+    <td><div class="ya-share2" data-curtain data-size="s" data-url="${url}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
@@ -233,40 +233,64 @@ const tmpl = () => `
 `;
 $(el).append(tmpl);
 let ctx = document.getElementById('chart').getContext('2d');
-let myChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [
-      {
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        borderWidth: 1
-      }
-    ]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true
+siteTop({top: 10}).done(function(data) {
+  const top10 = JSON.parse(data.data);  
+  const labels = [];
+  const getData = [];
+  $.each(top10, function(i,v) {
+    labels.push(v.site_url)
+    getData.push(v.fast_rait);
+  });  
+  let myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: '10 лучших сайтов',
+          data: getData,          
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(18, 158, 83, 0.2)',
+            'rgba(246, 126, 70, 0.2)',
+            'rgba(80, 192, 210, 0.2)',
+            'rgba(30, 72, 211, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(18, 158, 83, 1)',
+            'rgba(246, 126, 70, 1)',
+            'rgba(80, 192, 210, 1)',
+            'rgba(30, 72, 211, 1)'
+          ],
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        },
+        x: {
+          ticks: {
+            autoSkip: false,
+            maxRotation: 75,
+            minRotation: 75
+          }
+        }
       }
     }
-  }
+  });
 });
 };

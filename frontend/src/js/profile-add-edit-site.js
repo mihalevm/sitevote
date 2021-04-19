@@ -69,8 +69,7 @@ checkAuth().done(function(data) {
   });
   
   
-  const clearAddSiteValues = () => {
-    // DRY
+  const clearAddSiteValues = () => {    
     $('#add-site-form input').each(function() {
       $(this).val('');
     });

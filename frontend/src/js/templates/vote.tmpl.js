@@ -12,7 +12,7 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
       </div>
       <div class="modal-body">
         <div id="get-the-vote-body">
-          <div id="share-site" class="ya-share2" data-curtain data-size="l" data-shape="round" data-url="" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>          
+          <div class="ya-share2" data-curtain data-size="l" data-shape="round" data-url="" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>          
           <h5 class="pt-5">${site_name}</h5>
           <div class="pt-5">
             <img id="get-the-vote-img" src="${img_src}" alt="${img_alt}" class="img-fluid">
@@ -55,10 +55,11 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
         email: $('#save-vote-email').val()
       };
       
-      if($('#save-vote-email').val != 0)
+      if($('#save-vote-email').val != 0) {
         voteEmailSendConfirm(vote).done(function(data) {
           
-        })
+        });
+      }        
     });
 
   });
