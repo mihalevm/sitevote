@@ -177,7 +177,6 @@ const tmpl = ({site_url, ratings, share, del_site}) => `
 };
 
 export const createSitesRows = (arrayOfSites) => { 
- 
   const tmpl = (id, url, fast_rait) => `
   <tr>    
     <td>${url}</td>    
@@ -186,13 +185,11 @@ export const createSitesRows = (arrayOfSites) => {
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
-
   const sitesRowsHTML = (array) => {
     let rows = '';  
     $.each(array, function(i, v) {
       rows = rows + tmpl(v.id, v.site_url, v.fast_rait);
-    }); 
-    
+    });     
     return rows;
   };
 

@@ -20,7 +20,7 @@ export const unAuthroizedUser = () => {
   $('#profile-link').remove();
   $('#profile-add-site-link').remove();
 };
-//<form action="#"></form>     
+//     
 export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, email}) => `
   <div id="auth-modal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="auth-modal" aria-hidden="true">
@@ -29,9 +29,9 @@ export const createAuthWindow = (el) => {
       <div class="modal-header">
         <h5 class="modal-title">${title}</h5>
         <button id="auth-modal-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <div class="modal-body">      
+      </div>      
+      <div class="modal-body">
+      <form id="auth-form" class="needs-validation" novalidate>    
         <div class="mb-3">
           <label for="auth-modal-email" class="form-label">${email}</label>
           <input id="auth-modal-email" type="email" class="form-control"  aria-describedby="emailHelp" autocomplete="username" required>
@@ -45,10 +45,10 @@ export const createAuthWindow = (el) => {
           </div>
         </div>
       </div>
+      </form>   
       <div class="modal-footer">
-        <button id="auth-modal-enter" class="btn btn-primary">${enter}</button>
-      </div>
-                 
+        <button id="auth-modal-enter" type="submit" class="btn btn-primary">${enter}</button>
+      </div>                  
     </div>
   </div>
 </div>
