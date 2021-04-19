@@ -55,10 +55,11 @@ const tmpl = ({ site_name, img_src, img_alt, description }) => `
         email: $('#save-vote-email').val()
       };
       
-      if($('#save-vote-email').val != 0)
+      if($('#save-vote-email').val != 0) {
         voteEmailSendConfirm(vote).done(function(data) {
           
-        })
+        });
+      }        
     });
 
   });

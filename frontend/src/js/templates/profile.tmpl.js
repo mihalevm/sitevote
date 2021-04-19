@@ -1,5 +1,5 @@
 import config from '../../config/config.json';
-import { siteStats } from '../lib/clientRequests';
+import { siteTop } from '../lib/clientRequests';
 import {
   Chart,
   ArcElement,
@@ -233,40 +233,57 @@ const tmpl = () => `
 `;
 $(el).append(tmpl);
 let ctx = document.getElementById('chart').getContext('2d');
-let myChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    datasets: [
-      {
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        borderWidth: 1
-      }
-    ]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true
+siteTop({top: 10}).done(function(data) {
+  const top10 = JSON.parse(data.data);  
+  const labels = [];
+  const getData = [];
+  $.each(top10, function(i,v) {
+    labels.push(v.site_url)
+    getData.push(v.fast_rait);
+  });  
+  let myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: '# of Votes',
+          data: getData,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        },
+        x: {
+          ticks: {
+            autoSkip: false,
+            maxRotation: 75,
+            minRotation: 75
+          }
+        }
       }
     }
-  }
+  });
 });
+
 };
