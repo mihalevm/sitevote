@@ -302,7 +302,7 @@ def db_vote_type() -> VoteType:
 
 def db_site_top() -> Sites:
     try:
-        sites: Sites = DBH.query(Sites).filter(Sites.disabled == 'N').order_by(Sites.fast_rait).all()
+        sites: Sites = DBH.query(Sites).filter(Sites.disabled == 'N').order_by(desc(Sites.fast_rait)).all()
     except SQLAlchemyError as exc:
         DBH.rollback()
         sites = Sites()
@@ -854,7 +854,7 @@ async def site_top(params: SiteTopParams):
     sites: Sites = db_site_top()
 
     if sites:
-        j_obj["data"] = json.dumps(sites[0:params.top-1], cls=Encoder)
+        j_obj["data"] = json.dumps(sites[0:params.top], cls=Encoder)
         j_obj["error"] = 200
 
     return JSONResponse(
