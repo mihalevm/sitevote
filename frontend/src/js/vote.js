@@ -40,7 +40,15 @@ const loadDataToForm = (el) => {
   const id = $(el).data('sid');
   siteVoteGet({sid: id}).done(function(data) {
     const site = JSON.parse(data.data);
+    const shareBlock = `<div class="ya-share2" data-curtain data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>`;
+    $('#vote-share').append(shareBlock);
+    Ya.share2($('#vote-share :first-child')[0], {
+      content: {
+        url: site.site_url
+      }
+    });
     $('#get-the-vote h5').text(site.site_url);
+    $('#vote-counter').text(`Голосов: ${site.fast_rait}`);
     $('#get-the-vote').attr('data-sid', site.id);
     $('#get-the-vote-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}.png`);            
     $('#get-the-vote-desc').text(site.site_desc);
