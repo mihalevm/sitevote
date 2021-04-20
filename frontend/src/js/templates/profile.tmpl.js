@@ -178,7 +178,7 @@ const tmpl = ({site_url, ratings, share, del_site}) => `
 
 export const createSitesRows = (arrayOfSites) => { 
   const tmpl = (id, url, fast_rait) => `
-  <tr>    
+  <tr data-sid="${id}">    
     <td>${url}</td>    
     <td>${fast_rait}</td>
     <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${url}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
@@ -196,7 +196,7 @@ export const createSitesRows = (arrayOfSites) => {
   return sitesRowsHTML(arrayOfSites);  
 }; 
   
-export const userSiteDeleteConfirm = (el) => {
+export const createSiteDeleteConfirm = (el) => {
   const tmpl = () => `  
   <div class="modal fade" id="delete-site-confirm" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="delete-site-confirm" aria-hidden="true">
     <div class="modal-dialog">
