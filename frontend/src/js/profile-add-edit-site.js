@@ -45,13 +45,23 @@ checkAuth().done(function(data) {
   userLogged();
   const loadDataToForm = (el) => {
     const id = $(el).data('sid');        
-    siteGet({sid: id}).done(function(data) {
-      const site = JSON.parse(data.data);          
-      $('#add-site-form').attr('data-sid', site.id);
-      for(let v in site) {
-        $(`input[name="${v}"]`).val(site[v]);
-      }          
-      $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
+    siteGet({sid: id}).done(function(data) {      
+      // http://sitevote.e-arbitrage.ru/pages/vote.html?sid=2      
+      const src = () => {
+        let res = window.location.origin.split(':')[1].split('//')[1];
+        if(res === 'localhost') {
+          return 'http://sitevote.e-arbitrage.ru';
+        } else {
+          return window.location.origin;
+        }
+      };
+      const site = JSON.parse(data.data);
+      // console.log(site);
+      const htmlBlock = (id, imgURL) => `<div><img src="${src()}/storage/${imgURL}_small.png"><a href="${src()}/pages/vote.html?sid=${id}">Голосуйте за мой сайт</a></div>`;
+      $('#add-site-form').attr('data-sid', site.id);                
+      $('#add-site-url').val(site.site_url);
+      $('#add-share-block').val(htmlBlock(site.id, site.img_link));
+      $('#add-site-img').attr('src', `${src()}/storage/${site.img_link}_small.png`);
       $('#add-site-description').val(site.site_desc)
       $('.modal-title').text('Редактирование сайта');
       $('#dummy-svg').hide();
