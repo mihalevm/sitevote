@@ -12,7 +12,17 @@ const tmpl = () => `
       </div>
       <div class="modal-body">
         <div id="get-the-vote-body">
-          <div class="ya-share2" data-curtain data-shape="round" data-url="" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>                    
+          <div class="row rows-cols-2">
+            <div class="col">
+              <div class="d-flex justify-content-start">
+                <h5 id="vote-counter"></h5>
+              </div>
+            </div>
+            <div class="col">
+              <div id="vote-share" class="d-flex justify-content-end">                
+              </div>
+            </div>
+          </div>      
           <div class="pt-5">
             <img id="get-the-vote-img" src="" class="img-fluid">
           </div>
@@ -35,67 +45,61 @@ const tmpl = () => `
     const votesBlock = createVotes(votes);      
     $('#get-the-vote-body').append(votesBlock);     
   }).done(function(data) {
-    $($('.form-check-input')[3]).attr('checked', true);
+    $($('#select-role :first-child')).attr('selected', true);
     $('#save-vote-email').on('keyup', function() {
       emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');
     });    
     $('#save-vote').on('click', function() {
-      emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');
+      emailValidationEvent('#save-vote-email', '#save-vote', '#save-v-e-inv');      
       const vote = {
-        sid: parseInt($('#get-the-vote').data('sid')),
-        vtype: parseInt($(':checked').data('vtype')),
+        sid: parseInt($('#get-the-vote').attr('data-sid')),
+        vtype: parseInt($(':selected').data('vtype')),
         email: $('#save-vote-email').val()
-      };
-      
-      if($('#save-vote-email').val != 0) {
+      };      
+      if($('#save-vote-email').val != 0) {        
         voteEmailSendConfirm(vote).done(function(data) {
-          console.log('Email send')
+          if(data.data) {
+            // Вы успешно проголосовали
+          }
+        }).fail(function(data){
+          console.log('Ошибка отправки запроса');
         });
-      }        
+      }
     });
-
   });
 };
-
 export const createVotes = (arrayOfVotes) => { 
-  const beginTag = `<div class="d-flex justify-content-center"><form id="get-the-vote-form" class="pt-5">`;
-  const endTag = `</form></div>`;
-  const vote = (id, value) => `
-  <div class="form-check pt-3">
-    <input class="form-check-input" type="radio" name="vote-opt" id="vote-${id}" data-vtype=${id}>
-    <label class="form-check-label" for="vote-${id}">
-      ${value}
-    </label>    
-  </div>
-  `;
-  const saveVoteBlock = `
+  const beginTag = `
+  <form id="get-the-vote-form" class="d-flex justify-content-center pt-5">
   <div class="row g-3 pt-5 pb-5">
     <div class="col-auto">
-      <label for="save-vote-email" class="pt-1 form-label">Email</label>
-    </div>
-    <div class="col-auto">     
-      <input id="save-vote-email" type="email" class="form-control" aria-describedby="emailHelp" required>
-      <div id="save-v-e-inv" class="invalid-feedback"></div>
+      <label for="select-role" class="pt-2 form-label">Роль</label>
     </div>
     <div class="col-auto">
-      <button id="save-vote" type="button" class="btn btn-primary">${config.vote.vote_btn}</button>
+      <select id="select-role" class="form-select" aria-label="Роль">`;
+  const endTag = `</select></div>`;
+  const vote = (id, value) => `
+  <option id="vote-${id}" data-vtype=${id} value="${id}">${value}</option>
+  `;
+  const saveVoteBlock = `  
+      <div class="col-auto">
+        <label for="save-vote-email" class="pt-2 form-label">Email</label>
+      </div>
+      <div class="col-auto">     
+        <input id="save-vote-email" type="email" class="form-control" aria-describedby="emailHelp" required>
+        <div id="save-v-e-inv" class="invalid-feedback"></div>
+      </div>
+      <div class="col-auto">
+        <button id="save-vote" type="button" class="btn btn-primary">${config.vote.vote_btn}</button>
+      </div>
     </div>
-  </>
-
+  </form>
   `;
   let votesHTML = '';
-  votesHTML = votesHTML + beginTag;
+  votesHTML += beginTag;
   $.each(arrayOfVotes, function(i,v) {    
-    votesHTML = votesHTML + vote(v.id, v.value);
+    votesHTML += vote(v.id, v.value);
   });
-  votesHTML = votesHTML + saveVoteBlock + endTag;
+  votesHTML += endTag + saveVoteBlock;
   return votesHTML
 };
-
-
-// export const createShare = (el) => {
-//   const tmpl = () => `
-//     <div class="ya-share2" data-curtain data-size="l" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,twitter,whatsapp"></div>
-//   `;
-//   $(el).append(tmpl());
-// }
