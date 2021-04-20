@@ -1,4 +1,5 @@
 import config from '../../config/config.json';
+import { getSRC } from './main.tmpl'
 
 export const createSiteAwards = (arrayOfTopSites) => {
   const rowBeginTag = '<div class="row pt-5">';
@@ -8,7 +9,7 @@ export const createSiteAwards = (arrayOfTopSites) => {
   const tmpl = (id, imgLink, cardTitle, cardText) => `  
   <div class="col g-4" style="width:370px; height:416;">
   <div class="card" data-sid="${id}">
-    <img src="http://sitevote.e-arbitrage.ru/storage/${imgLink}.png" class="card-img-top" alt="Картинка сайта">
+    <img src="${getSRC()}/storage/${imgLink}.png" class="card-img-top" alt="Картинка сайта">
     <div class="card-body">
       <h5 class="card-title">${cardTitle}</h5>
       <p class="card-text card-text-extend">${cardText}</p>      
@@ -36,4 +37,3 @@ export const createDescription = (el) => {
     description: config.index.description
   }))
 }
-// 416X370

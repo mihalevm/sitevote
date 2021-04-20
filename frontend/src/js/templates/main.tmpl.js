@@ -20,7 +20,7 @@ export const unAuthroizedUser = () => {
   $('#profile-link').remove();
   $('#profile-add-site-link').remove();
 };
-//     
+  
 export const createAuthWindow = (el) => {  
   const tmpl = ({title, hint, pass, enter, email}) => `
   <div id="auth-modal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="auth-modal" aria-hidden="true">
@@ -190,4 +190,13 @@ export const loadingCardIntoPage = (array, parent, idModal, clickCallback) => {
       }
     });
   } 
+};
+
+export const getSRC = () => {
+  let res = window.location.origin.split(':')[1].split('//')[1];
+  if(res === 'localhost') {
+    return 'http://sitevote.e-arbitrage.ru';
+  } else {
+    return window.location.origin;
+  }
 };
