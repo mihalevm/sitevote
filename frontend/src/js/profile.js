@@ -33,7 +33,7 @@ checkAuth().done(function() {
       const div = $(`div[data-item-id=${v.id}]`)[0];      
       Ya.share2(div,  {
         content: {
-          url: $(div).data('url')
+          url: $(div).data('url'),
         }
       });
     });    

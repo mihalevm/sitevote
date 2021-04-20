@@ -181,7 +181,7 @@ export const createSitesRows = (arrayOfSites) => {
   <tr data-sid="${id}">    
     <td>${url}</td>    
     <td>${fast_rait}</td>
-    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${url}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
+    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${url}" data-description="Голосуйте за мой сайт" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
@@ -235,10 +235,10 @@ siteTop({top: 10}).done(function(data) {
   const labels = [];
   const getData = [];  
   top10.sort(function(r1, r2) {
-    if (r1.fast_rait > r2.fast_rait) {
+    if (r1.fast_rait < r2.fast_rait) {
       return 1;
     }
-    if (r1.fast_rait < r2.fast_rait) {
+    if (r1.fast_rait > r2.fast_rait) {
       return -1;
     }    
     return 0;
