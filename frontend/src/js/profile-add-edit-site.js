@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
 import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
-import { createAuthWindow, createHeader, createFooter, userLogged, loadingCardIntoPage } from './templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter, userLogged, loadingCardIntoPage, getSRC } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
 
@@ -46,12 +46,12 @@ checkAuth().done(function(data) {
   const loadDataToForm = (el) => {
     const id = $(el).data('sid');        
     siteGet({sid: id}).done(function(data) {
-      const site = JSON.parse(data.data);          
-      $('#add-site-form').attr('data-sid', site.id);
-      for(let v in site) {
-        $(`input[name="${v}"]`).val(site[v]);
-      }          
-      $('#add-site-img').attr('src', `http://sitevote.e-arbitrage.ru/storage/${site.img_link}_small.png`);
+      const site = JSON.parse(data.data); 
+      const htmlBlock = (id, imgURL) => `<div><img src="${getSRC()}/storage/${imgURL}_small.png"><a href="${getSRC()}/pages/vote.html?sid=${id}">Голосуйте за мой сайт</a></div>`;      
+      $('#add-site-form').attr('data-sid', site.id);                
+      $('#add-site-url').val(site.site_url);
+      $('#add-share-block').val(htmlBlock(site.id, site.img_link));
+      $('#add-site-img').attr('src', `${getSRC()}/storage/${site.img_link}_small.png`);
       $('#add-site-description').val(site.site_desc)
       $('.modal-title').text('Редактирование сайта');
       $('#dummy-svg').hide();
@@ -75,6 +75,7 @@ checkAuth().done(function(data) {
     });
     $('#add-site-description').val('');
     $('#add-site-form').attr('data-sid', '0');
+    $('#add-share-block').val('');
     $('.modal-title').text('Добавить сайт');
     $('#add-site-img').attr('src', '');
     $('#dummy-svg').show();
@@ -105,7 +106,7 @@ checkAuth().done(function(data) {
       }  
       getImg.done(function(data) {        
         if(data.error === 200) {
-          let src = (window.location.origin === "http://localhost:8081") ? 'http://sitevote.e-arbitrage.ru'+ data.data.small : data.data.small;
+          let src = getSRC() + data.data.small;
           // console.log(src);
           $('#add-site-img').attr('src', src);        
           $('#add-site-img').attr('data-origin', data.data.origin);
@@ -142,14 +143,16 @@ checkAuth().done(function(data) {
 
   $('#add-site-save').on('click', function(e) {    
     if($('#add-site-url').val().length != 0) {      
+      const id = parseInt($('#add-site-form').attr('data-sid'));
+      const imgSRC = ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin');
       const site = {
         // Refactoring
-        sid: parseInt($('#add-site-form').data('sid')),
+        sid: parseInt(id),
         site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : 'Нет описания',
         site_url: $('#add-site-url').val(),
-        short_link: $('#add-uniq-url').val(),
-        img_link: ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin')
-      };
+        short_link: '',
+        img_link: imgSRC
+      };      
       // without reload
       // const modalEl = document.getElementById('add-site-modal');
       // const modal = Modal.getInstance(modalEl);            

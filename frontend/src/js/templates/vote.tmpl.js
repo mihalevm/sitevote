@@ -1,4 +1,5 @@
 import config from '../../config/config.json';
+import { Modal } from 'bootstrap';
 import { voteTypes, voteEmailSendConfirm } from '../lib/clientRequests';
 import { emailValidationEvent } from '../lib/events';
 export const createVote = (el) => {
@@ -55,11 +56,29 @@ const tmpl = () => `
         sid: parseInt($('#get-the-vote').attr('data-sid')),
         vtype: parseInt($(':selected').data('vtype')),
         email: $('#save-vote-email').val()
-      };      
-      if($('#save-vote-email').val != 0) {        
-        voteEmailSendConfirm(vote).done(function(data) {
+      };
+      const alertMsg = (cl, text) => `
+        <div id="vote-alert-msg" class="alert alert-${cl}" role="alert">
+          ${text}
+        </div>
+      `;  
+      
+      if($('#save-vote-email').val != 0) {                
+        voteEmailSendConfirm(vote).done(function(data) {          
+          const voteModalEl = document.getElementById('get-the-vote');
+          const voteModal = Modal.getInstance(voteModalEl);
           if(data.data) {
-            // Вы успешно проголосовали
+            $('#get-the-vote .modal-body').append(alertMsg('success', 'Вам отправлено письмо на почту для подтверждения вашего голоса.'));
+            setTimeout(() => {
+              $('#vote-alert-msg').remove();
+              voteModal.hide();
+            }, 5000);
+          } else {
+            $('#get-the-vote .modal-body').append(alertMsg('danger', 'Ошибка при отравке запроса.'));
+            setTimeout(() => {
+              $('#vote-alert-msg').remove();
+              voteModal.hide();
+            }, 5000);
           }
         }).fail(function(data){
           console.log('Ошибка отправки запроса');

@@ -1,7 +1,7 @@
 import config from '../../config/config.json';
 
 export const createAddSite = (el) => {
-  const tmpl = ({ save, url, access_check, description, uniq_url }) => `
+  const tmpl = ({ save, url, access_check, description, html_block }) => `
 <div id="add-site-modal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="add-site-modal" aria-hidden="true" >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -21,16 +21,16 @@ export const createAddSite = (el) => {
             <title>Placeholder</title>
             <rect width="100%" height="100%" fill="#868e96"></rect>
             <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Картинка сайта</text>
-          </svg>          
+          </svg>
           <button id="add-site-check" class="btn btn-primary">${access_check}</button>
         </div>
         <div class="mb-3">
-          <label for=add-site-description" class="form-label">${description}</label>          
+          <label for="add-site-description" class="form-label">${description}</label>          
           <textarea id="add-site-description" name="site_desc" class="form-control" placeholder="Добавьте описание сайта" style="height: 100px"></textarea>
-        </div>
-        <div class="input-group mb-3">
-          <span for="add-uniq-url" class="input-group-text">${uniq_url}</span>
-          <input id="add-uniq-url" name="short_link" type="text" class="form-control" aria-label="add-uniq-url" aria-describedby="add-uniq-url">
+        </div>        
+        <div class="mb-3">
+          <label for="add-share-block" class="form-label">${html_block}</label>          
+          <textarea id="add-share-block" name="short_link" class="form-control" style="height: 100px" disabled></textarea>
         </div>
       </div>
       <div class="modal-footer">        
@@ -46,6 +46,6 @@ export const createAddSite = (el) => {
     url: config.select_site.url,    
     access_check: config.select_site.access_check,    
     description: config.select_site.description,
-    uniq_url: config.select_site.uniq_url ,  
+    html_block: config.select_site.html_block,    
   }));
 };

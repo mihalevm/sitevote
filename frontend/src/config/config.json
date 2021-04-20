@@ -41,6 +41,7 @@
     "pass": "Пароль",
     "confirm_pass": "Подтверждение пароля",
     "save":"Сохранить",
+    
     "statistics_tab" : {
       "place" : "Место",
       "site_url": "URL",
@@ -55,8 +56,9 @@
     "url": "URL",    
     "description": "Описание сайта",
     "access_check": "Проверить",
-    "uniq_url" : "http://sitevote.e-arbitrage.ru/sites/",
-    "save":"Сохранить"
+    "html_block" : "HTML-блок",
+    "save":"Сохранить",
+    "copy":"Копировать HTML-блок"
   },
   "vote":{
     "page_title": "Голосование",
