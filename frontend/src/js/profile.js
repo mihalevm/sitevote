@@ -1,9 +1,10 @@
 import config from '../config/config.json'
 import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
-import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, userSiteDeleteConfirm } from './templates/profile.tmpl';
+import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, createSiteDeleteConfirm } from './templates/profile.tmpl';
 import { checkAuth, profileGet, profileSave, siteStats, siteGet, siteDel } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
 import '../styles/style.scss';
+import { Modal } from 'bootstrap';
 
 const container = () => `
 <div id="profile-main" class="container">
@@ -19,7 +20,7 @@ createProfileTabs('#profile-main');
 createProfile('#profile-tab');
 createStatistics('#statistics-tab');
 createChart('#statistics-tab');
-userSiteDeleteConfirm('#statistics-tab');
+createSiteDeleteConfirm('#statistics-tab');
 
 checkAuth().done(function() {
   userLogged();
@@ -58,18 +59,25 @@ checkAuth().done(function() {
 
   $('#delete-site').on('click', function() {
     const id = $('#delete-site-body').data('sid');
-    siteDel({sid: id}).done(function() {      
-      $('#delete-site-confirm').hide();
-      const alertMsg = `
-      <div class="alert alert-success" role="alert">
-        Сайт успешно удален
-      </div>
-      `;
+    siteDel({sid: id}).done(function(data) {
+      if(data.data) {        
+        const deleteModalEl = document.getElementById('delete-site-confirm');
+        const deleteModal = Modal.getInstance(deleteModalEl);
+        deleteModal.hide();
+        const siteId = $('#delete-site-body').attr('data-sid');      
+        $(`tr[data-sid=${siteId}]`).remove();
+        const alertMsg = `
+        <div id="delete-alert" class="alert alert-success" role="alert">
+          Сайт успешно удален
+        </div>
+        `;
       $('#stat-con').prepend(alertMsg);
       setTimeout(() => {        
-        window.location.reload();
-        // window.location.replace('/pages/profile.html#statistics-tab');
+        $('#delete-alert').remove();
       }, 1500); 
+      } else {
+        console.log('Ошибка выполнения запроса');
+      }      
     });
   });
   $('#profile-email').on('keyup', function() {
