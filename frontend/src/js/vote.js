@@ -47,7 +47,8 @@ const gettingVote = (id) => {
         url: `${getSRC()}/pages/vote?sid=${site.id}`,
       }
     });
-    $('#get-the-vote h5').text(site.site_url);
+    $('#get-the-vote h5 > a').attr('href', site.site_url);
+    $('#get-the-vote h5 > a').text(site.site_url);
     $('#vote-counter').text(`Голосов: ${site.fast_rait}`);
     $('#get-the-vote').attr('data-sid', site.id);
     $('#get-the-vote-img').attr('src', `${getSRC()}/storage/${site.img_link}.png`);

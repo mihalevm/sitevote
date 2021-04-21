@@ -8,12 +8,12 @@ const tmpl = () => `
   <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"></h5>
+        <h5 class="modal-title"><a href="" target="_blank"></a></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div id="get-the-vote-body">
-          <div class="row rows-cols-2">
+          <div id="get-the-vote-share" class="row rows-cols-2">
             <div class="col">
               <div class="d-flex justify-content-start">
                 <h5 id="vote-counter"></h5>
@@ -23,7 +23,7 @@ const tmpl = () => `
               <div id="vote-share" class="d-flex justify-content-end">                
               </div>
             </div>
-          </div>      
+          </div>
           <div class="pt-5">
             <img id="get-the-vote-img" src="" class="img-fluid">
           </div>
@@ -44,7 +44,7 @@ const tmpl = () => `
   voteTypes().done(function(data) {
     const votes = JSON.parse(data.data);    
     const votesBlock = createVotes(votes);      
-    $('#get-the-vote-body').append(votesBlock);     
+    $('#get-the-vote-share').after(votesBlock);
   }).done(function(data) {
     $($('#select-role :first-child')).attr('selected', true);
     $('#save-vote-email').on('keyup', function() {
@@ -63,24 +63,33 @@ const tmpl = () => `
         </div>
       `;  
       
-      if($('#save-vote-email').val != 0) {                
-        voteEmailSendConfirm(vote).done(function(data) {          
+      if($('#save-vote-email').val != 0) {
+        const sendVote = voteEmailSendConfirm(vote);                 
+        if(sendVote.state() === 'pending') {
+          $('#save-vote').text('');
+          const spinner = `<span id="save-btn-spinner" class="spinner-border spinner-border-sm pe-1" role="status" aria-hidden="true"></span> Прогресс`;          
+          $('#save-vote').append(spinner);
+        }
+        sendVote.done(function(data) {
+          $('#save-btn-spinner').remove();
+          $('#save-vote').text(config.vote.vote_btn);
           const voteModalEl = document.getElementById('get-the-vote');
           const voteModal = Modal.getInstance(voteModalEl);
           if(data.data) {
-            $('#get-the-vote .modal-body').append(alertMsg('success', 'Вам отправлено письмо на почту для подтверждения вашего голоса.'));
+            $('#get-the-vote-form').after(alertMsg('success', 'Вам отправлено письмо на почту для подтверждения вашего голоса.'));
             setTimeout(() => {
               $('#vote-alert-msg').remove();
               voteModal.hide();
             }, 5000);
           } else {
-            $('#get-the-vote .modal-body').append(alertMsg('danger', 'Ошибка при отравке запроса.'));
+            $('#get-the-vote-form').after(alertMsg('danger', 'Ошибка при отравке запроса.'));
             setTimeout(() => {
               $('#vote-alert-msg').remove();
               voteModal.hide();
             }, 5000);
           }
         }).fail(function(data){
+          $('#save-btn-spinner').remove();
           console.log('Ошибка отправки запроса');
         });
       }

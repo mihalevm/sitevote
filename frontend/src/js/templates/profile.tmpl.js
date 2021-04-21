@@ -1,5 +1,6 @@
 import config from '../../config/config.json';
 import { siteTop } from '../lib/clientRequests';
+import { getSRC } from './main.tmpl';
 import {
   Chart,
   ArcElement,
@@ -181,7 +182,7 @@ export const createSitesRows = (arrayOfSites) => {
   <tr data-sid="${id}">    
     <td>${url}</td>    
     <td>${fast_rait}</td>
-    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${url}" data-description="Голосуйте за мой сайт" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
+    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${getSRC()}/pages/vote?sid=${id}" data-description="Голосуйте за мой сайт" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
     <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
   </tr>
   `;
