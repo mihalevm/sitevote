@@ -47,7 +47,7 @@ checkAuth().done(function(data) {
     const id = $(el).data('sid');        
     siteGet({sid: id}).done(function(data) {
       const site = JSON.parse(data.data); 
-      const htmlBlock = (id, imgURL) => `<div><img src="${getSRC()}/storage/${imgURL}_small.png"><a href="${getSRC()}/pages/vote.html?sid=${id}">Голосуйте за мой сайт</a></div>`;      
+      const htmlBlock = (id) => `<div><img src="${getSRC()}/img/banner_480x240.png"><a href="${getSRC()}/pages/vote.html?sid=${id}">Голосуйте за мой сайт</a></div>`;      
       $('#add-site-form').attr('data-sid', site.id);                
       $('#add-site-url').val(site.site_url);
       $('#add-share-block').val(htmlBlock(site.id, site.img_link));

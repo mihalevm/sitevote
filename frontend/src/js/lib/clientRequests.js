@@ -2,7 +2,7 @@ import sha256 from 'crypto-js/sha256';
 
 const URL = 'http://sitevote.e-arbitrage.ru/rest';
 
-const redirectToIndex = function() {
+const redirectToIndex = function() {    
   if(window.location.pathname !== '/') {
     window.location.replace('/');
   }
@@ -12,10 +12,9 @@ const messageToConsole = (msg) => {
   console.log(msg);
 };
 
-const saveTokenToStorage = function(data) {
+const saveTokenToStorage = function(data) {   
   if(data.token) {
-    localStorage.token = data.token;
-    // console.log('save token to storage ' + data.token + ' You have successfully accessed to ' + window.location.pathname);
+    localStorage.token = data.token;    
   }
 };
 
@@ -38,15 +37,16 @@ const sendAjax = (type, path, successCallback, errorCallback, data) => {
 };
 
 export const logIn = (username, password) => $.ajax({
-  type: "POST",
   url: URL + "/login",
+  type: "POST",
   data: {
     username: username,
     password: sha256(password).toString()
   },
-  success: function(data) {    
-    localStorage.token = data.token;
-    console.log(data);    
+  success: function(data) {
+    if(data.token) {    
+      localStorage.token = data.token;    
+    }
   },
   error: function(data) {    
     console.log(data);

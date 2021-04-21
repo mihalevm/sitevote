@@ -44,10 +44,11 @@ const gettingVote = (id) => {
     $('#vote-share').append(shareBlock);
     Ya.share2($('#vote-share :first-child')[0], {
       content: {
-        url: site.site_url,
+        url: `${getSRC()}/pages/vote?sid=${site.id}`,
       }
     });
-    $('#get-the-vote h5').text(site.site_url);
+    $('#get-the-vote h5 > a').attr('href', site.site_url);
+    $('#get-the-vote h5 > a').text(site.site_url);
     $('#vote-counter').text(`Голосов: ${site.fast_rait}`);
     $('#get-the-vote').attr('data-sid', site.id);
     $('#get-the-vote-img').attr('src', `${getSRC()}/storage/${site.img_link}.png`);
@@ -63,23 +64,31 @@ const loadDataToForm = (el) => {
 siteSearch({pattern: ""}).done(function(data) {
   const allSites = JSON.parse(data.data);
   loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm); 
-}).done(function() {
+  return allSites;
+}).done(function(data) {
   $('#all-sites-list .card').each(function(data) {    
     $(this).on('click', function() {        
       loadDataToForm(this);
     });
-  });   
+  });
+  const allSites = JSON.parse(data.data);
+  const idS = []
+  $.each(allSites, function(i,v) {
+    idS.push(v.id);    
+  })  
   const params = new URLSearchParams(window.location.search);
   let id;
   if(params.has('sid')) {
     id = params.get('sid')
     if(id) {
-      const voteModalEl = document.getElementById('get-the-vote');
-      const voteModal = new Modal(voteModalEl, {
-        keyboard: false
-      });  
-      voteModal.show();
-      gettingVote(id);
+      if(idS.includes(parseInt(id))) {
+        const voteModalEl = document.getElementById('get-the-vote');
+        const voteModal = new Modal(voteModalEl, {
+          keyboard: false
+        });  
+        voteModal.show();
+        gettingVote(id);
+      }      
     }
   }  
 });
