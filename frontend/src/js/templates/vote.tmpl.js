@@ -90,7 +90,7 @@ const tmpl = () => `
           }
         }).fail(function(data){
           $('#save-btn-spinner').remove();
-          console.log('Ошибка отправки запроса');
+          $('#get-the-vote-form').after(alertMsg('danger', 'Ошибка при отравке запроса.'));
         });
       }
     });

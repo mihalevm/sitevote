@@ -24,7 +24,7 @@ createChart('#index-main');
 
 checkAuth().done(function(data) {
   userLogged()
-}).fail(function(data) {
-  console.log('fail', data);
+}).fail(function(xhr) {    
+  // console.log(xhr)
 });
 
