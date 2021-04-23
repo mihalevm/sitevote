@@ -19,7 +19,7 @@ const container = () => `
     </div>
     <div id="select-site-con" class="container pt-5">
       <div class="input-group input-group-lg">
-        <span class="input-group-text">${config.select_site.search}</span>
+        <span class="input-group-text">${config.add_site.search}</span>
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
@@ -30,7 +30,7 @@ const container = () => `
 </div>
 `;
 
-document.title = config.select_site.page_title;
+document.title = config.vote.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);

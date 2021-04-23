@@ -3,8 +3,8 @@ import { createAuthWindow, createFooter, createHeader, userLogged } from './temp
 import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, createSiteDeleteConfirm } from './templates/profile.tmpl';
 import { checkAuth, profileGet, profileSave, siteStats, siteGet, siteDel } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
-import '../styles/style.scss';
 import { Modal } from 'bootstrap';
+import '../styles/style.scss';
 
 const container = () => `
 <div id="profile-main" class="container">
@@ -44,7 +44,7 @@ checkAuth().done(function() {
         siteGet({sid: id}).done(function(data) {
           const site = JSON.parse(data.data);          
           $('#delete-site-body').attr('data-sid', site.id);          
-          $('#delete-site-body').text('Вы действительно желаете удалить сайт ' + site.site_url);          
+          $('#delete-site-body').text(config.alertsMessages.site_del + site.site_url);          
         });
       });
     });
@@ -68,7 +68,7 @@ checkAuth().done(function() {
         $(`tr[data-sid=${siteId}]`).remove();
         const alertMsg = `
         <div id="delete-alert" class="alert alert-success" role="alert">
-          Сайт успешно удален
+          ${config.alertsMessages.site_del_success}
         </div>
         `;
       $('#stat-con').prepend(alertMsg);
@@ -76,7 +76,7 @@ checkAuth().done(function() {
         $('#delete-alert').remove();
       }, 1500); 
       } else {
-        console.log('Ошибка выполнения запроса');
+        console.log(config.alertsMessages.requests.send_err);
       }      
     });
   });
@@ -94,7 +94,7 @@ checkAuth().done(function() {
     profileSave(formFields).done(function(data) {      
       const alertMsg = `
       <div class="alert alert-success" role="alert">
-        Учетные данные обновлены.
+        ${config.alertsMessages.profile_update_success}
       </div>
       `;
       $('#profile-edit-form').prepend(alertMsg);

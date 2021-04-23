@@ -63,24 +63,22 @@ const tmpl = ({ fio_company, email, number, confirm_pass, pass, save }) => `
     <form id="profile-edit-form" class="needs-validation" novalidate>
     <div class="mb-3">      
       <label for="profile-fio" class="form-label">${fio_company}</label>
-      <input id="profile-fio" name="fullname" type="text" class="form-control" placeholder="Иванов Иван Иванович\\ООО 'Компания'" aria-label="fio" aria-describedby="profile-fio">      
+      <input id="profile-fio" name="fullname" type="text" class="form-control" placeholder="${config.profile.fio_company_ph}" aria-label="fio" aria-describedby="profile-fio">      
     </div>          
     <div class="mb-3">
       <label for="profile-email" class="form-label">${email}</label>
-      <input id="profile-email" autocomplete="username" name="email" type="text" class="form-control" placeholder="index@google.com" aria-label="email" aria-describedby="profile-email" required>
+      <input id="profile-email" autocomplete="username" name="email" type="text" class="form-control" placeholder="${config.profile.email_ph}" aria-label="email" aria-describedby="profile-email" required>
       <div id="profile-e-inv" class="invalid-feedback">
       </div>
     </div>          
     <div class="mb-3">
       <label for="profile-number" class="form-label">${number}</label>
-      <input id="profile-number" name="phone" type="text" class="form-control" placeholder="89998887766" aria-label="number" aria-describedby="profile-number">
+      <input id="profile-number" name="phone" type="text" class="form-control" placeholder="${config.profile.number_ph}" aria-label="number" aria-describedby="profile-number">
     </div>
     <div class="mb-3">
       <label for="profile-password" class="form-label">${pass}</label>
       <input id="profile-password" name="password" type="password" class="form-control" autocomplete="new-password">
-      <div class="invalid-feedback">
-        Пароль и подтверждение пароля должны быть одинаковыми!
-      </div>
+      <div class="invalid-feedback">${config.validationMessages.password.password_confirm_err}</div>
     </div>
     <div class="mb-3">
       <label for="profile-confirm-pass" class="form-label" >${confirm_pass}</label>
@@ -182,8 +180,8 @@ export const createSitesRows = (arrayOfSites) => {
   <tr data-sid="${id}">    
     <td>${url}</td>    
     <td>${fast_rait}</td>
-    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${getSRC()}/pages/vote?sid=${id}" data-description="Голосуйте за мой сайт" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
-    <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">Удалить</a></div></td>
+    <td><div data-item-id="${id}" class="ya-share2" data-curtain data-size="s" data-url="${getSRC()}/pages/vote?sid=${id}" data-description="${config.profile.data_desc}" data-shape="round" data-services="vkontakte,facebook,odnoklassniki,telegram,whatsapp"></div></td> 
+    <td><a href="#delete-site-confirm" data-sid="${id}" data-bs-toggle="modal" data-bs-target="#delete-site-confirm">${config.profile.del_btn}</a></div></td>
   </tr>
   `;
   const sitesRowsHTML = (array) => {
@@ -203,14 +201,14 @@ export const createSiteDeleteConfirm = (el) => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Удаление сайта</h5>
+          <h5 class="modal-title">${config.profile.del_modal_header}</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div id="delete-site-body" data-sid="" class="modal-body">          
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
-          <button id="delete-site" type="button" class="btn btn-danger">Удалить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">${config.profile.cancel_btn}</button>
+          <button id="delete-site" type="button" class="btn btn-danger">${config.profile.del_btn}</button>
         </div>
       </div>
     </div>
@@ -253,8 +251,7 @@ siteTop({top: 10}).done(function(data) {
     data: {
       labels: labels,
       datasets: [
-        {
-          label: '10 лучших сайтов',
+        {          
           data: getData,          
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
@@ -289,7 +286,7 @@ siteTop({top: 10}).done(function(data) {
         y: {
           title:{
             display: true,
-          text: 'Кол-во голосов',
+          text: config.profile.chart_ytitle,
           },          
           beginAtZero: true
         },

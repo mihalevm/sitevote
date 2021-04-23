@@ -6,7 +6,7 @@ import { emailValidationEvent, passwordValidationEvent } from '../lib/events';
 export const userLogged = () => {
   const menuLink = $('#auth-modal-enter-link');
   $('#auth-modal').hide();
-  menuLink.text('Выход');
+  menuLink.text(config.main_tmpl.exit);
   menuLink.removeAttr('data-bs-toggle');
   menuLink.removeAttr('data-bs-target');
   menuLink.on('click', function() {
