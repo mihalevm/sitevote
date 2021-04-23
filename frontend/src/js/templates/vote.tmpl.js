@@ -27,7 +27,7 @@ const tmpl = () => `
           <div class="pt-5">
             <img id="get-the-vote-img" src="" class="img-fluid">
           </div>
-          <h4 class="pt-5">Описание:</h4>
+          <h4 class="pt-5"></h4>
           <div class="pt-5">
             <p id="get-the-vote-desc">              
             </p>
@@ -76,13 +76,13 @@ const tmpl = () => `
           const voteModalEl = document.getElementById('get-the-vote');
           const voteModal = Modal.getInstance(voteModalEl);
           if(data.data) {
-            $('#get-the-vote-form').after(alertMsg('success', 'Вам отправлено письмо на почту для подтверждения вашего голоса.'));
+            $('#get-the-vote-form').after(alertMsg('success', config.alertsMessages.vote_confirm));
             setTimeout(() => {
               $('#vote-alert-msg').remove();
               voteModal.hide();
             }, 5000);
           } else {
-            $('#get-the-vote-form').after(alertMsg('danger', 'Ошибка при отравке запроса.'));
+            $('#get-the-vote-form').after(alertMsg('danger', config.alertsMessages.requests.send_err));
             setTimeout(() => {
               $('#vote-alert-msg').remove();
               voteModal.hide();
@@ -90,7 +90,7 @@ const tmpl = () => `
           }
         }).fail(function(data){
           $('#save-btn-spinner').remove();
-          $('#get-the-vote-form').after(alertMsg('danger', 'Ошибка при отравке запроса.'));
+          $('#get-the-vote-form').after(alertMsg('danger', config.alertsMessages.requests.send_err));
         });
       }
     });
@@ -101,17 +101,17 @@ export const createVotes = (arrayOfVotes) => {
   <form id="get-the-vote-form" class="d-flex justify-content-center pt-5">
   <div class="row g-3 pt-5 pb-5">
     <div class="col-auto">
-      <label for="select-role" class="pt-2 form-label">Роль</label>
+      <label for="select-role" class="pt-2 form-label">${config.vote.role}</label>
     </div>
     <div class="col-auto">
-      <select id="select-role" class="form-select" aria-label="Роль">`;
+      <select id="select-role" class="form-select" aria-label="${config.vote.role}">`;
   const endTag = `</select></div>`;
   const vote = (id, value) => `
   <option id="vote-${id}" data-vtype=${id} value="${id}">${value}</option>
   `;
   const saveVoteBlock = `  
       <div class="col-auto">
-        <label for="save-vote-email" class="pt-2 form-label">Email</label>
+        <label for="save-vote-email" class="pt-2 form-label">${config.auth_tmpl.email}</label>
       </div>
       <div class="col-auto">     
         <input id="save-vote-email" type="email" class="form-control" aria-describedby="emailHelp" required>

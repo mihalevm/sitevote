@@ -6,14 +6,14 @@ export const createAddSite = (el) => {
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Добавить сайт</h5>
+        <h5 class="modal-title">${config.add_site.header}</h5>
         <button id="add-site-close" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div id="add-site-form" data-sid="0" class="modal-body">
         <div class="mb-3">
           <label for="add-site-url" class="form-label">${url}</label>
           <input id="add-site-url" name="site_url" type="text" class="form-control" placeholder="https://google.com" aria-label="add-site-url" aria-describedby="add-site-url">
-          <div class="invalid-feedback">Поле URL не может быть пустым!</div>
+          <div class="invalid-feedback">${config.validationMessages.url.url_empty_err}</div>
         </div>        
         <div id="img-con" class="mb-3">
           <img id="add-site-img" src="" class="img-fluid pb-3">
@@ -26,7 +26,7 @@ export const createAddSite = (el) => {
         </div>
         <div class="mb-3">
           <label for="add-site-description" class="form-label">${description}</label>          
-          <textarea id="add-site-description" name="site_desc" class="form-control" placeholder="Добавьте описание сайта" style="height: 100px"></textarea>
+          <textarea id="add-site-description" name="site_desc" class="form-control" placeholder="${config.add_site.site_desc_ph}" style="height: 100px"></textarea>
         </div>        
         <div class="mb-3">
           <label for="add-share-block" class="form-label">${html_block}</label>          
@@ -42,10 +42,10 @@ export const createAddSite = (el) => {
 `;
   
   $(el).prepend(tmpl({ 
-    save: config.select_site.save,
-    url: config.select_site.url,    
-    access_check: config.select_site.access_check,    
-    description: config.select_site.description,
-    html_block: config.select_site.html_block,    
+    save: config.add_site.save,
+    url: config.add_site.url,    
+    access_check: config.add_site.access_check,    
+    description: config.add_site.description,
+    html_block: config.add_site.html_block,    
   }));
 };

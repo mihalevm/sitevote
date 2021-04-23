@@ -1,4 +1,7 @@
 {
+  "main_tmpl": {
+    "exit":"Выход"
+  },
   "header_tmpl": {
     "title": "Конкурс сайтов",
     "profile": "Профиль",
@@ -36,12 +39,19 @@
     "statistics": "Статистика голосования",    
     "chart": "График",
     "fio_company": "ФИО\\Название компании",    
+    "fio_company_ph": "Иванов Иван Иванович\\ООО 'Компания'",    
     "email": "Email",
-    "number": "Номер телефона",    
+    "email_ph": "index@google.com",
+    "number": "Номер телефона", 
+    "number_ph": "89998887766",     
     "pass": "Пароль",
     "confirm_pass": "Подтверждение пароля",
     "save":"Сохранить",
-    
+    "data_desc": "Голосуйте за мой сайт", 
+    "del_btn": "Удалить", 
+    "del_modal_header": "Удаление сайта", 
+    "cancel_btn": "Отменить", 
+    "chart_ytitle":"Кол-во голосов",
     "statistics_tab" : {
       "place" : "Место",
       "site_url": "URL",
@@ -50,8 +60,11 @@
       "del_site": "Удалить"
     }
   },
-  "select_site":{
-    "page_title": "Выбор сайта",
+  "add_site":{
+    "header":"Добавить сайт",
+    "site_edit":"Редактирование сайта",
+    "site_desc_ph":"Добавьте описание сайта",
+    "page_title": "Добавить сайт",
     "search": "Поиск",
     "url": "URL",    
     "description": "Описание сайта",
@@ -61,12 +74,11 @@
     "copy":"Копировать HTML-блок"
   },
   "vote":{
-    "page_title": "Голосование",
-    "site_name": "Винни-пух",
-    "img_src": "/img/img-site-1.webp",
-    "img_alt": "Текст картинки",
+    "page_title": "Голосование",  
     "description" :"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "vote_btn": "Проголосовать"
+    "vote_btn": "Проголосовать",
+    "desc_header": "Описание:",
+    "role":"Роль"
   },
   "confirm": {
     "title":"Подтверждение аккаунта",
@@ -92,10 +104,27 @@
       "email_empty_err": "Поле Email не может быть пустым."
     },
     "password": {
-      "password_empty_err": "Поле Пароль не может быть пустым"
+      "password_empty_err": "Поле Пароль не может быть пустым",
+      "password_confirm_err": "Пароль и подтверждение пароля должны быть одинаковыми!"
     },
     "authentication": {
       "unauthorized": "Комбинация логина и пароля не верна. Попробуйте заново."
-    }
+    },
+    "url":{
+      "url_empty_err": "Поле URL не может быть пустым!",
+      "url_format_err": "Проверьте правильность URL. Картинка сайта не была загружена."
+    }    
+  },
+  "alertsMessages":{
+    "vote_confirm": "Вам отправлено письмо на почту для подтверждения вашего голоса.",
+    "requests":{
+      "send_err": "Ошибка при отравке запроса.",
+      "img_load_err" : "Картинка не может быть загружена. Функция проверки не работает.",
+      "img_load_war_err":"Картинка не была загружена. Нажмите кнопку Проверить."
+    },
+    "desc_none": "Нет описания",
+    "site_del": "Вы действительно желаете удалить сайт ",
+    "site_del_success": "Сайт успешно удален",
+    "profile_update_success": "Учетные данные обновлены."
   }
 }

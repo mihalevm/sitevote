@@ -16,7 +16,7 @@ const container = () => `
         </button>
       </div>  
       <div class="input-group input-group-lg">
-        <span class="input-group-text">${config.select_site.search}</span>
+        <span class="input-group-text">${config.add_site.search}</span>
         <input type="text" id="sites-cards-search" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
       </div>
     </div>
@@ -27,7 +27,7 @@ const container = () => `
 </div>
 `;
 
-document.title = config.select_site.page_title;
+document.title = config.add_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
 $(document.body).append(container);
@@ -47,13 +47,13 @@ checkAuth().done(function(data) {
     const id = $(el).data('sid');        
     siteGet({sid: id}).done(function(data) {
       const site = JSON.parse(data.data); 
-      const htmlBlock = (id) => `<div><img src="${getSRC()}/img/banner_480x240.png"><a href="${getSRC()}/pages/vote.html?sid=${id}">Голосуйте за мой сайт</a></div>`;      
+      const htmlBlock = (id) => `<div><img src="${getSRC()}/img/banner_480x240.png"><a href="${getSRC()}/pages/vote.html?sid=${id}">${config.profile.data_desc}</a></div>`;      
       $('#add-site-form').attr('data-sid', site.id);                
       $('#add-site-url').val(site.site_url);
       $('#add-share-block').val(htmlBlock(site.id, site.img_link));
       $('#add-site-img').attr('src', `${getSRC()}/storage/${site.img_link}_small.png`);
       $('#add-site-description').val(site.site_desc)
-      $('.modal-title').text('Редактирование сайта');
+      $('.modal-title').text(config.add_site.site_edit);
       $('#dummy-svg').hide();
     });
   }; 
@@ -76,7 +76,7 @@ checkAuth().done(function(data) {
     $('#add-site-description').val('');
     $('#add-site-form').attr('data-sid', '0');
     $('#add-share-block').val('');
-    $('.modal-title').text('Добавить сайт');
+    $('.modal-title').text(config.add_site.header);
     $('#add-site-img').attr('src', '');
     $('#dummy-svg').show();
   };
@@ -115,7 +115,7 @@ checkAuth().done(function(data) {
           <div id="al-img" style="width:466px; height:326px;">    
           <div class="position-relative top-50 start-50 translate-middle d-flex justify-content-center">
             <div class="alert alert-danger" role="alert">
-              Проверьте правильность URL. Картинка сайта не была загружена.
+              ${config.validationMessages.url.url_format_err}
             </div>
           </div>
           </div>
@@ -131,7 +131,7 @@ checkAuth().done(function(data) {
         $('#loading-spinner').remove();
         const alertMsg = `
           <div class="alert alert-danger" role="alert">
-            Картинка не может быть загружена. Функция проверки не работает.
+            ${config.alertsMessages.requests.img_load_err}
           </div>
         `;
         $('#img-con').prepend(alertMsg);
@@ -148,7 +148,7 @@ checkAuth().done(function(data) {
       const site = {
         // Refactoring
         sid: parseInt(id),
-        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : 'Нет описания',
+        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : config.alertsMessages.desc_none,
         site_url: $('#add-site-url').val(),
         short_link: '',
         img_link: imgSRC
@@ -176,7 +176,7 @@ checkAuth().done(function(data) {
         <div id="al-img" style="width:466px; height:326px;">    
         <div class="position-relative top-50 start-50 translate-middle d-flex justify-content-center">
           <div class="alert alert-warning" role="alert">
-            Картинка не была загружена. Нажмите кнопку Проверить.
+            ${config.alertsMessages.requests.img_load_war_err}
           </div>
         </div>
         </div>
