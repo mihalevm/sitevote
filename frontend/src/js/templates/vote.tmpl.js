@@ -27,7 +27,7 @@ const tmpl = () => `
           <div class="pt-5">
             <img id="get-the-vote-img" src="" class="img-fluid">
           </div>
-          <h4 class="pt-5"></h4>
+          <h4 class="pt-5">${config.vote.desc_header}</h4>
           <div class="pt-5">
             <p id="get-the-vote-desc">              
             </p>
