@@ -25,6 +25,16 @@ class TEmailVoteConfirm(TEmail):
         self.to = to
 
 
+class TEmailSupport(TEmail):
+    message: str
+
+    def __init__(self, to: str, user_name: str, site_url: str, message: str):
+        self.to = to
+        self.user_name = user_name
+        self.site_url = site_url
+        self.message = message
+
+
 def render_email_confirm(params: TEmailConfirm) -> str:
     return f'''
 <p>
@@ -39,7 +49,7 @@ def render_email_confirm(params: TEmailConfirm) -> str:
 <p style="text-align: left;">Здравствуйте {params.user_name} !</p>
 <p style="text-align: left;">Поздравляем с успешной регистрацией на <strong>сайте для голосования</strong> !</p>
 <p style="text-align: left;">
-    Что бы активировать Вашу учетную запись, нажмите кнопку ниже для подтверждения вашего адреса электронной почты.
+    Чтобы активировать Вашу учетную запись, нажмите кнопку ниже для подтверждения вашего адреса электронной почты.
 </p>
 <p>&nbsp;</p>
 <p style="text-align: center;">
@@ -96,3 +106,15 @@ def render_vote_email_confirm(params: TEmailVoteConfirm) -> str:
 '''
 
 
+def render_email_support(params: TEmailSupport) -> str:
+    return f'''
+<p>
+    <span style="text-align: left; padding-right: 70%; font-size: 16px; font-weight: 600;">
+        Вопрос с сайта {params.site_url}
+    </span>
+</p>
+<hr/>
+<p style="text-align: left;">От: {params.user_name}</p>
+<br/>
+<p style="text-align: left;">{params.message}</p>
+'''

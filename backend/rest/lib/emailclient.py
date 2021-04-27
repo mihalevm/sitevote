@@ -6,7 +6,9 @@ from email.mime.text import MIMEText
 from html2text import html2text
 
 from rest.lib.config import Configuration
-from rest.lib.emailtemplates import TEmailConfirm, render_email_confirm, TEmailVoteConfirm, render_vote_email_confirm
+from rest.lib.emailtemplates import TEmailConfirm, render_email_confirm,\
+                                    TEmailVoteConfirm, render_vote_email_confirm,\
+                                    TEmailSupport, render_email_support
 
 
 def __send_email(to: str, subj: str, msg: str) -> bool:
@@ -58,4 +60,12 @@ def send_vote_confirmation(params: TEmailVoteConfirm):
         params.to,
         'Подверждение голоса',
         render_vote_email_confirm(params)
+    )
+
+
+def send_support_ticket(params: TEmailSupport):
+    return __send_email(
+        params.to,
+        'Вопрос с сайта',
+        render_email_support(params)
     )

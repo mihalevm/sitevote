@@ -31,8 +31,8 @@ from rest.lib.emailtemplates import TEmailConfirm
 from rest.lib.emailclient import send_confirmation
 
 from rest.lib.webscreen import WebScreen
-from rest.lib.emailtemplates import TEmailVoteConfirm
-from rest.lib.emailclient import send_vote_confirmation
+from rest.lib.emailtemplates import TEmailVoteConfirm, TEmailSupport
+from rest.lib.emailclient import send_vote_confirmation, send_support_ticket
 
 from pydantic import BaseModel
 from jose import JWTError, jwt
@@ -121,10 +121,16 @@ class GetUserParams(BaseModel):
     uid: int = Query(default=None, description="Идентификатор пользователя")
 
 
+class SupportParams(BaseModel):
+    email: str = Query(default=None, max_length=64, description="Эл. адрес")
+    message: str = Query(default=None, max_length=512, description="Текст вопроса")
+
+
 config: Configuration = Configuration('server.ini')
 DB_ACCOUNT = config.get_section('DATABASE')
 ROUTER = config.get_section('ROUTER')
 REST = config.get_section('REST')
+EMAIL = config.get_section('EMAIL')
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(ROUTER['token_expire'])
 SECRET_KEY = ROUTER['secret']
@@ -1006,6 +1012,32 @@ async def send_validation(params: GetUserParams, sess_acc: SessionAccount = Depe
         headers={
             'x-auth-token': sess_acc.token
         }
+    )
+
+
+@router.post("/send-support-question")
+async def send_support_question(params: SupportParams):
+    j_obj = {
+        "data": "Ошибка отправки сообщения",
+        "error": 400
+    }
+
+    support_question: TEmailSupport = TEmailSupport(
+                to=EMAIL['replyto'],
+                site_url=REST['site_url'],
+                user_name=params.email,
+                message=params.message
+            )
+
+    if send_support_ticket(support_question):
+        j_obj["data"] = True
+        j_obj["error"] = 200
+    else:
+        j_obj["data"] = False
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
     )
 
 
