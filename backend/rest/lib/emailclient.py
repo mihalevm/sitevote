@@ -26,7 +26,7 @@ def __send_email(to: str, subj: str, msg: str) -> bool:
     mail_message.add_header('reply-to', email_config['replyto'])
     # mail_message.add_header('Content-Type', 'text/html')
     mail_message.attach(MIMEText(msg, 'html'))
-    mail_message.attach(MIMEText(html2text(msg), 'plain'))
+    mail_message.attach(MIMEText(html2text(msg, bodywidth=0), 'plain'))
 
     mail_session: SMTP = SMTP(email_config['host'])
     mail_session.starttls()
