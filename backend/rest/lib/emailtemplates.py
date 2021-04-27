@@ -63,6 +63,9 @@ def render_email_confirm(params: TEmailConfirm) -> str:
     </a>
 </p>
 <p>&nbsp;</p>
+<p style="text-align: left;"><strong>После активации Вашего аккаунта задайте пароль в разделе "Профиль".</strong></p>
+<p style="text-align: left;"><strong>Иначе при следующей попытки входа персональный кабинет будет недоступен</strong></p>
+<p>&nbsp;</p>
 <p style="text-align: left;">Если кнопка не работает скопируйте ссылку ниже в Ваш браузер:</p>
 <p style="text-align: center; color: blue;">{params.site_url+'/pages/confirm.html?h='+params.confirm_hash}</p>
 <p>&nbsp;</p>
