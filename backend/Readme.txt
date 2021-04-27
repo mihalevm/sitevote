@@ -9,3 +9,4 @@ Installation:
     pip install mysqlclient
     pip install selenium
     pip install Pillow
+    pip install html2text

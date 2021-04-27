@@ -46,22 +46,28 @@ if __name__ == "__main__":
         db_session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
         DBH = db_session()
 
-    users = DBH.query(Users).all()
+    users = DBH.query(Users).filter(Users.verified == 'N').all()
+    counter = 0
+    total = len(users)
 
     for user in users:
-        if user.verified == 'N':
-            confirm_hash: str = token_hex(32)
-            confirmation: TEmailConfirm = TEmailConfirm(
-                confirm_hash=confirm_hash,
-                user_name=user.fullname,
-                to=user.email,
-                site_url=rest_config['site_url']
-            )
+        confirm_hash: str = token_hex(32)
+        confirmation: TEmailConfirm = TEmailConfirm(
+            confirm_hash=confirm_hash,
+            user_name=user.fullname,
+            to=user.email,
+            site_url=rest_config['site_url']
+        )
 
-            time.sleep(2)
-            if send_confirmation(confirmation):
-                user.verified = 'S'
-                user.chash = confirm_hash
+        counter = counter + 1
+        print(f'[{counter}/{total}] Sending ', end='')
+        time.sleep(5)
+        if send_confirmation(confirmation):
+            user.verified = 'S'
+            user.chash = confirm_hash
+            DBH.commit()
+            print('OK')
+        else:
+            print(f'Error at {user.email}')
 
-    DBH.commit()
     DBH.close()

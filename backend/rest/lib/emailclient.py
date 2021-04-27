@@ -3,6 +3,7 @@ import logging
 from smtplib import SMTP
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from html2text import html2text
 
 from rest.lib.config import Configuration
 from rest.lib.emailtemplates import TEmailConfirm, render_email_confirm, TEmailVoteConfirm, render_vote_email_confirm
@@ -20,9 +21,10 @@ def __send_email(to: str, subj: str, msg: str) -> bool:
     mail_message['Subject'] = subj
     mail_message['From'] = email_config['from']
     mail_message['To'] = to
+    mail_message.add_header('reply-to', email_config['replyto'])
     mail_message.add_header('Content-Type', 'text/html')
     mail_message.attach(MIMEText(msg, 'html'))
-    mail_message.attach(MIMEText('', 'plain'))
+    mail_message.attach(MIMEText(html2text(msg), 'plain'))
 
     mail_session: SMTP = SMTP(email_config['host'])
     mail_session.starttls()
