@@ -1,5 +1,5 @@
 import config from './config/config.json';
-import { createAuthWindow, createHeader, createFooter, userLogged } from './js/templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter, createHelp, userLogged } from './js/templates/main.tmpl';
 import { createChart } from './js/templates/profile.tmpl';
 import { createSiteAwards, createDescription } from './js/templates/index.tmpl';
 import { checkAuth, siteTop } from './js/lib/clientRequests';
@@ -12,6 +12,7 @@ const container = () => `
 document.title = config.index.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
+createHelp(document.body);
 $(document.body).append(container);
 createDescription('#index-main');
 createFooter(document.body);

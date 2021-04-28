@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
 import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
-import { createAuthWindow, createHeader, createFooter, userLogged, loadingCardIntoPage, getSRC } from './templates/main.tmpl';
+import { createAuthWindow, createHeader, createFooter, createHelp, userLogged, loadingCardIntoPage, getSRC } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
 import '../styles/style.scss';
 
@@ -30,6 +30,7 @@ const container = () => `
 document.title = config.add_site.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
+createHelp(document.body);
 $(document.body).append(container);
 createAddSite('#select-site-con');
 createFooter(document.body);
@@ -42,7 +43,7 @@ $('#sites-cards-search').on('keyup', function() {
 });
 
 checkAuth().done(function(data) {
-  userLogged();
+  userLogged();  
   const loadDataToForm = (el) => {
     const id = $(el).data('sid');        
     siteGet({sid: id}).done(function(data) {
@@ -58,8 +59,10 @@ checkAuth().done(function(data) {
     });
   }; 
   siteStats().done(function(data) {
-    const sites = JSON.parse(data.data);
-    loadingCardIntoPage(sites, '#profile-sites-list', 'add-site-modal', loadDataToForm);   
+    if(data.error === 200) {
+      const sites = JSON.parse(data.data);
+      loadingCardIntoPage(sites, '#profile-sites-list', 'add-site-modal', loadDataToForm);
+    }
   }).done(function() {
     $('#profile-sites-list .card').each(function() {
       $(this).on('click', function() {        

@@ -1,7 +1,7 @@
 import config from '../config/config.json'
 import { Modal } from 'bootstrap';
 import { createAuthWindow, createHeader, createFooter, 
-  userLogged, unAuthroizedUser, loadingCardIntoPage, getSRC } from './templates/main.tmpl';
+  userLogged, unAuthroizedUser, loadingCardIntoPage, getSRC, createHelp } from './templates/main.tmpl';
 import { checkAuthVote, siteSearch, siteVoteGet } from './lib/clientRequests';
 import { createVote } from './templates/vote.tmpl';
 import '../styles/style.scss';
@@ -33,6 +33,7 @@ const container = () => `
 document.title = config.vote.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
+createHelp(document.body);
 $(document.body).append(container);
 createFooter(document.body);
 createVote(document.body);

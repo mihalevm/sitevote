@@ -1,7 +1,7 @@
 import config from '../../config/config.json';
-import { Tabs } from 'bootstrap';
-import { logIn, logOut } from '../lib/clientRequests';
-import { emailValidationEvent, passwordValidationEvent } from '../lib/events';
+import { Tabs, Modal } from 'bootstrap';
+import { logIn, logOut, sendSupportQuestion } from '../lib/clientRequests';
+import { emailValidationEvent, fieldLengthEvent, passwordValidationEvent } from '../lib/events';
 
 export const userLogged = () => {
   const menuLink = $('#auth-modal-enter-link');
@@ -74,7 +74,7 @@ export const createAuthWindow = (el) => {
             emailEL.addClass('is-invalid');
           };        
         } else {
-          console.log('Ошибка выполнения запроса.')
+          console.log(config.alertsMessages.requests.send_err);
         }
       });
     }
@@ -127,12 +127,102 @@ export const createFooter = (el) => {
   const tmpl = () => `
 <footer class="footer mt-auto py-3 bg-light">
   <div class="footer-container">
-    <span class="text-muted">${config.footer_tmpl.main}</span>
+    <div class="row">
+      <div class="col">
+       <span class="text-muted">${config.footer_tmpl.main}</span>    
+      </div>
+      <div class="col-3">
+        <div class="d-flex justify-content-end">
+          <a href="#" data-bs-toggle="modal" data-bs-target="#help-modal">Сообщить о проблеме</a>    
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
 `;
   $(el).append(tmpl());
 };
+
+export const createHelp = (el) => {
+  const tmpl = ({header, email, desc_header, send}) => `
+  <div id="help-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">${header}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="help-email" class="form-label">${email}</label>
+            <input id="help-email" type="email" class="form-control" aria-describedby="emailHelp" autocomplete="username" required>          
+            <div id="help-e-inv" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-3">
+            <label for="help-message" class="form-label">${desc_header}</label>          
+            <textarea id="help-message" class="form-control" style="height: 100px"></textarea>
+            <div id="help-msg-inv" class="invalid-feedback"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div id="help-alerts"></div>
+          <button id="help-send" type="button" class="btn btn-primary">${send}</button>      
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+  $(el).append(tmpl({
+    header: config.footer_tmpl.help_header,
+    email: config.profile.email,
+    desc_header: config.vote.desc_header,
+    send: config.footer_tmpl.help_send,
+  }));
+
+  $('#help-email').on('keyup', function() {
+    emailValidationEvent(this, '#help-send', '#help-e-inv');
+  });
+
+  $('#help-message').on('keyup', function() {
+    fieldLengthEvent(this, '#help-send', '#help-msg-inv');
+  });
+
+  $('#help-send').on('click', function() {
+    const email = $('#help-email');
+    const msgField = $('#help-message');
+    if(email.val().length != 0 && msgField.val().length != 0) {
+      const send = sendSupportQuestion({email: email.val(), message: msgField.val()});
+      if(send.state() === 'pending') {
+        $(this).text('')
+        const spinner = `<span id="send-msg-spinner" class="spinner-border spinner-border-sm pe-1" role="status" aria-hidden="true"></span> Отправка...`; 
+        $(this).append(spinner);
+      }
+      send.done(function(data) {
+        $('#send-msg-spinner').remove();
+        $('#help-send').text(config.footer_tmpl.help_send);
+        const helpModalEl = document.getElementById('help-modal');
+        const helpModal = Modal.getInstance(helpModalEl);
+        if(data.data) {
+          $('#help-alerts').text(config.alertsMessages.help.success);
+          setTimeout(() => {
+            $('#help-alerts').text('');
+            helpModal.hide();
+          }, 5000);
+        } else {
+          $('#help-alerts').text(config.alertsMessages.requests.send_err);          
+          setTimeout(() => {
+            $('#help-alerts').text('');
+            helpModal.hide();
+          }, 5000);
+        }
+      });
+    } else {
+      $('#help-email').addClass('is-invalid');
+      $('#help-e-inv').text(config.validationMessages.field.empty_err);
+      $(this).attr('disabled', true);
+    }
+  });
+} ;
 
 export const createCards = (arrayOfCards, modalId) => {  
   const card = (id, img_link, url, description, short_link, modal_name) => `

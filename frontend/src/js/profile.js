@@ -1,5 +1,5 @@
 import config from '../config/config.json'
-import { createAuthWindow, createFooter, createHeader, userLogged } from './templates/main.tmpl';
+import { createAuthWindow, createFooter, createHeader, userLogged, createHelp } from './templates/main.tmpl';
 import { createProfileTabs, createProfile, createStatistics, createChart, createSitesRows, createSiteDeleteConfirm } from './templates/profile.tmpl';
 import { checkAuth, profileGet, profileSave, siteStats, siteGet, siteDel } from './lib/clientRequests';
 import { emailValidationEvent } from './lib/events' 
@@ -14,6 +14,7 @@ const container = () => `
 document.title = config.profile.page_title;
 createHeader(document.body);
 createAuthWindow(document.body);
+createHelp(document.body);
 $(document.body).append(container);
 createFooter(document.body);
 createProfileTabs('#profile-main');
@@ -25,18 +26,20 @@ createSiteDeleteConfirm('#statistics-tab');
 checkAuth().done(function() {
   userLogged();
   siteStats().done(function(data) {
-    const sites = JSON.parse(data.data);    
-    const tableRows = createSitesRows(sites);      
-    $('#sites-table tbody').append(tableRows);  
-    // Reflow warning
-    $.each(sites, function(i,v) {
-      const div = $(`div[data-item-id=${v.id}]`)[0];      
-      Ya.share2(div,  {
-        content: {
-          url: $(div).data('url'),
-        }
-      });
-    });    
+    if(data.error === 200) {
+      const sites = JSON.parse(data.data);    
+      const tableRows = createSitesRows(sites);      
+      $('#sites-table tbody').append(tableRows);  
+      // Reflow warning
+      $.each(sites, function(i,v) {
+        const div = $(`div[data-item-id=${v.id}]`)[0];      
+        Ya.share2(div,  {
+          content: {
+            url: $(div).data('url'),
+          }
+        });
+      });    
+    }    
   }).done(function() {   
     $('#sites-table td > a').each(function(data) {
       $(this).on('click', function() {        
