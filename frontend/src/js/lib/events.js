@@ -1,3 +1,4 @@
+import { LinearScale } from 'chart.js';
 import config from '../../config/config.json';
 
 // Input -> Objects ids
@@ -37,6 +38,17 @@ export const passwordValidationEvent = (passEl, saveBtnEl, invalidDiv) => {
   }
 };
 
+export const fieldLengthEvent = (fieldEl, btnEl, invalidDiv, len = 200) => {
+  if($(fieldEl).val().length <= len) {
+    $(fieldEl).removeClass('is-invalid');
+    $(btnEl).removeAttr('disabled');
+  } else {
+    $(invalidDiv).text(config.validationMessages.field.limit_over_err);
+    $(fieldEl).addClass('is-invalid');
+    $(btnEl).attr('disabled', true);
+  }
+};
+
 export const changeMainBlock = (rClass, aClass, text, url, rTime) => {
   setTimeout(() => {
     $('.alert').removeClass(rClass);
@@ -45,3 +57,4 @@ export const changeMainBlock = (rClass, aClass, text, url, rTime) => {
     setTimeout(() => window.location.replace(url), rTime);
   }, 2000);
 };
+
