@@ -68,9 +68,9 @@ function authorization(login, password, onDocumentReady) {
     httpRequest.send(auth_params);
 }
 
-function authtest(loginModal) {
+function authtest() {
     if (jwt.token) {
-        dataContentLoader('GET', 'authtest', {},function (data){
+        dataContentLoader('GET', 'authtest', {},function (){
             document.body.dispatchEvent(new  Event('Authorized'));
         });
     }
@@ -150,7 +150,7 @@ function tableRender(data) {
                 tr.innerHTML = '<th scope="row">' + i[1].id + '</th><td>' + (i[1].fullname ? i[1].fullname : '')
                     + '</td><td>'
                     + (i[1].email ? i[1].email : '') + '</td><td>' + (i[1].phone ? i[1].phone : '')
-                    + '</td><td title="Отправить приглашение" alt="Отправить приглашение" class="send-validation">'
+                    + '</td><td title="Отправить приглашение" class="send-validation">'
                     + '<i class="bi-envelope"></i></td>';
                 tr.dataset.uid = i[1].id;
                 t_body.appendChild(tr);
@@ -263,7 +263,7 @@ function tableStatRender(data) {
     if (data.length) {
         Object.entries(data).forEach((i) => {
             let tr = document.createElement('tr');
-            tr.innerHTML = '<td scope="row">' + i[1].title + '</td><td>' + i[1].cnt + '</td>';
+            tr.innerHTML = '<td>' + i[1].title + '</td><td>' + i[1].cnt + '</td>';
             t_body.appendChild(tr);
         })
     } else {
