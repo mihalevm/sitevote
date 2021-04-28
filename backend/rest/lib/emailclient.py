@@ -39,7 +39,7 @@ def __send_email(to: str, subj: str, msg: str) -> bool:
             mail_message.as_string()
         )
     except Exception as exc:
-        result=False
+        result = False
         log.error('[EMAIL CLIENT] error %s', exc)
     finally:
         mail_session.quit()
@@ -64,6 +64,8 @@ def send_vote_confirmation(params: TEmailVoteConfirm):
 
 
 def send_support_ticket(params: TEmailSupport):
+    params.message = html2text(params.message, bodywidth=0)
+
     return __send_email(
         params.to,
         'Вопрос с сайта',
