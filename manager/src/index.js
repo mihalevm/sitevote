@@ -7,7 +7,8 @@ import sha256 from 'crypto-js/sha256'
 import { Modal, Toast } from 'bootstrap';
 
 let jwt = {token: '',};
-let baseUrl = 'http://127.0.0.1:5656/';
+// let baseUrl = 'http://127.0.0.1:5656/';
+let baseUrl = window.location.origin+'/rest/';
 
 function authorization(login, password, onDocumentReady) {
     let httpRequest = new XMLHttpRequest();
@@ -208,14 +209,39 @@ function getUserProfile(uid, el, modal) {
     })
 }
 
+function tableStatRender(data) {
+    let t_body = document.querySelector('#viewStatResult > tbody');
+    t_body.innerHTML = '';
+    if (data.length) {
+        Object.entries(data).forEach((i) => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = '<td scope="row">' + i[1].title + '</td><td>' + i[1].cnt + '</td>';
+            t_body.appendChild(tr);
+        })
+    } else {
+        t_body.innerHTML = '<tr><td class="text-center" colspan="4">По Вашему запросу ни чего не найдено</td></tr>';
+    }
+}
+
+
+function getVotesStat(modal) {
+    dataContentLoader('POST', 'get-vote-stats', {}, function(stat) {
+        tableStatRender(stat);
+        modal.show();
+    })
+}
+
+
 document.addEventListener('DOMContentLoaded', () => {
     let el_addUserModal = document.querySelector('#addUser');
+    let el_viewStatModal = document.querySelector('#viewStat');
     let el_loginModal = document.querySelector('#loginModal');
     let el_searchInput = document.querySelector('#search');
     let sendSuccessfulToast = new  Toast(document.querySelector('#send-successful'));
     let sendErrorToast = new Toast(document.querySelector('#send-error'));
 
     let addUserModal = new Modal(el_addUserModal);
+    let viewStatModal = new Modal(el_viewStatModal);
     let loginModal = new Modal(el_loginModal, {
         keyboard: false,
         backdrop: 'static'
@@ -247,6 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#bnt_AddUser').addEventListener('click', () => {
         el_addUserModal.dataset.uid = '0'   ;
         addUserModal.show();
+    })
+
+    document.querySelector('#bnt_viewStat').addEventListener('click', () => {
+        getVotesStat(viewStatModal)
     })
 
     document.querySelector('#searchResult > tbody').addEventListener('click', (e) => {

@@ -15,8 +15,11 @@
     <div class="container mt-5">
         <div class="row">
             <div class="offset-3 col-lg-6 mb-4">
-                <button type="button" class="btn btn-primary float-end" id="bnt_AddUser">
+                <button type="button" class="btn btn-primary float-end ms-4" id="bnt_AddUser">
                     <i class="bi-person-plus"></i> Добавить
+                </button>
+                <button type="button" class="btn btn-warning float-end" id="bnt_viewStat">
+                    <i class="bi-bar-chart"></i> Статистика
                 </button>
             </div>
         </div>
@@ -131,6 +134,36 @@
                     Ошибка отправления приглашения.
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="viewStat" data-uid="1" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Статистика по голосованию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="offset-2 col-lg-8">
+                                <table class="table" id="viewStatResult">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Название</th>
+                                        <th scope="col">Кол-во</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
             </div>
         </div>
     </div>
