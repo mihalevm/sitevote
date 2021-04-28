@@ -7,11 +7,13 @@ import logging
 
 from secrets import token_hex
 
-from sqlalchemy import create_engine, asc, desc, or_, func
+from sqlalchemy import create_engine, asc, desc, or_, func, inspect
+from sqlalchemy.sql.expression import literal_column
 from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from sqlalchemy.engine.row import Row
 
 from fastapi import Depends, FastAPI, HTTPException, status, Query, Body
 from fastapi.responses import JSONResponse
@@ -58,6 +60,9 @@ class Encoder(json.JSONEncoder):
                     else:
                         fields[field] = None
             return fields
+
+        if obj.__class__.__name__ == 'Row':
+            return obj._asdict()
 
         if type(obj) is date or type(obj) is datetime:
             return obj.strftime("%d.%m.%Y %H:%M:%S")
@@ -419,6 +424,33 @@ def db_search_user(pattern: str) -> Users:
         log.error('[Rest] DB error: %s', exc)
 
     return users.all() if users else None
+
+
+def db_stats_get():
+    q_not_invited = DBH.query(
+            literal_column("'Не приглашены'").label('title'),
+            func.count(Users.id).label('cnt'))\
+        .filter(Users.verified == 'N')
+    q_invited = DBH.query(
+            literal_column("'Приглашение отправлено'").label('title'),
+            func.count(Users.id).label('cnt'))\
+        .filter(Users.verified == 'S')
+    q_registered = DBH.query(
+            literal_column("'Зарегистрировались'").label('title'),
+            func.count(Users.id).label('cnt'))\
+        .filter(Users.verified == 'Y')
+    q_total = DBH.query(
+            literal_column("'Всего участников'").label('title'),
+            func.count(Users.id).label('cnt'))
+    q_sites_total = DBH.query(
+            literal_column("'Сайтов добавлено'").label('title'),
+            func.count(Sites.id).label('cnt'))
+    q_sub_votes = DBH.query(Votes.email).distinct(Votes.email).subquery()
+    q_votes_cnt = DBH.query(
+            literal_column("'Уникальных голосов'").label('title'),
+            func.count().label('cnt')).select_from(q_sub_votes)
+
+    return q_not_invited.union(q_invited, q_registered, q_total, q_sites_total, q_votes_cnt).all()
 
 
 def authenticate_user(email: str, password: str) -> Users:
@@ -969,6 +1001,28 @@ async def get_user(params: GetUserParams, sess_acc: SessionAccount = Depends(val
 
     if profile:
         j_obj["data"] = json.dumps(profile, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/get-vote-stats")
+async def get_vote_stats(sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка запроса статистики",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    stats = db_stats_get()
+
+    if stats:
+        j_obj["data"] = json.dumps(stats, cls=Encoder)
         j_obj["error"] = 200
 
     return JSONResponse(

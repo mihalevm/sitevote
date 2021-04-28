@@ -1,3 +1,4 @@
+import time
 import logging
 
 from selenium import webdriver
@@ -32,6 +33,7 @@ class WebScreen:
                 )
 
                 driver.get(url)
+                time.sleep(5)
                 driver.save_screenshot(output)
                 driver.close()
                 driver.quit()
