@@ -10,6 +10,37 @@ let jwt = {token: '',};
 // let baseUrl = 'http://127.0.0.1:5656/';
 let baseUrl = window.location.origin+'/rest/';
 
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function setCookie(name, value, options = {}) {
+    options = {
+        path: '/',
+        ...options
+    };
+
+    if (options.expires instanceof Date) {
+        options.expires = options.expires.toUTCString();
+    }
+
+    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+    for (let optionKey in options) {
+        updatedCookie += "; " + optionKey;
+        let optionValue = options[optionKey];
+        if (optionValue !== true) {
+            updatedCookie += "=" + optionValue;
+        }
+    }
+
+    document.cookie = updatedCookie;
+}
+
 function authorization(login, password, onDocumentReady) {
     let httpRequest = new XMLHttpRequest();
 
@@ -19,6 +50,7 @@ function authorization(login, password, onDocumentReady) {
             try {
                 content = JSON.parse(this.responseText);
                 jwt.token = content.token
+                setCookie('token', jwt.token)
             } catch (e) {
                 console.log(e)
             } finally {
@@ -36,6 +68,14 @@ function authorization(login, password, onDocumentReady) {
     httpRequest.send(auth_params);
 }
 
+function authtest(loginModal) {
+    if (jwt.token) {
+        dataContentLoader('GET', 'authtest', {},function (data){
+            document.body.dispatchEvent(new  Event('Authorized'));
+        });
+    }
+}
+
 function dataContentLoader (method, resource, params, onDocumentReady = null) {
     let httpReq = new XMLHttpRequest();
 
@@ -48,9 +88,13 @@ function dataContentLoader (method, resource, params, onDocumentReady = null) {
                 console.log(e)
             } finally {
                 if (null !== content && content.hasOwnProperty('token')) {
+                    jwt.token = content.token;
+                    setCookie('token', jwt.token);
                     if (onDocumentReady) {
                         onDocumentReady(content.error === 200 ? JSON.parse(content.data):[]);
                     }
+                } else {
+                    document.body.dispatchEvent(new  Event('NotAuthorized'));
                 }
             }
         }
@@ -101,17 +145,21 @@ function tableRender(data) {
     t_body.innerHTML = '';
     if (data.length) {
         Object.entries(data).forEach((i) => {
-            let tr = document.createElement('tr');
-            tr.innerHTML = '<th scope="row">' + i[1].id + '</th><td>' + i[1].fullname + '</td><td>'
-                + i[1].email+'</td><td>' + i[1].phone
-                + '</td><td title="Отправить приглашение" alt="Отправить приглашение" class="send-validation"><i class="bi-envelope"></i></td>';
-            tr.dataset.uid = i[1].id;
-            t_body.appendChild(tr);
+            if ( null !== i[1].id ) {
+                let tr = document.createElement('tr');
+                tr.innerHTML = '<th scope="row">' + i[1].id + '</th><td>' + (i[1].fullname ? i[1].fullname : '')
+                    + '</td><td>'
+                    + (i[1].email ? i[1].email : '') + '</td><td>' + (i[1].phone ? i[1].phone : '')
+                    + '</td><td title="Отправить приглашение" alt="Отправить приглашение" class="send-validation">'
+                    + '<i class="bi-envelope"></i></td>';
+                tr.dataset.uid = i[1].id;
+                t_body.appendChild(tr);
+            }
         })
-        t_body.querySelector('.send-validation').addEventListener('click', (e) => {
+        t_body.querySelectorAll('.send-validation').forEach((el) => el.addEventListener('click', (e) => {
             e.stopPropagation();
             sendValidation(e.target.parentElement.parentElement.dataset.uid);
-        })
+        }))
     } else {
         t_body.innerHTML = '<tr><td class="text-center" colspan="4">По Вашему запросу ни чего не найдено</td></tr>';
     }
@@ -152,7 +200,7 @@ function saveUser(el) {
     if (!email.value || !full_name.value)
         return false;
 
-    params.email = email.value;
+    params.email = email.value.replace(/[^\x00-\x7F]/g, "");
     params.fullname = full_name.value;
 
     if (uid)
@@ -247,8 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
         backdrop: 'static'
     });
 
-    loginModal.show();
-
     document.querySelector('#act_login').addEventListener('click', () => {
         act_login(el_loginModal, loginModal);
     })
@@ -295,4 +341,21 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('SendError', () => {
         sendErrorToast.show();
     })
+
+    document.body.addEventListener('Authorized', () => {
+        console.log('Authorized');
+        loginModal.hide();
+    })
+
+    document.body.addEventListener('NotAuthorized', () => {
+        console.log('NotAuthorized');
+        loginModal.show();
+    })
+
+    jwt.token = getCookie('token');
+    if (jwt.token) {
+        authtest();
+    } else {
+        loginModal.show();
+    }
 })
