@@ -26,20 +26,22 @@ class WebScreen:
         ret: bool = False
 
         if url and url.startswith('http'):
-            try:
-                driver = webdriver.Chrome(
-                    executable_path=self.__chrome_config['driver'],
-                    chrome_options=self.__chrome_options
-                )
+            driver = webdriver.Chrome(
+                executable_path=self.__chrome_config['driver'],
+                chrome_options=self.__chrome_options
+            )
 
+            try:
+                # driver.set_page_load_timeout(10)
                 driver.get(url)
                 time.sleep(5)
                 driver.save_screenshot(output)
-                driver.close()
-                driver.quit()
             except WebDriverException as exc:
                 self.__log.info("[REST] Webscreen raise exception %s", exc)
             else:
                 ret = True
+
+            driver.close()
+            driver.quit()
 
         return ret

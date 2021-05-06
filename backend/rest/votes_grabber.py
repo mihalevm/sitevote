@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     DBH.query(Votes).\
         filter(func.length(Votes.chash) > 0, Votes.vote_date+86400 < func.now()).\
-        delete(synchronize_session=False)
+        update({Votes.deleted: 'Y'}, synchronize_session=False)
 
     DBH.commit()
     DBH.close()

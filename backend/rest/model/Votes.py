@@ -27,6 +27,7 @@ class Votes(PrefixBase):
     phone = Column(VARCHAR(16), nullable=True, comment="Номер телефона голосующего")
     vote_date = Column(TIMESTAMP, nullable=False, default=func.now(), comment="Дата голосоания")
     chash = Column(VARCHAR(64), nullable=True, comment="Хеш подтверждения голоса")
+    deleted = Column(CHAR(1), default='N', comment="Признак удаления голоса")
 
     def __init__(self):
         __table__ = metadata.tables[self.__tablename__]
