@@ -42,7 +42,7 @@ if __name__ == "__main__":
         DBH = db_session()
 
     DBH.query(Votes).\
-        filter(func.length(Votes.chash) > 0, Votes.vote_date+86400 < func.now()).\
+        filter(func.length(Votes.chash) > 0, func.now() - Votes.vote_date > 86400).\
         update({Votes.deleted: 'Y'}, synchronize_session=False)
 
     DBH.commit()

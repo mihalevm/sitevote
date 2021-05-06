@@ -341,7 +341,7 @@ def db_vote_confirm_email_add(params: VoteConfirmParams) -> str:
     chash: str = ''
 
     has_vote: Votes = DBH.query(Votes)\
-        .filter(Votes.email == params.email, Votes.vote_date - func.now() < 86400, Votes.deleted == 'N')\
+        .filter(Votes.email == params.email, func.now()-Votes.vote_date < 86400, Votes.deleted == 'N')\
         .first()
 
     if not has_vote:
