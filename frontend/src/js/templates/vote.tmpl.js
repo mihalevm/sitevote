@@ -71,22 +71,31 @@ const tmpl = () => `
           $('#save-vote').append(spinner);
         }
         sendVote.done(function(data) {
+          console.log('save', data);
           $('#save-btn-spinner').remove();
           $('#save-vote').text(config.vote.vote_btn);
           const voteModalEl = document.getElementById('get-the-vote');
           const voteModal = Modal.getInstance(voteModalEl);
-          if(data.data) {
+          if(data.error === 200) {
             $('#get-the-vote-form').after(alertMsg('success', config.alertsMessages.vote_confirm));
             setTimeout(() => {
               $('#vote-alert-msg').remove();
               voteModal.hide();
             }, 5000);
           } else {
-            $('#get-the-vote-form').after(alertMsg('danger', config.alertsMessages.requests.send_err));
-            setTimeout(() => {
-              $('#vote-alert-msg').remove();
-              voteModal.hide();
-            }, 5000);
+            if(data.error === 400) {
+              $('#get-the-vote-form').after(alertMsg('warning', data.data));
+              setTimeout(() => {
+                $('#vote-alert-msg').remove();
+                voteModal.hide();
+              }, 5000);
+            } else {
+              $('#get-the-vote-form').after(alertMsg('danger', config.alertsMessages.requests.send_err));
+              setTimeout(() => {
+                $('#vote-alert-msg').remove();
+                voteModal.hide();
+              }, 5000);
+            }            
           }
         }).fail(function(data){
           $('#save-btn-spinner').remove();
