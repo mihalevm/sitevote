@@ -80,7 +80,7 @@ siteSearch({pattern: ""}).done(function(data) {
   const params = new URLSearchParams(window.location.search);
   let id;
   if(params.has('sid')) {
-    id = params.get('sid')
+    id = params.get('sid');
     if(id) {
       if(idS.includes(parseInt(id))) {
         const voteModalEl = document.getElementById('get-the-vote');
@@ -93,12 +93,21 @@ siteSearch({pattern: ""}).done(function(data) {
     }
   }  
 });
-
+let timerId = null
 $('#sites-cards-search').on('keyup', function() {
-  let value = $(this).val().toLowerCase();
-  $('#all-sites-list div.col').filter(function() {
-    $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
-  })
+  $('#all-sites-list .row').remove();
+  let searchStr = $(this).val().toLowerCase();  
+  if(searchStr) {    
+    if(timerId) {
+      clearTimeout(timerId)
+    }
+    timerId = setTimeout(() => {    
+      siteSearch({pattern: searchStr}).done(function(data) {
+        const allSites = JSON.parse(data.data);
+        loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm);
+      });
+    }, 1000);
+  }  
 }); 
 
 checkAuthVote().done(function(data) {  
