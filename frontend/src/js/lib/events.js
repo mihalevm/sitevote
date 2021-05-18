@@ -1,7 +1,5 @@
-import { LinearScale } from 'chart.js';
 import config from '../../config/config.json';
 
-// Input -> Objects ids
 export const emailValidationEvent = (emailEl, saveBtnEl, invalidDiv) => {
   const isValidEmail = (email) => {
     const emailReg = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/;
