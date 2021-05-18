@@ -4,6 +4,7 @@ import { createAuthWindow, createHeader, createFooter,
   userLogged, unAuthroizedUser, loadingCardIntoPage, getSRC, createHelp } from './templates/main.tmpl';
 import { checkAuthVote, siteSearch, siteVoteGet } from './lib/clientRequests';
 import { createVote } from './templates/vote.tmpl';
+import { alertMsg }  from './lib/events';
 import '../styles/style.scss';
 
 const container = () => `
@@ -93,9 +94,11 @@ siteSearch({pattern: ""}).done(function(data) {
     }
   }  
 });
+
 let timerId = null
 $('#sites-cards-search').on('keyup', function() {
-  $('#all-sites-list .row').remove();
+  $('#all-sites-list').children().remove();
+  $(window).off('scroll');
   let searchStr = $(this).val().toLowerCase();  
   if(searchStr) {    
     if(timerId) {
@@ -103,8 +106,18 @@ $('#sites-cards-search').on('keyup', function() {
     }
     timerId = setTimeout(() => {    
       siteSearch({pattern: searchStr}).done(function(data) {
-        const allSites = JSON.parse(data.data);
-        loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm);
+        if(data.error == 200) {
+          const allSites = JSON.parse(data.data);
+          loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm);
+        } else {
+          $('#all-sites-list').append(alertMsg('search','warning',`По вашему запросу "${searchStr}" ничего не нашлось`));
+        }
+      }).done(function(data) {
+        $('#all-sites-list .card').each(function(data) {
+          $(this).on('click', function() {        
+            loadDataToForm(this);
+          });
+        }); 
       });
     }, 1000);
   }  

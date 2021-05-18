@@ -58,3 +58,8 @@ export const changeMainBlock = (rClass, aClass, text, url, rTime) => {
   }, 2000);
 };
 
+export const alertMsg = (id, cl, text) => `
+<div id="${id}-alert-msg" class="alert alert-${cl}" role="alert">
+  ${text}
+</div>
+`; 
