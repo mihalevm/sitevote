@@ -4,7 +4,7 @@ import config from '../../config/config.json';
 // Input -> Objects ids
 export const emailValidationEvent = (emailEl, saveBtnEl, invalidDiv) => {
   const isValidEmail = (email) => {
-    const emailReg = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){1}\.[a-z]{2,3}$/gm;
+    const emailReg = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/;
     return emailReg.test(email);
   };
 
