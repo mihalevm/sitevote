@@ -4,6 +4,7 @@ import { createAuthWindow, createHeader, createFooter,
   userLogged, unAuthroizedUser, loadingCardIntoPage, getSRC, createHelp } from './templates/main.tmpl';
 import { checkAuthVote, siteSearch, siteVoteGet } from './lib/clientRequests';
 import { createVote } from './templates/vote.tmpl';
+import { alertMsg }  from './lib/events';
 import '../styles/style.scss';
 
 const container = () => `
@@ -62,43 +63,69 @@ const loadDataToForm = (el) => {
   gettingVote(id);
 };
 
-siteSearch({pattern: ""}).done(function(data) {
-  const allSites = JSON.parse(data.data);
-  loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm); 
-  return allSites;
-}).done(function(data) {
-  $('#all-sites-list .card').each(function(data) {    
-    $(this).on('click', function() {        
-      loadDataToForm(this);
+const firstPageLoading = () => {
+  siteSearch({pattern: ""}).done(function(data) {
+    const allSites = JSON.parse(data.data);    
+    loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm); 
+    return allSites;
+  }).done(function(data) {
+    $('#all-sites-list .card').each(function(data) {    
+      $(this).on('click', function() {        
+        loadDataToForm(this);
+      });
     });
+    const allSites = JSON.parse(data.data);
+    const idS = []
+    $.each(allSites, function(i,v) {
+      idS.push(v.id);    
+    })  
+    const params = new URLSearchParams(window.location.search);
+    let id;
+    if(params.has('sid')) {
+      id = params.get('sid');
+      if(id) {
+        if(idS.includes(parseInt(id))) {
+          const voteModalEl = document.getElementById('get-the-vote');
+          const voteModal = new Modal(voteModalEl, {
+            keyboard: false
+          });  
+          voteModal.show();
+          gettingVote(id);
+        }      
+      }
+    }  
   });
-  const allSites = JSON.parse(data.data);
-  const idS = []
-  $.each(allSites, function(i,v) {
-    idS.push(v.id);    
-  })  
-  const params = new URLSearchParams(window.location.search);
-  let id;
-  if(params.has('sid')) {
-    id = params.get('sid')
-    if(id) {
-      if(idS.includes(parseInt(id))) {
-        const voteModalEl = document.getElementById('get-the-vote');
-        const voteModal = new Modal(voteModalEl, {
-          keyboard: false
-        });  
-        voteModal.show();
-        gettingVote(id);
-      }      
-    }
-  }  
-});
+}
+firstPageLoading();
 
+let timerId = null
 $('#sites-cards-search').on('keyup', function() {
-  let value = $(this).val().toLowerCase();
-  $('#all-sites-list div.col').filter(function() {
-    $(this).toggle($(this).text().toLowerCase().indexOf(value) > - 1);    
-  })
+  $('#all-sites-list').children().remove();
+  $(window).off('scroll');
+  let searchStr = $(this).val().toLowerCase();  
+  if(searchStr.length > 0) {
+    if(timerId) {
+      clearTimeout(timerId)
+    }
+    timerId = setTimeout(() => {    
+      siteSearch({pattern: searchStr}).done(function(data) {
+        if(data.error == 200) {
+          const allSites = JSON.parse(data.data);
+          loadingCardIntoPage(allSites, '#all-sites-list', 'get-the-vote', loadDataToForm);
+        } else {
+          $('#all-sites-list').append(alertMsg('search','warning',`По вашему запросу "${searchStr}" ничего не нашлось`));
+        }
+      }).done(function(data) {
+        $('#all-sites-list .card').each(function(data) {
+          $(this).on('click', function() {        
+            loadDataToForm(this);
+          });
+        }); 
+      });
+    }, 1000);
+  } else {
+    firstPageLoading();
+  }
 }); 
 
 checkAuthVote().done(function(data) {  

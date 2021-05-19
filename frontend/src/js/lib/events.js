@@ -1,10 +1,8 @@
-import { LinearScale } from 'chart.js';
 import config from '../../config/config.json';
 
-// Input -> Objects ids
 export const emailValidationEvent = (emailEl, saveBtnEl, invalidDiv) => {
   const isValidEmail = (email) => {
-    const emailReg = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){1}\.[a-z]{2,3}$/gm;
+    const emailReg = /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/;
     return emailReg.test(email);
   };
 
@@ -58,3 +56,8 @@ export const changeMainBlock = (rClass, aClass, text, url, rTime) => {
   }, 2000);
 };
 
+export const alertMsg = (id, cl, text) => `
+<div id="${id}-alert-msg" class="alert alert-${cl}" role="alert">
+  ${text}
+</div>
+`; 
