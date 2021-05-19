@@ -90,7 +90,17 @@ function dataContentLoader (method, resource, params, onDocumentReady = null) {
                     jwt.token = content.token;
                     setCookie('token', jwt.token);
                     if (onDocumentReady) {
-                        onDocumentReady(content.error === 200 ? JSON.parse(content.data):[]);
+                        if (content.error === 200){
+                            let response = null;
+                            try {
+                                response = JSON.parse(content.data);
+                            } catch (e) {
+                                response = content.data;
+                            }
+                            onDocumentReady(response);
+                        } else {
+                            onDocumentReady(null);
+                        }
                     }
                 } else {
                     document.body.dispatchEvent(new  Event('NotAuthorized'));
@@ -139,6 +149,10 @@ function sendValidation (uid) {
     })
 }
 
+function addSiteModal(uid) {
+    console.log(uid)
+}
+
 function tableRender(data) {
     let t_body = document.querySelector('#searchResult > tbody');
     t_body.innerHTML = '';
@@ -146,11 +160,14 @@ function tableRender(data) {
         Object.entries(data).forEach((i) => {
             if ( null !== i[1].id ) {
                 let tr = document.createElement('tr');
+                tr.classList.add('text-center');
                 tr.innerHTML = '<th scope="row">' + i[1].id + '</th><td>' + (i[1].fullname ? i[1].fullname : '')
                     + '</td><td>'
                     + (i[1].email ? i[1].email : '') + '</td><td>' + (i[1].phone ? i[1].phone : '')
                     + '</td><td title="Отправить приглашение" class="send-validation">'
-                    + '<i class="bi-envelope"></i></td>';
+                    + '<i class="bi-envelope"></i></td>'
+                    + '<td title="Добавить сайт" class="add-site">'
+                    + '<i class="bi-patch-plus"></i></td>';
                 tr.dataset.uid = i[1].id;
                 t_body.appendChild(tr);
             }
@@ -158,6 +175,10 @@ function tableRender(data) {
         t_body.querySelectorAll('.send-validation').forEach((el) => el.addEventListener('click', (e) => {
             e.stopPropagation();
             sendValidation(e.target.parentElement.parentElement.dataset.uid);
+        }))
+        t_body.querySelectorAll('.add-site').forEach((el) => el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.body.dispatchEvent(new CustomEvent('AddSite', { detail: { uid: e.target.parentElement.parentElement.dataset.uid }}))
         }))
     } else {
         t_body.innerHTML = '<tr><td class="text-center" colspan="4">По Вашему запросу ни чего не найдено</td></tr>';
@@ -270,7 +291,6 @@ function tableStatRender(data) {
     }
 }
 
-
 function getVotesStat(modal) {
     dataContentLoader('POST', 'get-vote-stats', {}, function(stat) {
         tableStatRender(stat);
@@ -278,15 +298,52 @@ function getVotesStat(modal) {
     })
 }
 
+function siteVerify(url, imgHolder) {
+    imgHolder.innerHTML = '<div class="position-absolute top-50 w-100 text-center"><div class="spinner-border text-primary" role="status"></div></div>';
+
+    dataContentLoader(
+       'POST',
+       'site-verify',
+        {url: url},
+        function (data) {
+           if (data) {
+               imgHolder.innerHTML = '<img class="img-container" src="'+window.origin + data.small+'">';
+               imgHolder.dataset.pic = data.origin;
+               imgHolder.classList.remove('is-invalid');
+           } else {
+               imgHolder.innerHTML = '<div class="position-absolute top-50 w-100 text-center">Ошибка загрузки сайта</div>';
+           }
+        })
+}
+
+function siteSave(uid, url, pic, desc, modal) {
+    dataContentLoader(
+        'POST',
+        'site-save-ext',
+        {
+            uid: uid,
+            site_url: url,
+            img_link: pic,
+            site_desc: desc
+        },
+        function (data) {
+            modal.hide();
+        })
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     let el_addUserModal = document.querySelector('#addUser');
+    let el_addSiteModal = document.querySelector('#viewSiteAdd');
     let el_viewStatModal = document.querySelector('#viewStat');
     let el_loginModal = document.querySelector('#loginModal');
     let el_searchInput = document.querySelector('#search');
     let sendSuccessfulToast = new  Toast(document.querySelector('#send-successful'));
     let sendErrorToast = new Toast(document.querySelector('#send-error'));
 
+    let addSiteModal = new Modal(el_addSiteModal, {
+        keyboard: false,
+        backdrop: 'static'
+    });
     let addUserModal = new Modal(el_addUserModal);
     let viewStatModal = new Modal(el_viewStatModal);
     let loginModal = new Modal(el_loginModal, {
@@ -320,6 +377,50 @@ document.addEventListener('DOMContentLoaded', () => {
         addUserModal.show();
     })
 
+    document.querySelector('#bnt_siteCheck').addEventListener('click', () => {
+        let el_site_url = document.querySelector('#site_url');
+        el_site_url.classList.remove('is-invalid');
+
+        if (el_site_url.value) {
+            siteVerify(
+                el_site_url.value,
+                document.querySelector('.img-container')
+                );
+        } else {
+            el_site_url.classList.add('is-invalid');
+        }
+    })
+
+    document.querySelector('#bnt_saveSite').addEventListener('click', () => {
+        let el_site_url = document.querySelector('#site_url');
+        el_site_url.classList.remove('is-invalid');
+        let el_img_holder = document.querySelector('.img-container');
+        let el_site_desc = document.querySelector('#site_desc');
+
+        let validation = true;
+
+        if (! el_site_url.value) {
+            el_site_url.classList.add('is-invalid');
+            validation = false;
+        }
+
+        if (! el_img_holder.dataset.pic) {
+            el_img_holder.classList.add('is-invalid');
+            validation = false;
+        }
+
+        if (validation) {
+            siteSave(
+                document.querySelector('#viewSiteAdd').dataset.uid,
+                el_site_url.value,
+                el_img_holder.dataset.pic,
+                el_site_desc.value,
+                addSiteModal
+            )
+        }
+
+    })
+
     document.querySelector('#bnt_viewStat').addEventListener('click', () => {
         getVotesStat(viewStatModal)
     })
@@ -349,6 +450,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('NotAuthorized', () => {
         console.log('NotAuthorized');
         loginModal.show();
+    })
+
+    document.body.addEventListener('AddSite', (ev) => {
+        document.querySelector('#viewSiteAdd').dataset.uid = ev.detail.uid;
+        document.querySelector('#site_url').classList.remove('is-invalid');
+        document.querySelector('#site_url').value  = '';
+        document.querySelector('#site_desc').value = '';
+        document.querySelector('.img-container').innerHTML = '<div class="position-absolute top-50 w-100 text-center">Картинка не загружена</div>';
+        document.querySelector('.img-container').dataset.pic = '';
+
+        addSiteModal.show();
     })
 
     jwt.token = getCookie('token');

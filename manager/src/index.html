@@ -7,8 +7,14 @@
     <script src="vendor.js"></script>
 </head>
 <style>
-    .send-validation {
+    .send-validation, .add-site {
         cursor: pointer;
+    }
+    .img-container {
+        width: 440px;
+        height: 300px;
+        background-color: lightgray;
+        padding: 0;
     }
 </style>
 <body>
@@ -35,12 +41,12 @@
             <div class="offset-2 col-lg-8">
                 <table class="table" id="searchResult">
                     <thead>
-                    <tr>
+                    <tr class="text-center">
                         <th scope="col"></th>
                         <th scope="col">ФИО/Компания</th>
                         <th scope="col">Email</th>
                         <th scope="col">Телефон</th>
-                        <th scope="col"><i class="bi-gear"></i></th>
+                        <th scope="col" colspan="2"><i class="bi-gear"></i></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -163,6 +169,41 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="viewSiteAdd" data-uid="1" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавление сайта</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-9 mb-4">
+                                <input type="text" class="form-control" placeholder="http://www.site.com" id="site_url">
+                            </div>
+                            <div class="col-3 mb-4">
+                                <button type="button" class="btn btn-warning float-end" id="bnt_siteCheck">Проверить</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <div class="img-container position-relative form-control"><div class="position-absolute top-50 w-100 text-center">Картинка не загружена</div></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <textarea class="form-control" placeholder="Описание сайта" id="site_desc"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary me-3" id="bnt_saveSite">Сохранить</button>
                 </div>
             </div>
         </div>

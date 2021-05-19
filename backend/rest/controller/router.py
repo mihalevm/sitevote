@@ -84,7 +84,8 @@ class UserParams(BaseModel):
 
 
 class SiteParams(BaseModel):
-    sid: Optional[int] = Query(default=None, description='никальный идетнификатор сайта')
+    uid: Optional[int] = Query(default=None, description='Уникальный идетнификатор пользователя')
+    sid: Optional[int] = Query(default=None, description='Уникальный идетнификатор сайта')
     site_desc: Optional[str] = Query(default=None, max_length=512, description='Краткое описание сайта')
     site_url: str = Query(default=None, max_length=128, description='Адрес сайта')
     short_link: Optional[str] = Query(default=None, max_length=32, description='Сокращенная ссылка сайта')
@@ -1023,6 +1024,26 @@ async def get_vote_stats(sess_acc: SessionAccount = Depends(validate_user)):
 
     if stats:
         j_obj["data"] = json.dumps(stats, cls=Encoder)
+        j_obj["error"] = 200
+
+    return JSONResponse(
+        content=j_obj,
+        headers={
+            'x-auth-token': sess_acc.token
+        }
+    )
+
+
+@router.post("/site-save-ext")
+async def site_save_ext(params: SiteParams, sess_acc: SessionAccount = Depends(validate_user)):
+    j_obj = {
+        "data": "Ошибка сохранения параметров сайта.",
+        "error": 400,
+        "token": sess_acc.token
+    }
+
+    if sess_acc.verified == 'A' and db_site_save(params.uid, params):
+        j_obj["data"] = "Настройки сайта сохранены"
         j_obj["error"] = 200
 
     return JSONResponse(

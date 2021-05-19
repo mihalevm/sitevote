@@ -32,7 +32,7 @@ class WebScreen:
             )
 
             try:
-                # driver.set_page_load_timeout(10)
+                driver.set_page_load_timeout(30)
                 driver.get(url)
                 time.sleep(5)
                 driver.save_screenshot(output)
