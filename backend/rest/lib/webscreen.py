@@ -36,12 +36,11 @@ class WebScreen:
                 driver.get(url)
                 time.sleep(5)
                 driver.save_screenshot(output)
+                driver.close()
+                driver.quit()
             except WebDriverException as exc:
                 self.__log.info("[REST] Webscreen raise exception %s", exc)
             else:
                 ret = True
-
-            driver.close()
-            driver.quit()
 
         return ret
