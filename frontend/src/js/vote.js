@@ -46,7 +46,7 @@ const gettingVote = (id) => {
     $('#vote-share').append(shareBlock);
     Ya.share2($('#vote-share :first-child')[0], {
       content: {
-        url: `${getSRC()}/pages/vote?sid=${site.id}`,
+        url: `${getSRC()}/pages/vote.html?sid=${site.id}`,
       }
     });
     $('#get-the-vote h5 > a').attr('href', site.site_url);
