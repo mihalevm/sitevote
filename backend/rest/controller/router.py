@@ -6,6 +6,7 @@ import json
 import logging
 
 from secrets import token_hex
+from hashlib import sha256
 
 from sqlalchemy import create_engine, asc, desc, or_, func, inspect
 from sqlalchemy.sql.expression import literal_column
@@ -395,6 +396,8 @@ def db_save_user(user: UserParams) -> bool:
         db_user.fullname = user.fullname
         db_user.phone = db_user.phone
         db_user.user_desc = user.user_desc
+        if user.password:
+            db_user.password = sha256(user.password.encode('utf-8')).hexdigest()
         DBH.commit()
     else:
         db_user: Users = Users()
@@ -405,6 +408,8 @@ def db_save_user(user: UserParams) -> bool:
         db_user.password = token_hex(32)
         db_user.disabled = 'N'
         db_user.verified = 'N'
+        if user.password:
+            db_user.password = sha256(user.password.encode('utf-8')).hexdigest()
 
         DBH.add(db_user)
         DBH.commit()

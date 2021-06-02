@@ -7,8 +7,8 @@ import sha256 from 'crypto-js/sha256'
 import { Modal, Toast } from 'bootstrap';
 
 let jwt = {token: '',};
-// let baseUrl = 'http://127.0.0.1:5656/';
-let baseUrl = window.location.origin+'/rest/';
+let baseUrl = 'http://127.0.0.1:5656/';
+// let baseUrl = window.location.origin+'/rest/';
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -211,6 +211,7 @@ function saveUser(el) {
     let full_name = el.querySelector('#full_name');
     let phone = el.querySelector('#phone');
     let user_desc = el.querySelector('#user_desc');
+    let user_pwd = el.querySelector('#user_password');
 
     if (!email.value)
         email.classList.add('is-invalid');
@@ -222,6 +223,7 @@ function saveUser(el) {
 
     params.email = email.value.replace(/[^\x00-\x7F]/g, "");
     params.fullname = full_name.value;
+    params.password = user_pwd.value;
 
     if (uid)
         params.uid = uid;
