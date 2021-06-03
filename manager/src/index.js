@@ -7,8 +7,8 @@ import sha256 from 'crypto-js/sha256'
 import { Modal, Toast } from 'bootstrap';
 
 let jwt = {token: '',};
-let baseUrl = 'http://127.0.0.1:5656/';
-// let baseUrl = window.location.origin+'/rest/';
+// let baseUrl = 'http://127.0.0.1:5656/';
+let baseUrl = window.location.origin+'/rest/';
 
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
