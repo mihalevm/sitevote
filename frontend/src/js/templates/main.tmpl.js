@@ -242,7 +242,7 @@ export const createCards = (arrayOfCards, modalId) => {
     const endTag = '\n</div>\n';
     resultHTML += beginTag;
     $.each(array, function(i, v) {      
-      resultHTML += card(v.id, v.img_link, v.site_url, v.site_desc, v.short_link, modalId);     
+      resultHTML += card(v.id, v.img_link, v.site_url, (v.site_desc.trim().length !== 0) ? v.site_desc : config.alertsMessages.desc_none, v.short_link, modalId);     
     });
     resultHTML += endTag;    
     return resultHTML;
