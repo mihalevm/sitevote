@@ -1,5 +1,6 @@
 import config from '../../config/config.json';
-import { getSRC } from './main.tmpl'
+import { getSRC } from './main.tmpl';
+import { isEmpty, onlySpaces } from './../lib/events';
 
 export const createSiteAwards = (arrayOfTopSites) => {
   const rowBeginTag = '<div class="row pt-5">';
@@ -19,7 +20,7 @@ export const createSiteAwards = (arrayOfTopSites) => {
   `;
 
   $.each(arrayOfTopSites, function(i, v) {    
-    awardsHTML = awardsHTML + tmpl(v.id, v.img_link, v.site_url, (v.site_desc.trim().length !== 0) ? v.site_desc : config.alertsMessages.desc_none);
+    awardsHTML = awardsHTML + tmpl(v.id, v.img_link, v.site_url, (!isEmpty(v.site_desc) && !onlySpaces(v.site_desc)) ? v.site_desc : config.alertsMessages.desc_none);
   })
   awardsHTML = awardsHTML + divEndTag;
   return awardsHTML;

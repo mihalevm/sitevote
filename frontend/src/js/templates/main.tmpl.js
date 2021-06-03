@@ -1,7 +1,7 @@
 import config from '../../config/config.json';
 import { Tabs, Modal } from 'bootstrap';
 import { logIn, logOut, sendSupportQuestion } from '../lib/clientRequests';
-import { emailValidationEvent, fieldLengthEvent, passwordValidationEvent } from '../lib/events';
+import { emailValidationEvent, fieldLengthEvent, passwordValidationEvent, isEmpty, onlySpaces } from '../lib/events';
 
 export const userLogged = () => {
   const menuLink = $('#auth-modal-enter-link');
@@ -241,8 +241,8 @@ export const createCards = (arrayOfCards, modalId) => {
     const beginTag = '<div class="row row-cols-1 row-cols-md-4 g-4 pt-3">\n';
     const endTag = '\n</div>\n';
     resultHTML += beginTag;
-    $.each(array, function(i, v) {      
-      resultHTML += card(v.id, v.img_link, v.site_url, (v.site_desc.trim().length !== 0) ? v.site_desc : config.alertsMessages.desc_none, v.short_link, modalId);     
+    $.each(array, function(i, v) {
+      resultHTML += card(v.id, v.img_link, v.site_url, (!isEmpty(v.site_desc) && !onlySpaces(v.site_desc)) ? v.site_desc : config.alertsMessages.desc_none, v.short_link, modalId);     
     });
     resultHTML += endTag;    
     return resultHTML;

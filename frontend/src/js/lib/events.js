@@ -61,3 +61,11 @@ export const alertMsg = (id, cl, text) => `
   ${text}
 </div>
 `; 
+
+export const isEmpty = (str) => {
+  return (!str || str.length === 0);  
+}
+
+export const onlySpaces = (str) => {
+  return (str.trim().length === 0);
+}
