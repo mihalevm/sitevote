@@ -4,7 +4,7 @@ import { createAuthWindow, createHeader, createFooter,
   userLogged, unAuthroizedUser, loadingCardIntoPage, getSRC, createHelp } from './templates/main.tmpl';
 import { checkAuthVote, siteSearch, siteVoteGet } from './lib/clientRequests';
 import { createVote } from './templates/vote.tmpl';
-import { alertMsg }  from './lib/events';
+import { alertMsg, isEmpty, onlySpaces }  from './lib/events';
 import '../styles/style.scss';
 
 const container = () => `
@@ -54,7 +54,7 @@ const gettingVote = (id) => {
     $('#vote-counter').text(`Голосов: ${site.fast_rait}`);
     $('#get-the-vote').attr('data-sid', site.id);
     $('#get-the-vote-img').attr('src', `${getSRC()}/storage/${site.img_link}.png`);
-    $('#get-the-vote-desc').text((site.site_desc.trim().length !== 0) ? site.site_desc : config.alertsMessages.desc_none);
+    $('#get-the-vote-desc').text((!isEmpty(site.site_desc) && !onlySpaces(site.site_desc)) ? site.site_desc : config.alertsMessages.desc_none);
   });
 };
 

@@ -3,6 +3,7 @@ import { Modal } from 'bootstrap';
 import { checkAuth, siteVerify, siteSave, siteStats, siteGet } from './lib/clientRequests';
 import { createAuthWindow, createHeader, createFooter, createHelp, userLogged, loadingCardIntoPage, getSRC } from './templates/main.tmpl';
 import { createAddSite } from './templates/profile-add-edit-site.tmpl';
+import { isEmpty, onlySpaces } from './lib/events';
 import '../styles/style.scss';
 
 const container = () => `
@@ -53,7 +54,7 @@ checkAuth().done(function(data) {
       $('#add-site-url').val(site.site_url);
       $('#add-share-block').val(htmlBlock(site.id, site.img_link));
       $('#add-site-img').attr('src', `${getSRC()}/storage/${site.img_link}_small.png`);
-      $('#add-site-description').val((site.site_desc.trim().length !== 0) ? site.site_desc : config.alertsMessages.desc_none)
+      $('#add-site-description').val((!isEmpty(site.site_desc) && !onlySpaces(site.site_desc)) ? site.site_desc : config.alertsMessages.desc_none);
       $('.modal-title').text(config.add_site.site_edit);
       $('#dummy-svg').hide();
     });
@@ -148,10 +149,11 @@ checkAuth().done(function(data) {
     if($('#add-site-url').val().length != 0) {      
       const id = parseInt($('#add-site-form').attr('data-sid'));
       const imgSRC = ($('#add-site-img').attr('src') !== '') ? $('#add-site-img').attr('src').split('/storage/')[1].split('_')[0] : $('#add-site-img').data('origin');
+      const siteDesc = $('#add-site-description').val();
       const site = {
         // Refactoring
         sid: parseInt(id),
-        site_desc: ($('#add-site-description').val().trim().length !== 0) ? $('#add-site-description').val() : config.alertsMessages.desc_none,
+        site_desc: (siteDesc != null || siteDesc.trim().length !== 0) ? siteDesc : config.alertsMessages.desc_none,
         site_url: $('#add-site-url').val(),
         short_link: '',
         img_link: imgSRC
