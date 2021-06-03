@@ -53,7 +53,7 @@ checkAuth().done(function(data) {
       $('#add-site-url').val(site.site_url);
       $('#add-share-block').val(htmlBlock(site.id, site.img_link));
       $('#add-site-img').attr('src', `${getSRC()}/storage/${site.img_link}_small.png`);
-      $('#add-site-description').val(site.site_desc)
+      $('#add-site-description').val((site.site_desc.trim().length !== 0) ? site.site_desc : config.alertsMessages.desc_none)
       $('.modal-title').text(config.add_site.site_edit);
       $('#dummy-svg').hide();
     });
@@ -151,7 +151,7 @@ checkAuth().done(function(data) {
       const site = {
         // Refactoring
         sid: parseInt(id),
-        site_desc: ($('#add-site-description').val().length !== 0) ? $('#add-site-description').val() : config.alertsMessages.desc_none,
+        site_desc: ($('#add-site-description').val().trim().length !== 0) ? $('#add-site-description').val() : config.alertsMessages.desc_none,
         site_url: $('#add-site-url').val(),
         short_link: '',
         img_link: imgSRC
