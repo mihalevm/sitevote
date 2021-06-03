@@ -18,8 +18,8 @@ export const createSiteAwards = (arrayOfTopSites) => {
   </div> 
   `;
 
-  $.each(arrayOfTopSites, function(i, v) {
-    awardsHTML = awardsHTML + tmpl(v.id, v.img_link, v.site_url, v.site_desc);
+  $.each(arrayOfTopSites, function(i, v) {    
+    awardsHTML = awardsHTML + tmpl(v.id, v.img_link, v.site_url, (v.site_desc.trim().length !== 0) ? v.site_desc : config.alertsMessages.desc_none);
   })
   awardsHTML = awardsHTML + divEndTag;
   return awardsHTML;
