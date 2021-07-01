@@ -38,6 +38,7 @@ const tmpl = () => `
   </div>
 </div>  
 `;
+  window.location.href = window.origin;
 
   $(el).append(tmpl());
 

@@ -111,7 +111,7 @@ export const createHeader = (el) => {
       <span class="fs-4">${title}</span>
     </a>
     <ul id="menu-list" class="nav nav-pills">
-      <li class="nav-item"><a href="/pages/vote.html" class="nav-link">Голосование</a></li>            
+<!--      <li class="nav-item"><a href="/pages/vote.html" class="nav-link">Голосование</a></li>            -->
       <li class="nav-item"><a id="auth-modal-enter-link" href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#auth-modal">${enter}</a></li>
     </ul>
   </header>
